@@ -1,0 +1,48 @@
+html, body{
+    margin:0;
+    overflow:hidden;
+    background:white;
+}
+
+canvas{
+    position:fixed;
+    inset:0;
+}
+
+.content{
+
+    position:absolute;
+
+    left:50%;
+    top:50%;
+
+    transform:translate(-50%,-50%);
+
+    text-align:center;
+
+    pointer-events:none;
+
+    font-family:Futura, Helvetica, sans-serif;
+
+    color:#111;
+}
+
+h1{
+
+    letter-spacing:22px;
+
+    font-weight:400;
+
+    font-size:72px;
+
+    margin:0;
+}
+
+p{
+
+    margin-top:24px;
+
+    letter-spacing:6px;
+
+    font-size:15px;
+}
