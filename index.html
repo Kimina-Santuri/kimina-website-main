@@ -3,127 +3,64 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Book music production, education and sound engineering services with Kimina.">
+  <meta name="description" content="Kimina is a music producer, sound engineer, educator and creative technologist based in East Africa.">
   <link rel="canonical" href="https://kimina.santuri.org/">
   <meta property="og:type" content="website">
-  <meta property="og:site_name" content="Kimina Bookings">
-  <meta property="og:title" content="Kimina | Music Services &amp; Bookings">
-  <meta property="og:description" content="Book music production, tutoring, recording and live sound services with Kimina.">
+  <meta property="og:site_name" content="Kimina">
+  <meta property="og:title" content="Kimina — Producer, Educator &amp; Sound Engineer">
+  <meta property="og:description" content="Music, sound, education and creative technology by Kimina.">
   <meta property="og:url" content="https://kimina.santuri.org/">
-  <meta property="og:image" content="https://kimina.santuri.org/images/og-image.jpg">
+  <meta property="og:image" content="https://kimina.santuri.org/images/og-portfolio.jpg">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="Kimina music production and sound engineering services">
+  <meta property="og:image:alt" content="Kimina — music, education and sound">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Kimina | Music Services &amp; Bookings">
-  <meta name="twitter:description" content="Book music production, tutoring, recording and live sound services with Kimina.">
-  <meta name="twitter:image" content="https://kimina.santuri.org/images/og-image.jpg">
-  <title>Kimina | Music Services &amp; Bookings</title>
-  <link rel="icon" href="images/favicon.ico">
+  <meta name="twitter:title" content="Kimina — Producer, Educator &amp; Sound Engineer">
+  <meta name="twitter:description" content="Music, sound, education and creative technology by Kimina.">
+  <meta name="twitter:image" content="https://kimina.santuri.org/images/og-portfolio.jpg">
+  <title>Kimina — Producer, Educator &amp; Sound Engineer</title>
+  <link rel="icon" href="images/favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
-  <link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet">
-  <link href="style.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500&amp;display=swap" rel="stylesheet">
+  <link href="landing.css" rel="stylesheet">
 </head>
-<body>
-  <canvas id="topography" aria-hidden="true"></canvas>
-  <header class="hero">
-    <div class="hero__content">
-      <img class="logo" src="images/logo2.png" alt="Santuri East Africa">
-      <p class="eyebrow">Production · Education · Sound</p>
-    </div>
+<body class="home" data-animation="lissajous">
+  <canvas class="ambient-canvas" aria-hidden="true"></canvas>
+  <a class="skip-link" href="#about">Skip to content</a>
+  <header class="site-header">
+    <a class="site-mark" href="index.html" aria-label="Kimina home">K.</a>
+    <p>MUSIC.EDUCATION.SOUND</p>
   </header>
-  <main id="services" class="container">
-    <section aria-labelledby="services-title">
-      <div class="section-heading">
-        <h2 id="services-title">Choose your session</h2>
-        <p>Practical guidance for artists, producers, DJs and independent studios.</p>
-      </div>
-      <div class="cards">
-        <article class="card">
-          <img class="card__image" src="images/studio.jpg" alt="Music production studio equipment" loading="lazy">
-          <div class="card__content">
-            <p class="card__category">Education</p><h3>Music Production Tutoring</h3>
-            <p>Build your production skills through tutoring shaped around your music, workflow and goals.</p>
-            <p class="card__meta">15 Hours. In Person. 40,000 KES</p>
-            <a class="button booking-link" href="https://calendly.com/kimina-santuri/one-on-one-sessions">Book a session</a>
-          </div>
-        </article>
-        <article class="card">
-          <img class="card__image" src="images/dj-coaching.jpg" alt="DJ instructor coaching a learner on professional equipment" loading="lazy">
-          <div class="card__content">
-            <p class="card__category">Education</p><h3>DJ Tutoring</h3>
-            <p>Develop confident transitions, set preparation and performance technique through hands-on tutoring.</p>
-            <p class="card__meta">15 Hours. In Person. 40,000 KES</p>
-            <a class="button booking-link" href="https://calendly.com/kimina-santuri/one-on-one-sessions">Book a session</a>
-          </div>
-        </article>
-        <article class="card">
-          <img class="card__image" src="images/workstation-web.jpg" alt="Producer working at a music workstation" loading="lazy">
-          <div class="card__content">
-            <p class="card__category">Production</p><h3>Production Session</h3>
-            <p>Work together on an original track—from shaping the idea and arrangement to finishing the production.</p>
-            <p class="card__meta">In studio. From 1,000 KES per hour</p>
-            <a class="button booking-link" href="https://calendly.com/kimina-santuri/one-on-one-sessions">Book a session</a>
-          </div>
-        </article>
-        <article class="card">
-          <img class="card__image" src="images/mixing-mastering.jpg" alt="Sound engineer adjusting a professional mixing console" loading="lazy">
-          <div class="card__content">
-            <p class="card__category">Sound Engineering</p><h3>Mixing &amp; Mastering</h3>
-            <p>Give your release clarity, impact and a consistent sound across headphones, speakers and platforms.</p>
-            <p class="card__meta">From 5,000 KES</p>
-            <a class="button booking-link" href="https://calendly.com/kimina-santuri/one-on-one-sessions">Book a session</a>
-          </div>
-        </article>
-        <article class="card">
-          <img class="card__image" src="images/songwriting-feedback.jpg" alt="Two musicians reviewing a song in a studio" loading="lazy">
-          <div class="card__content">
-            <p class="card__category">Recording</p><h3>Recording Services</h3>
-            <p>Capture vocals, instruments and creative ideas with practical support throughout the recording process.</p>
-            <p class="card__meta">In studio. From 1,000 KES per hour</p>
-            <a class="button booking-link" href="https://calendly.com/kimina-santuri/one-on-one-sessions">Book a session</a>
-          </div>
-        </article>
-        <article class="card">
-          <img class="card__image" src="images/sound-tech-web.jpg" alt="Live sound technician working at an event" loading="lazy">
-          <div class="card__content">
-            <p class="card__category">Live Sound</p><h3>Sound Tech &amp; Live Engineer</h3>
-            <p>Professional technical support and live sound engineering for performances, events and productions.</p>
-            <p class="card__meta">From 5,000 KES</p>
-            <a class="button booking-link" href="https://calendly.com/kimina-santuri/one-on-one-sessions">Book a session</a>
-          </div>
-        </article>
-        <article class="card">
-          <img class="card__image" src="images/studio-consultation.jpg" alt="Sound engineer advising a client in a home studio" loading="lazy">
-          <div class="card__content">
-            <p class="card__category">Consultation</p><h3>General Consultation</h3>
-            <p>Get focused guidance on your creative direction, technical setup, career questions or next project.</p>
-            <p class="card__meta">From 1,000 KES</p>
-            <a class="button booking-link" href="https://calendly.com/kimina-santuri/one-on-one-sessions">Book a session</a>
-          </div>
-        </article>
+  <nav class="side-nav" aria-label="Primary navigation">
+    <a href="works.html">Works</a>
+    <a href="bookings.html">Bookings</a>
+    <a href="residencies.html">Residencies</a>
+    <a href="downloads.html">Downloads</a>
+    <a href="about.html">About</a>
+    <a href="contact.html">Contact</a>
+  </nav>
+  <main>
+    <section class="intro" aria-labelledby="page-title">
+      <p class="intro__index" aria-hidden="true">01 / 04</p>
+      <h1 id="page-title">Kimina</h1>
+      <p class="intro__role">Music producer<br>Sound engineer<br>Creative technologist</p>
+      <a class="scroll-cue" href="#about">Read more <span aria-hidden="true">↓</span></a>
+    </section>
+    <section class="bio" id="about" aria-labelledby="about-title">
+      <p class="section-label">About</p>
+      <div class="bio__copy">
+        <h2 id="about-title">Sound, learning and systems for creative expression.</h2>
+        <p>I’m a music producer, audio engineer and creative technologist working across music education, live production, experimental sound, instrument building and digital systems.</p>
+        <p>My practice moves between recording, synthesis, field work and unusual interfaces—creating spaces where artists can explore ideas, develop their craft and bring new work to life.</p>
+        <a class="text-link" href="bookings.html">Work with me <span aria-hidden="true">↗</span></a>
       </div>
     </section>
-    <section class="about" aria-labelledby="about-title">
-      <img class="about__image" src="images/about-web.jpg" alt="Kimina in a creative studio environment" loading="lazy">
-      <div class="about__content">
-        <p class="eyebrow">About</p>
-        <h2 id="about-title">Kimina</h2>
-        <p>I’m a music producer, audio engineer and creative technologist with a background spanning music education, live production, experimental sound, instrument building and digital systems. My work combines hands-on creativity with technical expertise—from recording, synthesis, field recordings and SuperCollider to developing unusual interfaces and supporting artists with their wider creative projects. Through my studio, I offer production tutoring, recording, workshops and tailored creative sessions in a relaxed, collaborative environment where ideas can be explored, developed and brought to life.</p>
-      </div>
-    </section>
-    <aside class="contact" aria-labelledby="contact-title">
-      <div><p class="eyebrow">Not sure what you need?</p><h2 id="contact-title">Let’s find the right session.</h2></div>
-      <a class="button button--light" href="mailto:kimina@santuri.org?subject=Booking%20Enquiry">Email Kimina</a>
-    </aside>
   </main>
-  <footer>
-    <img src="images/logo2.png" alt="" class="footer__logo">
-    <p>&copy; <span id="year">2026</span> Santuri East Africa</p>
+  <footer class="site-footer">
+    <p>Kimina / Nairobi</p>
+    <p>&copy; <span id="year">2026</span></p>
   </footer>
-  <script src="https://assets.calendly.com/assets/external/widget.js" async></script>
-  <script src="script.js" defer></script>
+  <script src="landing.js" defer></script>
 </body>
 </html>

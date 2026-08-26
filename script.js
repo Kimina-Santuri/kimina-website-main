@@ -6,37 +6,67 @@ document.querySelectorAll(".booking-link").forEach((bookingLink) => {
   });
 });
 
-document.querySelector("#year").textContent = new Date().getFullYear();
+const year = document.querySelector("#year");
+if (year) year.textContent = new Date().getFullYear();
 
 const canvas = document.querySelector("#topography");
 const context = canvas?.getContext("2d");
 const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+document.querySelectorAll('a[href]').forEach((link) => {
+  link.addEventListener("click", (event) => {
+    if (reduceMotion || event.defaultPrevented || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    const url = new URL(link.href, window.location.href);
+    if (url.origin !== window.location.origin || url.hash || link.target === "_blank" || url.protocol === "mailto:") return;
+    event.preventDefault();
+    document.body.classList.add("is-leaving");
+    window.setTimeout(() => { window.location.href = url.href; }, 180);
+  });
+});
+
 if (canvas && context) {
-  let width=0, height=0, time=0;
-  const mouse={x:-1000,y:-1000}, resolution=32;
-  const resize=()=>{ const scale=Math.min(window.devicePixelRatio||1,2); width=innerWidth; height=innerHeight; canvas.width=width*scale; canvas.height=height*scale; context.setTransform(scale,0,0,scale,0,0); };
-  const field=(x,y)=>{ let value=(Math.sin(x*.008+time)+Math.cos(y*.009+time*.7)+Math.sin((x+y)*.004))/3; value+=Math.max(0,1-Math.hypot(x-mouse.x,y-mouse.y)/300)*.25; return value; };
-  const interpolate=(a,b,level)=>(level-a)/(b-a);
-  const draw=()=>{
-    context.clearRect(0,0,width,height); context.strokeStyle="#171714"; context.lineWidth=.7;
-    const columns=Math.ceil(width/resolution), rows=Math.ceil(height/resolution);
-    const values=Array.from({length:columns+1},(_,x)=>Array.from({length:rows+1},(_,y)=>field(x*resolution,y*resolution)));
-    [-.6,-.4,-.2,0,.2,.4,.6].forEach(level=>{
-      context.beginPath();
-      for(let x=0;x<columns;x+=1) for(let y=0;y<rows;y+=1){
-        const [a,b,c,d]=[values[x][y],values[x+1][y],values[x+1][y+1],values[x][y+1]], points=[];
-        if((a<level)!==(b<level)) points.push([x*resolution+interpolate(a,b,level)*resolution,y*resolution]);
-        if((b<level)!==(c<level)) points.push([(x+1)*resolution,y*resolution+interpolate(b,c,level)*resolution]);
-        if((c<level)!==(d<level)) points.push([x*resolution+interpolate(d,c,level)*resolution,(y+1)*resolution]);
-        if((d<level)!==(a<level)) points.push([x*resolution,y*resolution+interpolate(a,d,level)*resolution]);
-        if(points.length===2){ context.moveTo(points[0][0],points[0][1]); context.lineTo(points[1][0],points[1][1]); }
-      }
-      context.stroke();
-    });
-    if(!reduceMotion){ time+=.004; requestAnimationFrame(draw); }
+  let width = 0;
+  let height = 0;
+  let time = 0;
+  let frameId;
+  const pointer = { x:.5, y:.5, targetX:.5, targetY:.5 };
+  const resize = () => {
+    const scale = Math.min(window.devicePixelRatio || 1, 2);
+    width = window.innerWidth;
+    height = window.innerHeight;
+    canvas.width = width * scale;
+    canvas.height = height * scale;
+    context.setTransform(scale, 0, 0, scale, 0, 0);
   };
-  addEventListener("resize",resize);
-  addEventListener("mousemove",event=>{mouse.x=event.clientX;mouse.y=event.clientY;});
-  resize(); draw();
+  const draw = () => {
+    pointer.x += (pointer.targetX - pointer.x) * .055;
+    pointer.y += (pointer.targetY - pointer.y) * .055;
+    context.clearRect(0, 0, width, height);
+    for (let wave = 0; wave < 11; wave += 1) {
+      const baseY = height * (wave + 1) / 12;
+      context.beginPath();
+      for (let x = 0; x <= width; x += 6) {
+        const distance = Math.abs(x - pointer.x * width);
+        const response = Math.max(0, 1 - distance / 380);
+        const amplitude = 10 + wave * 2.2 + response * (28 + pointer.y * 34);
+        const y = baseY + Math.sin(x * .012 + time + wave * .7) * amplitude + Math.sin(x * .004 - time * .55) * 9;
+        if (!x) context.moveTo(x, y); else context.lineTo(x, y);
+      }
+      context.strokeStyle = `rgba(5,5,5,${.055 + wave * .009})`;
+      context.lineWidth = .7;
+      context.stroke();
+    }
+    if (!reduceMotion) { time += .014; frameId = requestAnimationFrame(draw); }
+  };
+  window.addEventListener("pointermove", (event) => {
+    pointer.targetX = event.clientX / width;
+    pointer.targetY = event.clientY / height;
+  }, { passive:true });
+  window.addEventListener("resize", () => { resize(); if (reduceMotion) draw(); });
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden && frameId) cancelAnimationFrame(frameId);
+    if (!document.hidden && !reduceMotion) draw();
+  });
+  resize();
+  draw();
 }
