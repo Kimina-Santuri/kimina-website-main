@@ -31,6 +31,7 @@ The shared navigation order is Works, Bookings, Residencies, Downloads, About an
   - Contact: pulse rings
   - 404: lost signal
 - Subtle page transitions with static compositions for reduced-motion preferences
+- An opt-in stellar drone on the landing page with independently crossfading voices, cursor-reactive filtering and stereo movement
 
 ## Run locally
 
@@ -59,13 +60,14 @@ Every booking button has the `booking-link` class. When the Calendly widget is u
 - `images/smem.jpg` — original SMEM residency photograph used by Works and Residencies
 - `images/about-web.jpg` — About portrait
 - `landing.css` and `landing.js` — portfolio layouts and page-specific animations
-- `style.css` and `script.js` — Bookings layout, Calendly behavior and signal-wave animation
+- The landing-page sound engine is dependency-free and built with the Web Audio API. Its four voices use luminosity and distance values for Proxima Centauri, Sirius, Vega and Betelgeuse as musical control data.
+- `bookings.css` and `bookings.js` — Bookings layout, Calendly behavior and signal-wave animation
 
 The canonical site URL is `https://kimina.santuri.org/`. Social metadata uses absolute URLs on this domain.
 
 ## Deployment
 
-The site is static and can be hosted without a build step. `_redirects` provides extensionless route mappings and a custom 404 fallback on compatible hosts such as Netlify. Confirm equivalent rewrite behavior before changing visible `.html` links on another host.
+The site is static and can be hosted without a build step. `.nojekyll` prevents GitHub Pages from applying Jekyll processing. `_redirects` works only on compatible hosts such as Netlify; GitHub Pages ignores it, so visible navigation retains `.html` links.
 
 ## Verification
 
@@ -73,7 +75,7 @@ After changes:
 
 ```sh
 node --check landing.js
-node --check script.js
+node --check bookings.js
 ```
 
 Also confirm that local references exist, the Bookings page still contains seven cards and seven `booking-link` buttons, and desktop/mobile layouts remain usable.

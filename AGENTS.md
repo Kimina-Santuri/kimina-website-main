@@ -15,6 +15,7 @@ This is Kimina’s static personal portfolio for music, education, sound enginee
 - Maintain semantic HTML, descriptive image alt text, visible keyboard focus styles and reduced-motion support.
 - Do not invent projects, releases, credits, social profiles or downloadable materials. Add them only when the user provides factual content or assets.
 - Downloads must remain an honest empty index until real files are supplied.
+- Keep the landing-page stellar drone opt-in. Never autoplay audio.
 
 ## Current pages and animation themes
 
@@ -27,7 +28,9 @@ This is Kimina’s static personal portfolio for music, education, sound enginee
 - `contact.html`: enquiry routes and cursor-following pulse rings
 - `404.html`: custom “Signal lost” page and reactive signal line
 
-All portfolio animations live in `landing.js` and are selected through the body’s `data-animation` attribute. The Bookings animation and Calendly behavior live in `script.js`. Pointer response should stay subtle. Reduced-motion users receive a static frame, not continuous animation or page transitions.
+All portfolio animations live in `landing.js` and are selected through the body’s `data-animation` attribute. The Bookings animation and Calendly behavior live in `bookings.js`. Pointer response should stay subtle. Reduced-motion users receive a static frame, not continuous animation or page transitions.
+
+The landing page also has a dependency-free Web Audio stellar drone in `landing.js`. It starts only after the visitor presses the `SOUND OFF / SOUND ON` control, fades smoothly, suspends while the page is hidden and responds subtly to cursor position through filtering and stereo movement. Four independently fading voices are mapped to Proxima Centauri, Sirius, Vega and Betelgeuse. Log-compressed luminosity shapes level and brightness; distance shapes spectral focus and fade duration. Treat this as musical sonification rather than a literal representation of stellar sound. Keep the control visually consistent with the small uppercase navigation grammar.
 
 ## Works and residencies
 
@@ -86,13 +89,13 @@ The remaining service images are already optimized JPEG assets. Prefer existing 
 - Keep CSS and JavaScript external rather than moving them inline.
 - Prefer plain HTML, CSS and JavaScript over new dependencies.
 - Page transitions should ignore external, mailto, hash and new-tab links.
-- `_redirects` provides extensionless aliases and the 404 fallback on compatible hosts. Visible links currently retain `.html` for direct-file and generic static-host compatibility.
+- `.nojekyll` is included for GitHub Pages. `_redirects` is ignored by GitHub Pages and provides extensionless aliases only on compatible hosts. Visible links retain `.html` for GitHub Pages and direct-file compatibility.
 - The canonical production domain is `https://kimina.santuri.org/`. Keep social-image URLs absolute on this domain.
 - Do not restore the obsolete booking-oriented `images/og-image.jpg` in current metadata unless explicitly requested.
 
 ## Verification after edits
 
-- Run `node --check landing.js` and `node --check script.js`.
+- Run `node --check landing.js` and `node --check bookings.js`.
 - Confirm every local `src` and stylesheet/script reference exists.
 - Confirm every main page uses `images/favicon.svg` and the exact tagline `MUSIC.EDUCATION.SOUND`.
 - Confirm Bookings still contains seven service cards and seven `booking-link` buttons unless the request changes that number.

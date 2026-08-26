@@ -174,3 +174,115 @@ if (canvas && context) {
   resize();
   draw();
 }
+
+const soundControl = document.querySelector(".sound-control");
+if (soundControl) {
+  const label = soundControl.querySelector(".sound-control__label");
+  let audioContext;
+  let master;
+  let filter;
+  let panner;
+  let isPlaying = false;
+  let suspendTimer;
+
+  const buildDrone = () => {
+    audioContext = new AudioContext();
+    master = audioContext.createGain();
+    filter = audioContext.createBiquadFilter();
+    panner = audioContext.createStereoPanner();
+    const delay = audioContext.createDelay(2);
+    const feedback = audioContext.createGain();
+    const dry = audioContext.createGain();
+    const wet = audioContext.createGain();
+
+    master.gain.value = .0001;
+    filter.type = "lowpass";
+    filter.frequency.value = 480;
+    filter.Q.value = 2.2;
+    delay.delayTime.value = .72;
+    feedback.gain.value = .34;
+    dry.gain.value = .72;
+    wet.gain.value = .28;
+
+    filter.connect(dry).connect(panner);
+    filter.connect(delay);
+    delay.connect(feedback).connect(delay);
+    delay.connect(wet).connect(panner);
+    panner.connect(master).connect(audioContext.destination);
+
+    const stars = [
+      { name:"Proxima Centauri", frequency:55, luminosity:.00155, distance:4.23 },
+      { name:"Sirius", frequency:82.5, luminosity:25.4, distance:8.6 },
+      { name:"Vega", frequency:110, luminosity:40, distance:25 },
+      { name:"Betelgeuse", frequency:165, luminosity:10000, distance:700 }
+    ];
+
+    stars.forEach((star, index) => {
+      const oscillator = audioContext.createOscillator();
+      const voiceGain = audioContext.createGain();
+      const voiceFilter = audioContext.createBiquadFilter();
+      const pitchLfo = audioContext.createOscillator();
+      const pitchDepth = audioContext.createGain();
+      const fadeLfo = audioContext.createOscillator();
+      const fadeDepth = audioContext.createGain();
+      const luminosity = (Math.log10(star.luminosity) + 3) / 7;
+      const distance = Math.log10(star.distance + 1) / Math.log10(701);
+      const baseGain = .028 + Math.max(0, Math.min(1, luminosity)) * .055;
+      const fadeSeconds = 18 + distance * 34 + index * 3;
+
+      oscillator.type = index % 2 ? "triangle" : "sine";
+      oscillator.frequency.value = star.frequency;
+      oscillator.detune.value = index * 3 - 4;
+      voiceFilter.type = "lowpass";
+      voiceFilter.frequency.value = 1500 - distance * 1050 + luminosity * 260;
+      voiceFilter.Q.value = 1.2 + luminosity * 2.4;
+      voiceGain.gain.value = baseGain;
+      pitchLfo.frequency.value = .012 + index * .007;
+      pitchDepth.gain.value = 2 + distance * 5;
+      fadeLfo.frequency.value = 1 / fadeSeconds;
+      fadeDepth.gain.value = baseGain * .96;
+
+      pitchLfo.connect(pitchDepth).connect(oscillator.detune);
+      fadeLfo.connect(fadeDepth).connect(voiceGain.gain);
+      oscillator.connect(voiceFilter).connect(voiceGain).connect(filter);
+      oscillator.start();
+      pitchLfo.start();
+      fadeLfo.start(audioContext.currentTime + index * 2.7);
+    });
+  };
+
+  const setPlaying = async (nextState) => {
+    if (!audioContext) buildDrone();
+    window.clearTimeout(suspendTimer);
+    if (nextState) {
+      await audioContext.resume();
+      const now = audioContext.currentTime;
+      master.gain.cancelScheduledValues(now);
+      master.gain.setValueAtTime(Math.max(master.gain.value, .0001), now);
+      master.gain.exponentialRampToValueAtTime(.038, now + 1.8);
+    } else {
+      const now = audioContext.currentTime;
+      master.gain.cancelScheduledValues(now);
+      master.gain.setValueAtTime(Math.max(master.gain.value, .0001), now);
+      master.gain.exponentialRampToValueAtTime(.0001, now + .8);
+      suspendTimer = window.setTimeout(() => audioContext.suspend(), 850);
+    }
+    isPlaying = nextState;
+    soundControl.setAttribute("aria-pressed", String(isPlaying));
+    label.textContent = isPlaying ? "Sound on" : "Sound off";
+  };
+
+  soundControl.addEventListener("click", () => setPlaying(!isPlaying));
+  window.addEventListener("pointermove", (event) => {
+    if (!audioContext || !isPlaying) return;
+    const now = audioContext.currentTime;
+    const x = event.clientX / window.innerWidth;
+    const y = event.clientY / window.innerHeight;
+    filter.frequency.setTargetAtTime(240 + (1 - y) * 900, now, .35);
+    panner.pan.setTargetAtTime((x - .5) * .9, now, .4);
+  }, { passive:true });
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden && audioContext?.state === "running") audioContext.suspend();
+    if (!document.hidden && isPlaying) audioContext?.resume();
+  });
+}

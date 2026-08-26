@@ -31,6 +31,10 @@ main { min-height:100vh; }
 .text-link { position:relative; display:inline-block; margin-top:24px; font-size:.68rem; letter-spacing:.1em; text-decoration:none; text-transform:uppercase; }
 .site-footer { display:flex; justify-content:space-between; padding:24px 32px; border-top:1px solid var(--line); background:var(--paper); font-size:.62rem; letter-spacing:.08em; text-transform:uppercase; }
 .site-footer p { margin:0; }
+.sound-control { position:fixed; bottom:24px; left:32px; z-index:4; display:grid; grid-template-columns:auto auto; column-gap:9px; row-gap:3px; align-items:center; padding:10px 12px; border:1px solid var(--ink); background:rgba(255,255,255,.94); color:var(--ink); font:400 .58rem/1.2 "JetBrains Mono",monospace; letter-spacing:.08em; text-align:left; text-transform:uppercase; cursor:pointer; }
+.sound-control__dot { width:6px; height:6px; border:1px solid var(--ink); border-radius:50%; transition:background .35s ease; }
+.sound-control__mode { grid-column:2; font-size:.46rem; font-weight:300; opacity:.62; }
+.sound-control[aria-pressed="true"] .sound-control__dot { background:var(--ink); }
 a:focus-visible { outline:2px solid var(--ink); outline-offset:5px; }
 .simple-page { min-height:100vh; padding:26px 32px; }
 .simple-page main { display:grid; min-height:calc(100vh - 52px); align-content:center; padding-left:min(18vw,220px); }
@@ -90,6 +94,7 @@ a:focus-visible { outline:2px solid var(--ink); outline-offset:5px; }
   .scroll-cue { display:none; }
   .bio { min-height:auto; grid-template-columns:1fr; gap:48px; padding:100px 20px 130px; }
   .site-footer { padding:22px 20px 92px; }
+  .sound-control { right:20px; bottom:92px; left:auto; }
   .simple-page { padding:20px; }
   .simple-page main { padding-left:0; }
   .back-link { top:22px; left:20px; }
@@ -103,4 +108,4 @@ a:focus-visible { outline:2px solid var(--ink); outline-offset:5px; }
   .residency-item__image,.residency-item__meta,.residency-item__content { grid-column:1; grid-row:auto; }
   .contact-main { padding:120px 20px 140px; }
 }
-@media (prefers-reduced-motion:reduce) { html{scroll-behavior:auto}body{animation:none;transition:none}.side-nav a::after,.text-link::after{transition:none} }
+@media (prefers-reduced-motion:reduce) { html{scroll-behavior:auto}body{animation:none;transition:none}.side-nav a::after,.text-link::after,.sound-control__dot{transition:none} }
