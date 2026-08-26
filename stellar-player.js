@@ -7,7 +7,7 @@
   ];
   const stateKey = "kimina-stellar-player";
   const epochKey = "kimina-stellar-epoch";
-  const defaultState = { playing: false, volume: 55, continuePlaying: false };
+  const defaultState = { playing: false, volume: 55, continuePlaying: false, key: "A" };
 
   const readState = () => {
     try { return { ...defaultState, ...JSON.parse(sessionStorage.getItem(stateKey) || "{}") }; }
@@ -34,6 +34,7 @@
         <span>Source</span><span data-star-name>Proxima Centauri</span>
         <span>Luminosity</span><span data-star-luminosity>0.00155 L☉</span>
         <span>Distance</span><span data-star-distance>4.23 LY</span>
+        <span>Key</span><span data-key-name>A minor</span>
         <span>Evolution</span><span data-star-mode>Drift</span>
         <span>Voice phase</span><span data-star-phase>00%</span>
       </div>
@@ -41,6 +42,15 @@
         <span>Volume</span>
         <input type="range" min="0" max="100" step="1" value="${state.volume}" aria-label="Stellar drone volume">
         <output>${state.volume}%</output>
+      </label>
+      <label class="stellar-player__key">
+        <span>Key</span>
+        <select aria-label="Stellar drone key">
+          <option value="A" ${state.key === "A" ? "selected" : ""}>A minor</option>
+          <option value="F" ${state.key === "F" ? "selected" : ""}>F minor</option>
+          <option value="C" ${state.key === "C" ? "selected" : ""}>C minor</option>
+          <option value="D" ${state.key === "D" ? "selected" : ""}>D minor</option>
+        </select>
       </label>
       <label class="stellar-player__continue">
         <input type="checkbox" ${state.continuePlaying ? "checked" : ""}>
@@ -56,9 +66,11 @@
   const volume = player.querySelector('input[type="range"]');
   const volumeOutput = player.querySelector("output");
   const continueInput = player.querySelector('input[type="checkbox"]');
+  const keySelect = player.querySelector("select");
   const starName = player.querySelector("[data-star-name]");
   const starLuminosity = player.querySelector("[data-star-luminosity]");
   const starDistance = player.querySelector("[data-star-distance]");
+  const keyName = player.querySelector("[data-key-name]");
   const starMode = player.querySelector("[data-star-mode]");
   const starPhase = player.querySelector("[data-star-phase]");
 
@@ -129,10 +141,12 @@
       const baseGain = 0.028 + Math.max(0, Math.min(1, luminosity)) * 0.055;
       const fadeSeconds = 18 + distance * 34 + index * 3;
       oscillator.type = index % 2 ? "triangle" : "sine";
-      oscillator.frequency.value = star.frequency;
+      const initialSemitones = [0, 3, 7, 12][index];
+      const initialFrequency = (keyRoots[state.key] || keyRoots.A) * 2 ** (initialSemitones / 12);
+      oscillator.frequency.value = initialFrequency;
       oscillator.detune.value = index * 3 - 4;
       harmonic.type = index % 2 ? "sine" : "triangle";
-      harmonic.frequency.value = star.frequency * (index % 2 ? 2.002 : 1.501);
+      harmonic.frequency.value = initialFrequency * (index % 2 ? 2.002 : 1.501);
       harmonic.detune.value = 3 - index * 2;
       harmonicGain.gain.value = baseGain * 0.22;
       voiceFilter.type = "lowpass";
@@ -161,12 +175,13 @@
   };
 
   const harmonicFields = [
-    { name: "Drift", ratios: [1, 1, 1, 1] },
-    { name: "Convergence", ratios: [1, 9 / 8, 5 / 4, 3 / 2] },
-    { name: "Transit", ratios: [1, 6 / 5, 4 / 3, 8 / 5] },
-    { name: "Flare", ratios: [1, 7 / 6, 3 / 2, 7 / 4] },
-    { name: "Afterglow", ratios: [1, 5 / 4, 4 / 3, 5 / 3] }
+    { name: "Drift", semitones: [0, 7, 12, 15] },
+    { name: "Convergence", semitones: [0, 3, 7, 12] },
+    { name: "Transit", semitones: [0, 5, 7, 10] },
+    { name: "Flare", semitones: [0, 3, 10, 14] },
+    { name: "Afterglow", semitones: [0, 7, 10, 15] }
   ];
+  const keyRoots = { A: 55, F: 43.6535, C: 65.4064, D: 73.4162 };
 
   function evolveDrone() {
     if (!audioContext || !voices.length) return;
@@ -176,7 +191,7 @@
     currentStarIndex = (evolutionStep * 3 + 1) % stars.length;
     voices.forEach((voice, index) => {
       const octave = (evolutionStep + index) % 9 === 0 ? 0.5 : 1;
-      const targetFrequency = voice.star.frequency * field.ratios[index] * octave;
+      const targetFrequency = (keyRoots[state.key] || keyRoots.A) * 2 ** (field.semitones[index] / 12) * octave;
       const focus = index === currentStarIndex ? 1.35 : 0.62 + ((evolutionStep + index) % 3) * 0.13;
       voice.oscillator.frequency.cancelScheduledValues(now);
       voice.oscillator.frequency.setValueAtTime(Math.max(1, voice.oscillator.frequency.value), now);
@@ -246,6 +261,12 @@
     state.continuePlaying = continueInput.checked;
     saveState();
   });
+  keySelect.addEventListener("change", () => {
+    state.key = keySelect.value;
+    keyName.textContent = `${state.key} minor`;
+    saveState();
+    if (audioContext) evolveDrone();
+  });
   window.addEventListener("pointermove", (event) => {
     if (!audioContext || !isPlaying) return;
     const now = audioContext.currentTime;
@@ -265,6 +286,7 @@
     starName.textContent = star.name;
     starLuminosity.textContent = `${star.luminosity.toLocaleString()} L☉`;
     starDistance.textContent = `${star.distance.toLocaleString()} LY`;
+    keyName.textContent = `${state.key} minor`;
     starMode.textContent = audioContext ? currentMode : harmonicFields[Math.floor(elapsed / 12) % harmonicFields.length].name;
     starPhase.textContent = `${String(phase).padStart(2, "0")}%`;
   };

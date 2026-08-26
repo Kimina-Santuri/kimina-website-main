@@ -44,9 +44,11 @@ main { min-height:100vh; }
 .stellar-player__readout span:nth-child(even) { text-align:right; }
 .stellar-player__volume { display:grid; grid-template-columns:auto 1fr auto; gap:10px; align-items:center; margin-bottom:13px; }
 .stellar-player input[type="range"] { width:100%; accent-color:var(--ink); }
+.stellar-player__key { display:grid; grid-template-columns:auto 1fr; gap:10px; align-items:center; margin-bottom:13px; }
+.stellar-player__key select { width:100%; padding:5px 7px; border:1px solid var(--line); border-radius:0; background:var(--paper); color:var(--ink); font:inherit; text-transform:uppercase; }
 .stellar-player__continue { display:flex; gap:8px; align-items:flex-start; line-height:1.45; cursor:pointer; }
 .stellar-player__continue input { margin:1px 0 0; accent-color:var(--ink); }
-.stellar-player button:focus-visible,.stellar-player input:focus-visible { outline:2px solid var(--ink); outline-offset:-2px; }
+.stellar-player button:focus-visible,.stellar-player input:focus-visible,.stellar-player select:focus-visible { outline:2px solid var(--ink); outline-offset:-2px; }
 a:focus-visible { outline:2px solid var(--ink); outline-offset:5px; }
 .simple-page { min-height:100vh; padding:26px 32px; }
 .simple-page main { display:grid; min-height:calc(100vh - 52px); align-content:center; padding-left:min(18vw,220px); }

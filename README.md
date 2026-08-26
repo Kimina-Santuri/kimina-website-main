@@ -38,6 +38,7 @@ The shared navigation order is Works, Performances, Bookings, Residencies, Downl
 - Subtle page transitions with static compositions for reduced-motion preferences
 - A site-wide opt-in stellar drone with independently crossfading fundamentals and upper partials, cursor-reactive filtering and evolving stereo movement
 - Discreet player controls for volume, an evolving luminosity/distance readout and optional session continuity between internal pages
+- Persistent tonal-centre selection for A minor, F minor, C minor and D minor
 - Slow generative transitions through Drift, Convergence, Transit, Flare and Afterglow harmonic fields
 
 ## Run locally
