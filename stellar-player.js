@@ -132,8 +132,6 @@
       const voiceGain = audioContext.createGain();
       const voiceFilter = audioContext.createBiquadFilter();
       const voicePanner = audioContext.createStereoPanner();
-      const pitchLfo = audioContext.createOscillator();
-      const pitchDepth = audioContext.createGain();
       const fadeLfo = audioContext.createOscillator();
       const fadeDepth = audioContext.createGain();
       const luminosity = (Math.log10(star.luminosity) + 3) / 7;
@@ -153,25 +151,21 @@
       voiceFilter.frequency.value = 1500 - distance * 1050 + luminosity * 260;
       voiceFilter.Q.value = 1.2 + luminosity * 2.4;
       voiceGain.gain.value = baseGain;
-      pitchLfo.frequency.value = 0.012 + index * 0.007;
-      pitchDepth.gain.value = 2 + distance * 5;
       fadeLfo.frequency.value = 1 / fadeSeconds;
       fadeDepth.gain.value = baseGain * 0.34;
       voicePanner.pan.value = [-0.72, 0.48, -0.28, 0.76][index];
-      pitchLfo.connect(pitchDepth).connect(oscillator.detune);
       fadeLfo.connect(fadeDepth).connect(voiceGain.gain);
       oscillator.connect(voiceFilter);
       harmonic.connect(harmonicGain).connect(voiceFilter);
       voiceFilter.connect(voiceGain).connect(voicePanner).connect(filter);
       oscillator.start();
       harmonic.start();
-      pitchLfo.start();
       fadeLfo.start(audioContext.currentTime + index * 2.7);
       voices.push({ oscillator, harmonic, harmonicGain, voiceGain, voiceFilter, voicePanner, baseGain, star });
     });
-    evolutionStep = Math.floor((Date.now() - Number(sessionStorage.getItem(epochKey))) / 12000);
+    evolutionStep = Math.floor((Date.now() - Number(sessionStorage.getItem(epochKey))) / 30000);
     evolveDrone();
-    evolutionTimer = window.setInterval(evolveDrone, 12000);
+    evolutionTimer = window.setInterval(evolveDrone, 30000);
   };
 
   const harmonicFields = [
@@ -195,18 +189,18 @@
       const focus = index === currentStarIndex ? 1.35 : 0.62 + ((evolutionStep + index) % 3) * 0.13;
       voice.oscillator.frequency.cancelScheduledValues(now);
       voice.oscillator.frequency.setValueAtTime(Math.max(1, voice.oscillator.frequency.value), now);
-      voice.oscillator.frequency.exponentialRampToValueAtTime(targetFrequency, now + 8.5);
+      voice.oscillator.frequency.exponentialRampToValueAtTime(targetFrequency, now + 22);
       voice.harmonic.frequency.cancelScheduledValues(now);
       voice.harmonic.frequency.setValueAtTime(Math.max(1, voice.harmonic.frequency.value), now);
-      voice.harmonic.frequency.exponentialRampToValueAtTime(targetFrequency * (index % 2 ? 2.002 : 1.501), now + 9.5);
-      voice.voiceGain.gain.setTargetAtTime(voice.baseGain * focus, now, 3.8);
-      voice.harmonicGain.gain.setTargetAtTime(voice.baseGain * (currentMode === "Flare" ? 0.34 : 0.16 + index * 0.025), now, 4.6);
-      voice.voiceFilter.frequency.setTargetAtTime(380 + focus * 620 + (index % 2) * 210, now, 4.2);
-      voice.voicePanner.pan.setTargetAtTime(Math.sin(evolutionStep * 0.7 + index * 1.8) * 0.78, now, 5.5);
+      voice.harmonic.frequency.exponentialRampToValueAtTime(targetFrequency * (index % 2 ? 2.002 : 1.501), now + 25);
+      voice.voiceGain.gain.setTargetAtTime(voice.baseGain * focus, now, 10);
+      voice.harmonicGain.gain.setTargetAtTime(voice.baseGain * (currentMode === "Flare" ? 0.34 : 0.16 + index * 0.025), now, 12);
+      voice.voiceFilter.frequency.setTargetAtTime(380 + focus * 620 + (index % 2) * 210, now, 11);
+      voice.voicePanner.pan.setTargetAtTime(Math.sin(evolutionStep * 0.7 + index * 1.8) * 0.78, now, 14);
     });
-    delayNode.delayTime.setTargetAtTime([0.72, 0.94, 0.57, 1.18, 0.81][evolutionStep % 5], now, 3.5);
-    feedbackNode.gain.setTargetAtTime(currentMode === "Flare" ? 0.43 : 0.28 + (evolutionStep % 3) * 0.035, now, 3.5);
-    filter.frequency.setTargetAtTime(currentMode === "Afterglow" ? 360 : 500 + currentStarIndex * 95, now, 4.8);
+    delayNode.delayTime.setTargetAtTime([0.72, 0.94, 0.57, 1.18, 0.81][evolutionStep % 5], now, 10);
+    feedbackNode.gain.setTargetAtTime(currentMode === "Flare" ? 0.43 : 0.28 + (evolutionStep % 3) * 0.035, now, 10);
+    filter.frequency.setTargetAtTime(currentMode === "Afterglow" ? 360 : 500 + currentStarIndex * 95, now, 13);
     evolutionStep += 1;
   }
 
@@ -280,14 +274,14 @@
 
   const updateReadout = () => {
     const elapsed = (Date.now() - Number(sessionStorage.getItem(epochKey))) / 1000;
-    const starIndex = audioContext ? currentStarIndex : Math.floor(elapsed / 12) % stars.length;
+    const starIndex = audioContext ? currentStarIndex : Math.floor(elapsed / 30) % stars.length;
     const star = stars[starIndex];
     const phase = Math.round((Math.sin(elapsed / (7 + starIndex * 2)) * 0.5 + 0.5) * 100);
     starName.textContent = star.name;
     starLuminosity.textContent = `${star.luminosity.toLocaleString()} L☉`;
     starDistance.textContent = `${star.distance.toLocaleString()} LY`;
     keyName.textContent = `${state.key} minor`;
-    starMode.textContent = audioContext ? currentMode : harmonicFields[Math.floor(elapsed / 12) % harmonicFields.length].name;
+    starMode.textContent = audioContext ? currentMode : harmonicFields[Math.floor(elapsed / 30) % harmonicFields.length].name;
     starPhase.textContent = `${String(phase).padStart(2, "0")}%`;
   };
   updateReadout();
