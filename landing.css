@@ -57,6 +57,13 @@ a:focus-visible { outline:2px solid var(--ink); outline-offset:5px; }
 .download-item p { margin:0; font-size:.62rem; line-height:1.6; text-transform:uppercase; }
 .download-item a,.download-item span { font-size:.62rem; letter-spacing:.08em; text-transform:uppercase; }
 .empty-state { margin:20px 0 0; font-size:.62rem; letter-spacing:.08em; text-transform:uppercase; }
+.performance-list { width:min(960px,100%); margin-top:64px; border-top:1px solid var(--ink); }
+.performance-item { display:grid; grid-template-columns:minmax(220px,.75fr) minmax(120px,.4fr) minmax(300px,1.1fr); gap:36px; align-items:start; padding:34px 0; border-bottom:1px solid var(--ink); }
+.performance-item__image { display:block; width:100%; aspect-ratio:1; object-fit:cover; }
+.performance-item__meta p { margin:0 0 8px; font-size:.58rem; letter-spacing:.05em; line-height:1.5; text-transform:uppercase; }
+.performance-item__content h2 { margin:0 0 22px; font-size:clamp(1.5rem,3vw,3rem); font-weight:300; letter-spacing:-.055em; line-height:1.08; }
+.performance-item__content>p:not(.section-label) { margin:0 0 22px; font-size:.7rem; line-height:1.8; }
+.performance-item__content address { margin:0 0 24px; font-size:.62rem; font-style:normal; line-height:1.75; text-transform:uppercase; }
 .work-list { width:min(900px,100%); margin-top:72px; border-top:1px solid var(--ink); }
 .work-item { display:grid; grid-template-columns:minmax(240px,.8fr) minmax(120px,.4fr) minmax(280px,1fr); gap:36px; align-items:start; padding:34px 0; border-bottom:1px solid var(--ink); }
 .work-item__image-link img { display:block; width:100%; aspect-ratio:3/4; object-fit:cover; }
@@ -131,6 +138,7 @@ a:focus-visible { outline:2px solid var(--ink); outline-offset:5px; }
   .archive-page main { padding:120px 20px 130px; }
   .download-item { gap:15px; }
   .work-item { grid-template-columns:1fr; gap:26px; }
+  .performance-item { grid-template-columns:1fr; gap:26px; }
   .residency-item { grid-template-columns:1fr; gap:28px; }
   .residency-item__image-link,.residency-item__meta,.residency-item__content { grid-column:1; grid-row:auto; }
   .contact-main { padding:120px 20px 140px; }

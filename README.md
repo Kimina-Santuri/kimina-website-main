@@ -6,6 +6,7 @@ A minimal black-and-white portfolio for Kimina: music producer, educator, sound 
 
 - `index.html` — landing page with the short introduction
 - `works.html` — selected projects, currently beginning with the SMEM collaboration
+- `performances.html` — live archive beginning with the 2026 SMEM residency recap
 - `bookings.html` — seven services with Calendly booking links
 - `residencies.html` — residencies and research, including the current SMEM residency
 - `smem-residency.html` — dedicated SMEM residency story, ten-image gallery and credits
@@ -14,7 +15,7 @@ A minimal black-and-white portfolio for Kimina: music producer, educator, sound 
 - `contact.html` — tailored email enquiry routes
 - `404.html` — custom “Signal lost” page
 
-The shared navigation order is Works, Bookings, Residencies, Downloads, About and Contact. The masthead tagline is `MUSIC.EDUCATION.SOUND`.
+The shared navigation order is Works, Performances, Bookings, Residencies, Downloads, About and Contact. The masthead tagline is `MUSIC.EDUCATION.SOUND`.
 
 ## Visual system
 
@@ -25,6 +26,7 @@ The shared navigation order is Works, Bookings, Residencies, Downloads, About an
 - Mouse-reactive canvas themes:
   - Landing: Lissajous curves
   - Works: dot field
+  - Performances: layered waveforms
   - Bookings: signal waves
   - Residencies: orbital forms
   - SMEM residency: constellation field

@@ -179,7 +179,24 @@ if (canvas && context) {
     });
   };
 
-  const renderers = { lissajous, dots, orbits, threads, grid, pulse, signal, constellation };
+  const waveform = () => {
+    const mouseX = pointer.x * width;
+    for (let channel = 0; channel < 7; channel += 1) {
+      const centerY = height * (channel + 1) / 8;
+      context.beginPath();
+      for (let x = 0; x <= width; x += 5) {
+        const focus = Math.max(0, 1 - Math.abs(x - mouseX) / 340);
+        const envelope = Math.sin(x * .006 + channel) * .5 + .5;
+        const amplitude = 5 + envelope * 11 + focus * (22 + (1 - pointer.y) * 36);
+        const y = centerY + Math.sin(x * (.014 + channel * .0015) + time * (1.1 + channel * .06)) * amplitude;
+        if (!x) context.moveTo(x, y); else context.lineTo(x, y);
+      }
+      context.strokeStyle = `rgba(5,5,5,${.055 + channel * .018})`;
+      context.stroke();
+    }
+  };
+
+  const renderers = { lissajous, dots, orbits, threads, grid, pulse, signal, constellation, waveform };
   const draw = () => {
     pointer.x += (pointer.targetX - pointer.x) * .06;
     pointer.y += (pointer.targetY - pointer.y) * .06;
