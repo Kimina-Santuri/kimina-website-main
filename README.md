@@ -5,11 +5,12 @@ A minimal black-and-white portfolio for Kimina: music producer, educator, sound 
 ## Site structure
 
 - `index.html` — landing page with the short introduction
-- `works.html` — selected projects, currently beginning with the SMEM collaboration
-- `performances.html` — live archive beginning with the 2026 SMEM residency recap
+- `works.html` — category-aware project archive for releases, installations, instruments, research and collaborations
+- `performances.html` — live archive with the Kilele Experimental Night and SMEM residency recap
+- `kilele-performance.html` — Kimina For Me Please at Kilele 2026, with poster, context and seven-image gallery
 - `bookings.html` — seven services with Calendly booking links
 - `residencies.html` — residencies and research, including the current SMEM residency
-- `smem-residency.html` — dedicated SMEM residency story, ten-image gallery and credits
+- `smem-residency.html` — the first individual project page: SMEM residency story, ten-image gallery and credits
 - `downloads.html` — release-ready index; no downloads are published yet
 - `about.html` — full biography and a seven-image editorial gallery
 - `contact.html` — tailored email enquiry routes
@@ -35,7 +36,9 @@ The shared navigation order is Works, Performances, Bookings, Residencies, Downl
   - Contact: pulse rings
   - 404: lost signal
 - Subtle page transitions with static compositions for reduced-motion preferences
-- An opt-in stellar drone on the landing page with independently crossfading voices, cursor-reactive filtering and stereo movement
+- A site-wide opt-in stellar drone with independently crossfading fundamentals and upper partials, cursor-reactive filtering and evolving stereo movement
+- Discreet player controls for volume, an evolving luminosity/distance readout and optional session continuity between internal pages
+- Slow generative transitions through Drift, Convergence, Transit, Flare and Afterglow harmonic fields
 
 ## Run locally
 
@@ -62,9 +65,11 @@ Every booking button has the `booking-link` class. When the Calendly widget is u
 - `images/favicon.svg` — white-square `K.` favicon
 - `images/og-portfolio.jpg` — current 1200 × 630 portfolio social card
 - `images/smem.jpg` — original SMEM residency photograph used by Works and Residencies
+- `images/kilele/poster.jpg` — lead image for the Kilele Experimental Night performance
+- `images/kilele/` — poster and seven supplied performance photographs used by the Kilele detail page
 - `images/about/` — seven photographs used by the About portrait and gallery
 - `landing.css` and `landing.js` — portfolio layouts and page-specific animations
-- The landing-page sound engine is dependency-free and built with the Web Audio API. Its four voices use luminosity and distance values for Proxima Centauri, Sirius, Vega and Betelgeuse as musical control data.
+- `stellar-player.js` — dependency-free Web Audio player shared by every page. Its four voices use luminosity and distance values for Proxima Centauri, Sirius, Vega and Betelgeuse as musical control data.
 - `bookings.css` and `bookings.js` — Bookings layout, Calendly behavior and signal-wave animation
 
 The canonical site URL is `https://kimina.santuri.org/`. Social metadata uses absolute URLs on this domain.

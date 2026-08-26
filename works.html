@@ -23,14 +23,24 @@
     <p class="section-label">01 / Archive</p>
     <h1>Works</h1>
     <p class="page-intro">A growing archive of music production, sound work, instruments, installations and collaborations.</p>
+    <nav class="work-filters" aria-label="Filter works by type">
+      <button type="button" data-work-filter="all" aria-pressed="true">All <span>01</span></button>
+      <button type="button" data-work-filter="release" aria-pressed="false">Releases <span>00</span></button>
+      <button type="button" data-work-filter="installation" aria-pressed="false">Installations <span>00</span></button>
+      <button type="button" data-work-filter="instrument" aria-pressed="false">Instruments <span>00</span></button>
+      <button type="button" data-work-filter="research" aria-pressed="false">Research <span>01</span></button>
+      <button type="button" data-work-filter="collaboration" aria-pressed="false">Collaborations <span>01</span></button>
+    </nav>
     <div class="work-list">
-      <article class="work-item">
-        <a class="work-item__image-link" href="residencies.html" aria-label="Read about the SMEM residency"><img src="images/smem.jpg" alt="Rows of electronic keyboards and instruments inside the SMEM collection"></a>
-        <div class="work-item__meta"><p>2026</p><p>Residency / Collaboration</p></div>
-        <div class="work-item__content"><h2>SMEM × <a class="inline-link" href="https://goffbaby.com" target="_blank" rel="noopener">Goffbaby</a></h2><p>Three weeks of collaborative research and music-making at the Swiss Museum and Centre for Electronic Music Instruments in Fribourg.</p><a class="text-link" href="residencies.html">View project <span aria-hidden="true">↗</span></a></div>
+      <article class="work-item" data-work-types="research collaboration">
+        <a class="work-item__image-link" href="smem-residency.html" aria-label="Read about the SMEM residency"><img src="images/smem.jpg" alt="Rows of electronic keyboards and instruments inside the SMEM collection"></a>
+        <div class="work-item__meta"><p>2026</p><p>Research / Collaboration</p></div>
+        <div class="work-item__content"><h2>SMEM × <a class="inline-link" href="https://goffbaby.com" target="_blank" rel="noopener">Goffbaby</a></h2><p>Three weeks of collaborative research and music-making at the Swiss Museum and Centre for Electronic Music Instruments in Fribourg.</p><a class="text-link" href="smem-residency.html">View project <span aria-hidden="true">↗</span></a></div>
       </article>
     </div>
+    <p class="work-empty" hidden>No documented works in this category yet.</p>
   </main>
   <script src="landing.js" defer></script>
+  <script src="stellar-player.js" defer></script>
 </body>
 </html>

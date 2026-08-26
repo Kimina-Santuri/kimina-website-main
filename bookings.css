@@ -48,6 +48,21 @@ footer { display:flex; align-items:center; justify-content:space-between; paddin
 .footer__logo { width:62px; margin:0; opacity:.7; }
 footer p { margin:0; }
 a:focus-visible { outline:2px solid var(--ink); outline-offset:5px; }
+.stellar-player { position:fixed; bottom:24px; left:32px; z-index:5; width:min(310px,calc(100vw - 40px)); border:1px solid var(--ink); background:rgba(255,255,255,.96); color:var(--ink); font-size:.56rem; letter-spacing:.06em; text-transform:uppercase; }
+.stellar-player__bar { display:grid; grid-template-columns:1fr auto; }
+.stellar-player button { border:0; background:transparent; color:inherit; font:inherit; letter-spacing:inherit; text-transform:inherit; cursor:pointer; }
+.stellar-player__toggle { display:flex; align-items:center; gap:9px; padding:10px 12px; text-align:left; }
+.stellar-player__dot { width:6px; height:6px; flex:0 0 auto; border:1px solid var(--ink); border-radius:50%; transition:background .35s ease; }
+.stellar-player[data-playing="true"] .stellar-player__dot { background:var(--ink); }
+.stellar-player__details { padding:10px 12px; border-left:1px solid var(--line)!important; }
+.stellar-player__panel { padding:12px; border-top:1px solid var(--line); }
+.stellar-player__readout { display:grid; grid-template-columns:1fr auto; gap:5px 14px; margin:0 0 14px; line-height:1.5; }
+.stellar-player__readout span:nth-child(even) { text-align:right; }
+.stellar-player__volume { display:grid; grid-template-columns:auto 1fr auto; gap:10px; align-items:center; margin-bottom:13px; }
+.stellar-player input[type="range"] { width:100%; accent-color:var(--ink); }
+.stellar-player__continue { display:flex; gap:8px; align-items:flex-start; line-height:1.45; cursor:pointer; }
+.stellar-player__continue input { margin:1px 0 0; accent-color:var(--ink); }
+.stellar-player button:focus-visible,.stellar-player input:focus-visible { outline:2px solid var(--ink); outline-offset:-2px; }
 @keyframes page-in { from{opacity:0} to{opacity:1} }
 @media (max-width:920px) {
   .container { width:min(100% - 160px,760px); }
@@ -72,5 +87,6 @@ a:focus-visible { outline:2px solid var(--ink); outline-offset:5px; }
   .contact { align-items:flex-start; flex-direction:column; padding:28px 24px; }
   .button--light { width:100%; }
   footer { padding:22px 20px 92px; }
+  .stellar-player { right:20px; bottom:92px; left:20px; width:auto; }
 }
-@media (prefers-reduced-motion:reduce) { html{scroll-behavior:auto}body{animation:none;transition:none}.booking-nav a::after,.button{transition:none} }
+@media (prefers-reduced-motion:reduce) { html{scroll-behavior:auto}body{animation:none;transition:none}.booking-nav a::after,.button,.stellar-player__dot{transition:none} }
