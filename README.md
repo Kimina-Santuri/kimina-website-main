@@ -11,7 +11,7 @@ A minimal black-and-white portfolio for Kimina: music producer, educator, sound 
 - `residencies.html` — residencies and research, including the current SMEM residency
 - `smem-residency.html` — dedicated SMEM residency story, ten-image gallery and credits
 - `downloads.html` — release-ready index; no downloads are published yet
-- `about.html` — portrait and full biography
+- `about.html` — full biography and a seven-image editorial gallery
 - `contact.html` — tailored email enquiry routes
 - `404.html` — custom “Signal lost” page
 
@@ -62,7 +62,7 @@ Every booking button has the `booking-link` class. When the Calendly widget is u
 - `images/favicon.svg` — white-square `K.` favicon
 - `images/og-portfolio.jpg` — current 1200 × 630 portfolio social card
 - `images/smem.jpg` — original SMEM residency photograph used by Works and Residencies
-- `images/about-web.jpg` — About portrait
+- `images/about/` — seven photographs used by the About portrait and gallery
 - `landing.css` and `landing.js` — portfolio layouts and page-specific animations
 - The landing-page sound engine is dependency-free and built with the Web Audio API. Its four voices use luminosity and distance values for Proxima Centauri, Sirius, Vega and Betelgeuse as musical control data.
 - `bookings.css` and `bookings.js` — Bookings layout, Calendly behavior and signal-wave animation
