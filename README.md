@@ -8,6 +8,7 @@ A minimal black-and-white portfolio for Kimina: music producer, educator, sound 
 - `works.html` — selected projects, currently beginning with the SMEM collaboration
 - `bookings.html` — seven services with Calendly booking links
 - `residencies.html` — residencies and research, including the current SMEM residency
+- `smem-residency.html` — dedicated SMEM residency story, ten-image gallery and credits
 - `downloads.html` — release-ready index; no downloads are published yet
 - `about.html` — portrait and full biography
 - `contact.html` — tailored email enquiry routes
@@ -26,6 +27,7 @@ The shared navigation order is Works, Bookings, Residencies, Downloads, About an
   - Works: dot field
   - Bookings: signal waves
   - Residencies: orbital forms
+  - SMEM residency: constellation field
   - Downloads: rippling grid
   - About: connected threads
   - Contact: pulse rings

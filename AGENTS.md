@@ -23,6 +23,7 @@ This is Kimina’s static personal portfolio for music, education, sound enginee
 - `works.html`: selected work and reactive dot field
 - `bookings.html`: service cards and flowing signal waves
 - `residencies.html`: residency archive and orbital forms
+- `smem-residency.html`: dedicated SMEM residency story, ten-image gallery, credits and constellation field
 - `downloads.html`: future releases and rippling grid
 - `about.html`: full biography and connected threads
 - `contact.html`: enquiry routes and cursor-following pulse rings
@@ -40,6 +41,9 @@ The landing page also has a dependency-free Web Audio stellar drone in `landing.
 - `images/smem.jpg` is the original user-supplied portrait photograph and is the active source on Works and Residencies.
 - `images/smem-web.jpg` was produced by a failed conversion and renders black. Do not use it.
 - The SMEM image should remain portrait-oriented to the left of the residency text on desktop and stack above it on mobile.
+- The SMEM index entry links to `smem-residency.html`. Use that detail page as the template for future residency pages, with an editorial introduction, factual project description, responsive gallery, credits and previous/next navigation.
+- Do not duplicate a photograph merely to make the gallery appear larger. Add gallery items only when the user supplies additional images.
+- The active SMEM detail gallery uses the ten JPEGs inside `images/smem/`. Keep their descriptive alt text, lazy loading and natural image proportions. Ignore `.DS_Store` and `jpegmini_optimized.zip`.
 
 ## About and contact
 

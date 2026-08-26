@@ -149,7 +149,37 @@ if (canvas && context) {
     context.stroke();
   };
 
-  const renderers = { lissajous, dots, orbits, threads, grid, pulse, signal };
+  const constellation = () => {
+    const nodes = [
+      [.12,.22],[.28,.12],[.42,.31],[.61,.16],[.82,.28],
+      [.18,.58],[.36,.72],[.53,.52],[.72,.68],[.9,.55],
+      [.25,.9],[.6,.88]
+    ];
+    const mouseX = pointer.x * width;
+    const mouseY = pointer.y * height;
+    const points = nodes.map(([x,y], index) => {
+      const px = x * width + Math.sin(time * .35 + index) * 7;
+      const py = y * height + Math.cos(time * .28 + index * .8) * 7;
+      const influence = Math.max(0, 1 - Math.hypot(px - mouseX, py - mouseY) / 260);
+      return [px + (mouseX - px) * influence * .08, py + (mouseY - py) * influence * .08, influence];
+    });
+    const links = [[0,1],[1,2],[2,3],[3,4],[0,5],[2,5],[2,7],[5,6],[6,7],[7,8],[8,9],[6,10],[8,11],[10,11]];
+    links.forEach(([a,b]) => {
+      context.beginPath();
+      context.moveTo(points[a][0], points[a][1]);
+      context.lineTo(points[b][0], points[b][1]);
+      context.strokeStyle = `rgba(5,5,5,${.08 + Math.max(points[a][2],points[b][2]) * .2})`;
+      context.stroke();
+    });
+    points.forEach(([x,y,influence], index) => {
+      context.beginPath();
+      context.arc(x, y, 1.4 + influence * 2.2 + (index % 3 === 0 ? .8 : 0), 0, Math.PI * 2);
+      context.fillStyle = `rgba(5,5,5,${.28 + influence * .42})`;
+      context.fill();
+    });
+  };
+
+  const renderers = { lissajous, dots, orbits, threads, grid, pulse, signal, constellation };
   const draw = () => {
     pointer.x += (pointer.targetX - pointer.x) * .06;
     pointer.y += (pointer.targetY - pointer.y) * .06;
