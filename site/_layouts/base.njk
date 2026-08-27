@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="{{ description }}">
+  <link rel="canonical" href="{{ site.url }}{{ page.url }}">
+  <meta property="og:type" content="{{ ogType or 'website' }}">
+  <meta property="og:title" content="{{ metaTitle or title }} — Kimina">
+  <meta property="og:description" content="{{ description }}">
+  <meta property="og:url" content="{{ site.url }}{{ page.url }}">
+  <meta property="og:image" content="{{ site.url }}{{ socialImage or site.socialImage }}">
+  <meta name="twitter:card" content="summary_large_image">
+  <title>{{ metaTitle or title }} — Kimina</title>
+  <link rel="icon" href="images/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500&amp;display=swap" rel="stylesheet">
+  <link href="landing.css" rel="stylesheet">
+</head>
+<body class="{{ bodyClass or 'archive-page' }}" data-animation="{{ animation }}">
+  <canvas class="ambient-canvas" aria-hidden="true"></canvas>
+  <header class="site-header"><a class="site-mark" href="index.html" aria-label="Kimina home">K.</a><p>{{ site.tagline }}</p></header>
+  {% include "nav.njk" %}
+  {{ content | safe }}
+  <script src="landing.js" defer></script>
+  <script src="stellar-player.js" defer></script>
+</body>
+</html>

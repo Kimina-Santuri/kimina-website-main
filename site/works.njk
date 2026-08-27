@@ -1,0 +1,31 @@
+---
+layout: base.njk
+permalink: works.html
+title: Works
+description: Selected work by Kimina.
+currentPage: works
+animation: dots
+---
+<main>
+  <p class="section-label">01 / Archive</p>
+  <h1>Works</h1>
+  <p class="page-intro">A growing archive of music production, sound work, instruments, installations and collaborations.</p>
+  <nav class="work-filters" aria-label="Filter works by type">
+    <button type="button" data-work-filter="all" aria-pressed="true">All <span>{{ collections.publishedWorks.length | pad2 }}</span></button>
+    <button type="button" data-work-filter="release" aria-pressed="false">Releases <span>{{ collections.publishedWorks | countType('release') | pad2 }}</span></button>
+    <button type="button" data-work-filter="installation" aria-pressed="false">Installations <span>{{ collections.publishedWorks | countType('installation') | pad2 }}</span></button>
+    <button type="button" data-work-filter="instrument" aria-pressed="false">Instruments <span>{{ collections.publishedWorks | countType('instrument') | pad2 }}</span></button>
+    <button type="button" data-work-filter="research" aria-pressed="false">Research <span>{{ collections.publishedWorks | countType('research') | pad2 }}</span></button>
+    <button type="button" data-work-filter="collaboration" aria-pressed="false">Collaborations <span>{{ collections.publishedWorks | countType('collaboration') | pad2 }}</span></button>
+  </nav>
+  <div class="work-list">
+    {% for item in collections.publishedWorks | reverse %}
+    <article class="work-item" data-work-types="{{ item.data.work_types | join(' ') }}">
+      <a class="work-item__image-link" href="{{ item.url | relativeUrl }}" aria-label="Read about {{ item.data.title }}"><img src="{{ item.data.image or item.data.lead_image }}" alt="{{ item.data.image_alt or item.data.lead_alt }}"></a>
+      <div class="work-item__meta"><p>{{ item.data.date | year }}</p><p>{% for type in item.data.work_types %}{{ type | capitalize }}{% if not loop.last %} / {% endif %}{% endfor %}</p></div>
+      <div class="work-item__content"><h2>{{ (item.data.work_title or item.data.title) | markdownInline | safe }}</h2><p>{{ (item.data.work_summary or item.data.summary) | markdownInline | safe }}</p><a class="text-link" href="{{ item.url | relativeUrl }}">View project <span aria-hidden="true">↗</span></a></div>
+    </article>
+    {% endfor %}
+  </div>
+  <p class="work-empty" hidden>No documented works in this category yet.</p>
+</main>

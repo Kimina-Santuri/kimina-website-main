@@ -1,0 +1,33 @@
+---
+layout: base.njk
+permalink: performances.html
+title: Performances
+description: Live performances and appearances by Kimina, including Kilele Experimental Night and the SMEM residency recap.
+currentPage: performances
+animation: waveform
+---
+<main>
+  <p class="section-label">02 / Live</p>
+  <h1>Performances</h1>
+  <p class="page-intro">Live sets, appearances and performance documentation.</p>
+  <div class="performance-list">
+    {% for item in collections.publishedPerformances | reverse %}
+    <article class="performance-item">
+      {% if item.data.lead_image %}<a href="{{ (item.data.detail_url or item.url) | relativeUrl }}" aria-label="View {{ item.data.title }}"><img class="performance-item__image" src="{{ item.data.lead_image }}" alt="{{ item.data.lead_alt }}" loading="lazy"></a>{% endif %}
+      <div class="performance-item__meta">
+        <p>{{ item.data.date | displayDate }}</p>
+        {% if item.data.time %}<p>{{ item.data.time }}</p>{% endif %}
+        {% if item.data.programme %}<p>{{ item.data.programme }}</p>{% endif %}
+      </div>
+      <div class="performance-item__content">
+        <p class="section-label">{{ item.data.category }}</p>
+        <h2>{{ (item.data.list_title or item.data.title) | markdownInline | safe }}</h2>
+        <p>{{ item.data.summary | markdownInline | safe }}</p>
+        {% if item.data.additional_summary %}<p>{{ item.data.additional_summary }}</p>{% endif %}
+        {% if item.data.address %}<address>{% for line in item.data.address %}{{ line }}{% if not loop.last %}<br>{% endif %}{% endfor %}</address>{% endif %}
+        <a class="text-link" href="{{ (item.data.detail_url or item.url) | relativeUrl }}">{{ item.data.link_label or 'View performance' }} <span aria-hidden="true">↗</span></a>
+      </div>
+    </article>
+    {% endfor %}
+  </div>
+</main>

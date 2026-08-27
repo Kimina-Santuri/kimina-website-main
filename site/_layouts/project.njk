@@ -1,0 +1,50 @@
+---
+layout: base.njk
+bodyClass: project-page
+ogType: article
+---
+<main class="project-main">
+  <header class="project-hero">
+    <p class="section-label">{{ type_label }} / {{ date | year }}</p>
+    <h1>{{ display_title | safe }}</h1>
+    <div class="project-hero__meta">
+      {% for item in hero_meta %}<p>{{ item | markdownInline | safe }}</p>{% endfor %}
+    </div>
+  </header>
+
+  {% if lead_image %}
+  <figure class="project-lead">
+    <img src="{{ lead_image }}" alt="{{ lead_alt }}">
+    {% if lead_caption %}<figcaption>{{ lead_caption }}</figcaption>{% endif %}
+  </figure>
+  {% endif %}
+
+  <section class="project-story" aria-labelledby="story-title">
+    <p class="section-label">Context</p>
+    <div>
+      <h2 id="story-title">{{ story_heading }}</h2>
+      {{ content | safe }}
+    </div>
+  </section>
+
+  {% if gallery and gallery.length %}
+  <section class="project-gallery" aria-labelledby="gallery-title">
+    <div class="project-gallery__heading"><p class="section-label">Gallery</p><h2 id="gallery-title">{{ gallery_title }}</h2></div>
+    <div class="project-gallery__grid">
+      {% for image in gallery %}
+      <figure class="project-gallery__item{% if image.wide %} project-gallery__item--wide{% endif %}"><img src="{{ image.src }}" alt="{{ image.alt }}" loading="lazy" decoding="async"><figcaption>{{ image.caption }}</figcaption></figure>
+      {% endfor %}
+    </div>
+  </section>
+  {% endif %}
+
+  {% if credits and credits.length %}
+  <section class="project-credits" aria-labelledby="credits-title">
+    <p class="section-label" id="credits-title">Details</p>
+    <dl>{% for credit in credits %}<div><dt>{{ credit.label }}</dt><dd>{{ credit.value | markdownInline | safe }}</dd></div>{% endfor %}</dl>
+    {% if external_url %}<a class="text-link" href="{{ external_url }}" target="_blank" rel="noopener">{{ external_label }} <span aria-hidden="true">↗</span></a>{% endif %}
+  </section>
+  {% endif %}
+
+  <nav class="project-pagination" aria-label="{{ type_label }} navigation"><a href="{{ collection_url }}">← All {{ collection_label }}</a></nav>
+</main>

@@ -1,0 +1,26 @@
+---
+layout: base.njk
+permalink: downloads.html
+title: Downloads
+description: Downloads, tools and resources from Kimina.
+currentPage: downloads
+animation: grid
+---
+<main>
+  <p class="section-label">03 / Resources</p>
+  <h1>Downloads</h1>
+  <p class="page-intro">Sounds, tools and resources will be published here as they are released.</p>
+  <div class="download-list">
+    {% set visibleDownloads = collections.publishedDownloads %}
+    {% if visibleDownloads.length %}
+      {% for item in visibleDownloads | reverse %}
+      <article class="download-item">
+        <div><p class="section-label">{{ item.data.kind }}</p><h2>{{ item.data.title }}</h2><p>{{ item.data.summary }}</p></div>
+        <a class="text-link" href="{{ item.data.file }}" download>Download <span aria-hidden="true">↓</span></a>
+      </article>
+      {% endfor %}
+    {% else %}
+      <p class="empty-state">No releases yet.</p>
+    {% endif %}
+  </div>
+</main>

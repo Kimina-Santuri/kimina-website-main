@@ -36,20 +36,34 @@ The shared navigation order is Works, Performances, Bookings, Residencies, Downl
   - Contact: pulse rings
   - 404: lost signal
 - Subtle page transitions with static compositions for reduced-motion preferences
-- A site-wide opt-in stellar drone with independently crossfading fundamentals and upper partials, cursor-reactive filtering and evolving stereo movement
+- A site-wide opt-in stellar drone combining sine, triangle and sawtooth voices, quieter upper partials and filtered noise
+- Cursor-reactive filtering, evolving stereo movement, generated convolution reverb and feedback echo
 - Discreet player controls for volume, an evolving luminosity/distance readout and optional session continuity between internal pages
 - Persistent tonal-centre selection for A minor, F minor, C minor and D minor
-- Thirty-second generative transitions through Drift, Convergence, Transit, Flare and Afterglow harmonic fields
+- Minor-key pitches redistributed across a newly shuffled four-octave register every 30 seconds
+- A randomly selected voice rises three additional octaves for a “High signal” state approximately every 90 seconds
+- Textural transitions through Drift, Convergence, Transit, Flare and Afterglow without continuous pitch drift
 
 ## Run locally
 
-There is no build step or dependency installation. Open `index.html` directly, or run:
+Install the locked development dependencies once, then start Eleventy:
 
 ```sh
-python3 -m http.server 8000
+npm install
+npm run serve
 ```
 
-Then visit `http://localhost:8000`.
+The browser receives ordinary static HTML, CSS and JavaScript. Eleventy is used only to generate the `_site/` deployment folder from the structured content and templates.
+
+## Editorial content
+
+- `.pages.yml` — Pages CMS form and media configuration
+- `site/content/` — releases, performances, residencies and downloads
+- `site/_layouts/` — shared archive and detail-page structures
+- `site/_includes/` — reusable navigation
+- `docs/CONTENT-WORKFLOW.md` — publishing instructions
+
+Pages CMS saves content and media to GitHub. New entries are generated into permanent `.html` pages during deployment; there is no public CMS database or runtime API.
 
 ## Booking setup
 
@@ -77,15 +91,17 @@ The canonical site URL is `https://kimina.santuri.org/`. Social metadata uses ab
 
 ## Deployment
 
-The site is static and can be hosted without a build step. `.nojekyll` prevents GitHub Pages from applying Jekyll processing. `_redirects` works only on compatible hosts such as Netlify; GitHub Pages ignores it, so visible navigation retains `.html` links.
+`.github/workflows/deploy.yml` installs the locked Eleventy version, builds `_site/`, validates the result and deploys the static artifact to GitHub Pages. The repository’s Pages source must be set to **GitHub Actions** before merging the migration into `main`.
+
+`CNAME` keeps the canonical `kimina.santuri.org` domain in the generated artifact. `.nojekyll` prevents additional Jekyll processing. `_redirects` works only on compatible hosts such as Netlify; GitHub Pages ignores it, so visible navigation retains `.html` links.
 
 ## Verification
 
 After changes:
 
 ```sh
-node --check landing.js
-node --check bookings.js
+npm run build
+npm run check
 ```
 
-Also confirm that local references exist, the Bookings page still contains seven cards and seven `booking-link` buttons, and desktop/mobile layouts remain usable.
+The check covers `landing.js`, `bookings.js` and `stellar-player.js`, local generated references, the shared masthead/favicon, the seven booking cards and links, and the Downloads empty state. Desktop, tablet and mobile layouts should also be inspected before publishing design changes.
