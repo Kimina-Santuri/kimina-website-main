@@ -78,8 +78,8 @@ a:focus-visible { outline:2px solid var(--ink); outline-offset:5px; }
 .download-item h2 { margin:0 0 5px; font-size:.9rem; font-weight:400; }
 .download-item p { margin:0; font-size:.62rem; line-height:1.6; text-transform:uppercase; }
 .download-item a,.download-item span { font-size:.62rem; letter-spacing:.08em; text-transform:uppercase; }
-.download-button { display:inline-flex; min-height:40px; align-items:center; justify-content:center; padding:10px 14px; border:1px solid var(--ink); background:var(--ink); color:var(--white); text-decoration:none; transition:background .2s ease,color .2s ease; }
-.download-button:hover,.download-button:focus-visible { background:transparent; color:var(--ink); }
+.download-button { display:inline-flex; min-height:40px; align-items:center; justify-content:center; padding:10px 14px; border:1px solid var(--ink); background:var(--white); color:var(--ink); text-decoration:none; transition:background .2s ease,color .2s ease; }
+.download-button:hover,.download-button:focus-visible { background:var(--ink); color:var(--white); }
 .empty-state { margin:20px 0 0; font-size:.62rem; letter-spacing:.08em; text-transform:uppercase; }
 .performance-list { width:min(960px,100%); margin-top:64px; border-top:1px solid var(--ink); }
 .performance-item { display:grid; grid-template-columns:minmax(220px,.75fr) minmax(120px,.4fr) minmax(300px,1.1fr); gap:36px; align-items:start; padding:34px 0; border-bottom:1px solid var(--ink); }
