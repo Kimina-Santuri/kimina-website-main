@@ -105,7 +105,7 @@ module.exports = {
     label: "Downloads",
     directory: "site/content/downloads",
     tags: ["downloads"],
-    defaults: { permalink: false, published: false },
+    defaults: { permalink: false, published: false, include_in_works: false, work_types: ["instrument"] },
     fields: [
       ["title", "Title", "text", true],
       ["date", "Release date", "date", true],
@@ -113,6 +113,10 @@ module.exports = {
       ["summary", "Description", "textarea", true],
       ["external_url", "Shop or download link", "url", true],
       ["external_label", "Button text", "text", true],
+      ["include_in_works", "Include in Works", "checkbox", false],
+      ["work_types", "Works categories", "multiselect", false, ["release", "installation", "instrument", "research", "collaboration"]],
+      ["work_image", "Optional Works image", "image", false],
+      ["work_image_alt", "Works image description", "textarea", false],
       ["published", "Published", "checkbox", false]
     ]
   }

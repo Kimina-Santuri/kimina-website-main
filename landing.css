@@ -97,6 +97,7 @@ a:focus-visible { outline:2px solid var(--ink); outline-offset:5px; }
 .work-item { display:grid; grid-template-columns:minmax(240px,.8fr) minmax(120px,.4fr) minmax(280px,1fr); gap:36px; align-items:start; padding:34px 0; border-bottom:1px solid var(--ink); }
 .work-item[hidden] { display:none; }
 .work-item__image-link img { display:block; width:100%; aspect-ratio:3/4; object-fit:cover; }
+.work-item__placeholder { display:flex; width:100%; aspect-ratio:3/4; align-items:flex-end; padding:18px; border:1px solid var(--ink); font-size:clamp(1.2rem,3vw,2.5rem); font-weight:300; letter-spacing:-.05em; line-height:.95; }
 .work-item__meta p { margin:0 0 8px; font-size:.58rem; line-height:1.5; text-transform:uppercase; }
 .work-item__content h2 { margin:0 0 18px; font-size:clamp(1.8rem,3.5vw,3.5rem); font-weight:300; letter-spacing:-.06em; }
 .work-item__content>p { margin:0; font-size:.7rem; line-height:1.8; }

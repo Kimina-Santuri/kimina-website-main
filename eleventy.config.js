@@ -30,7 +30,13 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addFilter("countType", (items, type) =>
     items.filter((item) => (item.data.work_types || []).includes(type)).length
   );
-  ["works", "performances", "residencies", "downloads"].forEach((tag) => {
+  eleventyConfig.addCollection("publishedWorks", (collectionApi) =>
+    collectionApi.getAll().filter((item) => {
+      const tags = Array.isArray(item.data.tags) ? item.data.tags : [];
+      return item.data.published && (tags.includes("works") || item.data.include_in_works);
+    })
+  );
+  ["performances", "residencies", "downloads"].forEach((tag) => {
     const name = `published${tag[0].toUpperCase()}${tag.slice(1)}`;
     eleventyConfig.addCollection(name, (collectionApi) =>
       collectionApi.getFilteredByTag(tag).filter((item) => item.data.published && (tag !== "downloads" || item.data.external_url))
