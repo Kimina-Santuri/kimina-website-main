@@ -14,20 +14,20 @@ This is Kimina’s static personal portfolio for music, education, sound enginee
 - Keep page content restrained, with generous whitespace and square geometry.
 - Maintain semantic HTML, descriptive image alt text, visible keyboard focus styles and reduced-motion support.
 - Do not invent projects, releases, credits, social profiles or downloadable materials. Add them only when the user provides factual content or assets.
-- Downloads must remain an honest empty index until real files are supplied.
-- Performances contains the 24 February 2026 Kilele Experimental Night and the 5 September 2026 SMEM residency recap with Goffbaby. Add further entries only when the user supplies event details, credits or documentation.
+- Downloads contains only user-supplied entries and external destinations. Do not invent or claim files, releases or products.
+- Performances currently contains the 24 February 2026 Kilele Experimental Night, the 8 August 2026 Nyokabi Kariuki farewell performance at The Mist and the 5 September 2026 SMEM residency recap with Goffbaby. Add further entries only when the user supplies event details, credits or documentation.
 - Keep the stellar drone opt-in. It may restore only when a visitor has explicitly enabled both playback and the session-only “Continue between pages” option; otherwise never autoplay audio.
 
 ## Current pages and animation themes
 
 - `index.html`: landing page, short introduction and Lissajous curves
 - `works.html`: selected work and reactive dot field
-- `performances.html`: future live archive and layered waveforms
+- `performances.html`: live archive and layered waveforms
 - `kilele-performance.html`: Kimina For Me Please at Kilele Experimental Night, poster, context and seven-image gallery
 - `bookings.html`: service cards and flowing signal waves
 - `residencies.html`: residency archive and orbital forms
 - `smem-residency.html`: dedicated SMEM residency story, ten-image gallery, credits and constellation field
-- `downloads.html`: future releases and rippling grid
+- `downloads.html`: external shops/download destinations and rippling grid
 - `about.html`: full biography and connected threads
 - `contact.html`: enquiry routes and cursor-following pulse rings
 - `404.html`: custom “Signal lost” page and reactive signal line
@@ -38,8 +38,10 @@ Every page includes the dependency-free Web Audio stellar drone from `stellar-pl
 
 ## Works and residencies
 
-- The only documented project currently shown in Works is the 2026 SMEM collaboration with Goffbaby. Do not populate empty categories with invented work.
-- Works filters distinguish releases, installations, instruments, research and collaborations. SMEM is currently classified as research and collaboration, and links directly to its individual detail page.
+- Works currently shows the 2026 SMEM collaboration with Goffbaby, the user-supplied Bwaku Crew residency and SIGNAL FORMS. Do not populate categories with invented work.
+- Works filters distinguish releases, installations, instruments, research and collaborations. SMEM is classified as research and collaboration; SIGNAL FORMS is classified as an instrument.
+- Substantial Downloads such as authored instruments or releases may opt into Works through `include_in_works` and `work_types`. Ordinary files, manuals and utilities should remain Downloads-only.
+- A Download shown in Works links to its external destination and may use an optional Works image. Without one, retain the restrained typographic placeholder.
 - Each future documented work should receive its own detail page based on the semantic `project-main` structure used by `smem-residency.html`.
 - Every visible HTML mention of Goffbaby should link to `https://goffbaby.com` in a new tab with `rel="noopener"`. Metadata and documentation references are plain text because they cannot provide contextual page links.
 - The Residencies page describes the current three-week residency at the Swiss Museum and Centre for Electronic Music Instruments in Fribourg, developed through a Pro Helvetia Synergies collaboration.
@@ -57,6 +59,13 @@ Every page includes the dependency-free Web Audio stellar drone from `stellar-pl
 - `images/kilele/poster.jpg` is the lead image on the archive and detail page.
 - The seven other JPEGs in `images/kilele/` form the performance gallery; preserve their natural proportions, descriptive alt text and lazy loading.
 - Verified public context: Kilele’s third edition ran 23–28 February 2026 under the theme “Sound and Solidarity.” The user confirmed The Mist as the Experimental Night venue and 22:00–23:00 as Kimina For Me Please’s performance time.
+
+## Additional user-supplied entries
+
+- `site/content/performances/nyokabi-kariuki-at-the-mist.md` documents Nyokabi Kariuki’s farewell performance at The Mist on 8 August 2026. Its lead poster and gallery images are in `images/uploads/nyokabi-kariuki-at-the-mist/`.
+- `site/content/residencies/bwaku-crew.md` is the user-supplied Bwaku Crew collaboration/residency entry. Its images are in `images/uploads/bwaku-crew/`.
+- `site/content/downloads/signal-forms.md` is the SIGNAL FORMS collection: five Max for Live effects for reshaping time, texture and resonance. It links to the user-provided Google Drive folder and is included in Works as an instrument.
+- The verified local SIGNAL FORMS devices are KIMINA BLOOM, DUST, FRACTURE, LOOM and TIDE. Do not add technical or commercial claims beyond the user-supplied entry or verified device files.
 
 ## About and contact
 
@@ -126,13 +135,15 @@ The remaining service images are already optimized JPEG assets. Prefer existing 
 
 - Git uses the SSH remote `git@github.com:Kimina-Santuri/kimina-website-main.git` with a repository-specific SSH identity configured locally.
 - The dependency-light local CMS in `cms/` edits Markdown collections, accepts controlled image uploads, validates the generated site and publishes content through Git.
-- `cms/server.js` is a dependency-light Node HTTP server bound only to `127.0.0.1`. It launches Eleventy preview, reads and writes the Markdown collections, accepts controlled image/download uploads, validates before publishing, and calls Git with argument arrays rather than shell interpolation.
+- `cms/server.js` is bound only to `127.0.0.1`. It launches Eleventy preview, reads and writes the Markdown collections, validates before publishing and calls Git with argument arrays rather than shell interpolation.
 - `cms/public/` contains the local editorial interface. `cms/schema.js` defines Releases, Performances, Residencies and Downloads forms.
 - The intended command is `npm run cms`, serving the editor at `http://127.0.0.1:3000` and preview at `http://127.0.0.1:8080`.
 - `Kimina-CMS.command` is the double-clickable macOS launcher; it installs dependencies only when missing, starts the CMS and opens the editor automatically.
 - Saving remains local and updates the preview. Publishing is locked to `main` by default and must remain a separate deliberate action.
+- The `Published` checkbox controls whether an entry is included in the local generated preview as well as the eventual live build; checking it and saving locally does not push anything by itself.
 - The Publish action must continue to: reject unrelated working-tree changes, fetch/check that GitHub is not ahead, run build and validation, stage only `site/content`, `images/uploads` and `downloads`, commit, then push.
 - Downloads use external HTTP/HTTPS shop or file links with user-defined button labels; the CMS does not require hosted download uploads.
+- Download entries may optionally appear in Works using `include_in_works`, `work_types`, `work_image` and `work_image_alt`.
 - Local API verification covers collection reads, mutation-token rejection, save/read-back, uploads, Git diagnostics and branch-locked publishing.
 
-Last reviewed: 2026-09-01.
+Last reviewed: 2026-09-02.
