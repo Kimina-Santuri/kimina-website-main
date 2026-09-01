@@ -1,6 +1,6 @@
 ---
 layout: project.njk
-published: false
+published: true
 status: archived
 type_label: Performance
 currentPage: performances
@@ -20,7 +20,7 @@ address: []
 description: Performance at The Mist
 summary: Farewell Performance for Nyokabi Kariuki at The Mist
 additional_summary: ""
-lead_image: images/uploads/nyokabi-kariuki-at-the-mist/nk-mist.png
+lead_image: images/uploads/nyokabi-kariuki-at-the-mist/nk-mist-1788298040152.png
 lead_alt: Event Poster
 lead_caption: Event Poster
 story_heading: Performance
@@ -28,7 +28,19 @@ hero_meta: []
 external_url: ""
 external_label: ""
 gallery_title: ""
-gallery: []
+gallery:
+  - src: images/uploads/nyokabi-kariuki-at-the-mist/nk-mist-1788298040152.png
+    alt: ""
+    caption: Poster
+    wide: false
+  - src: images/uploads/nyokabi-kariuki-at-the-mist/whatsapp-image-2026-09-01-at-23-33-55-1.jpeg
+    alt: ""
+    caption: ""
+    wide: false
+  - src: images/uploads/nyokabi-kariuki-at-the-mist/whatsapp-image-2026-09-01-at-23-33-55.jpeg
+    alt: ""
+    caption: ""
+    wide: false
 credits:
   - label: Poster Design
     value: Sikhupi
