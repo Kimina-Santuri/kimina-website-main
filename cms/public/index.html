@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kimina Local CMS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500&amp;display=swap" rel="stylesheet">
+  <link href="styles.css" rel="stylesheet">
+</head>
+<body>
+  <header class="masthead"><p class="mark">K.</p><div><p>LOCAL CONTENT STUDIO</p><span id="branch-status">Connecting…</span></div></header>
+  <div class="shell">
+    <aside>
+      <nav id="collections" aria-label="Content collections"></nav>
+      <div class="git-panel">
+        <p class="eyebrow">Git connection</p>
+        <p id="git-summary">Not checked</p>
+        <button class="button button--quiet" id="check-git" type="button">Check connection</button>
+      </div>
+    </aside>
+    <main>
+      <section class="toolbar">
+        <div><p class="eyebrow" id="collection-label">Content</p><h1 id="editor-title">Select an entry</h1></div>
+        <div class="toolbar__actions">
+          <a class="button button--quiet" id="preview-link" href="http://127.0.0.1:8080" target="_blank" rel="noopener">Open preview</a>
+          <button class="button button--dark" id="publish" type="button">Publish via Git</button>
+        </div>
+      </section>
+      <div class="workspace">
+        <section class="entry-list" aria-label="Entries">
+          <button class="new-entry" id="new-entry" type="button">＋ New entry</button>
+          <div id="entries"></div>
+        </section>
+        <section class="editor">
+          <form id="entry-form" hidden>
+            <div class="form-grid" id="fields"></div>
+            <section class="editor-section" id="story-section">
+              <div class="section-heading"><div><p class="eyebrow">Editorial</p><h2>Story</h2></div></div>
+              <label class="field field--wide"><span>Body <b>*</b></span><textarea name="body" rows="12" placeholder="Write the full project story in Markdown."></textarea></label>
+            </section>
+            <section class="editor-section" id="gallery-section">
+              <div class="section-heading"><div><p class="eyebrow">Media</p><h2>Gallery</h2></div><button class="button button--quiet" data-add="gallery" type="button">Add image</button></div>
+              <label class="field"><span>Gallery title</span><input name="gallery_title" type="text"></label>
+              <div id="gallery-items" class="repeaters"></div>
+            </section>
+            <section class="editor-section" id="credits-section">
+              <div class="section-heading"><div><p class="eyebrow">Documentation</p><h2>Credits</h2></div><button class="button button--quiet" data-add="credits" type="button">Add credit</button></div>
+              <div id="credit-items" class="repeaters"></div>
+            </section>
+            <footer class="editor-footer">
+              <p id="save-status" role="status"></p>
+              <button class="button button--dark" type="submit">Save locally</button>
+            </footer>
+          </form>
+          <div class="welcome" id="welcome"><p>Choose a collection, then create or edit an entry.</p><p>Saving changes files on this Mac. Nothing reaches the live site until you choose <strong>Publish via Git</strong>.</p></div>
+        </section>
+      </div>
+    </main>
+  </div>
+  <dialog id="publish-dialog">
+    <form method="dialog">
+      <p class="eyebrow">Publish</p><h2>Commit and push</h2>
+      <p>The site will be built and checked before Git creates a commit or pushes anything.</p>
+      <label class="field"><span>Commit message</span><input id="commit-message" value="Update portfolio content" maxlength="100"></label>
+      <p id="publish-status" role="status"></p>
+      <div class="dialog-actions"><button class="button button--quiet" value="cancel">Cancel</button><button class="button button--dark" id="confirm-publish" value="default">Build and publish</button></div>
+    </form>
+  </dialog>
+  <script src="app.js" defer></script>
+</body>
+</html>

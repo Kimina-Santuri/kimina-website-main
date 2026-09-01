@@ -33,7 +33,7 @@ module.exports = function (eleventyConfig) {
   ["works", "performances", "residencies", "downloads"].forEach((tag) => {
     const name = `published${tag[0].toUpperCase()}${tag.slice(1)}`;
     eleventyConfig.addCollection(name, (collectionApi) =>
-      collectionApi.getFilteredByTag(tag).filter((item) => item.data.published && (tag !== "downloads" || item.data.file))
+      collectionApi.getFilteredByTag(tag).filter((item) => item.data.published && (tag !== "downloads" || item.data.external_url))
     );
   });
 

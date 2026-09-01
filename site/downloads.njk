@@ -16,7 +16,7 @@ animation: grid
       {% for item in visibleDownloads | reverse %}
       <article class="download-item">
         <div><p class="section-label">{{ item.data.kind }}</p><h2>{{ item.data.title }}</h2><p>{{ item.data.summary }}</p></div>
-        <a class="text-link" href="{{ item.data.file }}" download>Download <span aria-hidden="true">↓</span></a>
+        <a class="download-button" href="{{ item.data.external_url }}" target="_blank" rel="noopener">{{ item.data.external_label }} <span aria-hidden="true">↗</span></a>
       </article>
       {% endfor %}
     {% else %}

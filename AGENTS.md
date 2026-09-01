@@ -103,7 +103,8 @@ The remaining service images are already optimized JPEG assets. Prefer existing 
 
 ## Technical constraints
 
-- No framework, backend, database, dependency manager or build step is required.
+- The public site remains static and database-free. Eleventy is now used as a local/deployment-time generator; no framework or runtime backend is shipped to visitors.
+- Node dependencies are locked through `package-lock.json`. Use `npm install`, `npm run build`, `npm run check` and `npm run serve`.
 - Keep CSS and JavaScript external rather than moving them inline.
 - Prefer plain HTML, CSS and JavaScript over new dependencies.
 - Page transitions should ignore external, mailto, hash and new-tab links.
@@ -113,7 +114,7 @@ The remaining service images are already optimized JPEG assets. Prefer existing 
 
 ## Verification after edits
 
-- Run `node --check landing.js`, `node --check bookings.js` and `node --check stellar-player.js`.
+- Run `npm run build` and `npm run check`. The latter checks `landing.js`, `bookings.js`, `stellar-player.js`, generated references and required content counts.
 - Confirm every local `src` and stylesheet/script reference exists.
 - Confirm every main page uses `images/favicon.svg` and the exact tagline `MUSIC.EDUCATION.SOUND`.
 - Confirm Bookings still contains seven service cards and seven `booking-link` buttons unless the request changes that number.
@@ -121,4 +122,17 @@ The remaining service images are already optimized JPEG assets. Prefer existing 
 - Check desktop, tablet and mobile layouts when browser rendering is available.
 - Visually inspect newly converted images before referencing them; prior conversion tooling produced a valid-looking but black JPEG.
 
-Last reviewed: 2026-08-26.
+## Local CMS and publishing
+
+- Git uses the SSH remote `git@github.com:Kimina-Santuri/kimina-website-main.git` with a repository-specific SSH identity configured locally.
+- The dependency-light local CMS in `cms/` edits Markdown collections, accepts controlled image uploads, validates the generated site and publishes content through Git.
+- `cms/server.js` is a dependency-light Node HTTP server bound only to `127.0.0.1`. It launches Eleventy preview, reads and writes the Markdown collections, accepts controlled image/download uploads, validates before publishing, and calls Git with argument arrays rather than shell interpolation.
+- `cms/public/` contains the local editorial interface. `cms/schema.js` defines Releases, Performances, Residencies and Downloads forms.
+- The intended command is `npm run cms`, serving the editor at `http://127.0.0.1:3000` and preview at `http://127.0.0.1:8080`.
+- `Kimina-CMS.command` is the double-clickable macOS launcher; it installs dependencies only when missing, starts the CMS and opens the editor automatically.
+- Saving remains local and updates the preview. Publishing is locked to `main` by default and must remain a separate deliberate action.
+- The Publish action must continue to: reject unrelated working-tree changes, fetch/check that GitHub is not ahead, run build and validation, stage only `site/content`, `images/uploads` and `downloads`, commit, then push.
+- Downloads use external HTTP/HTTPS shop or file links with user-defined button labels; the CMS does not require hosted download uploads.
+- Local API verification covers collection reads, mutation-token rejection, save/read-back, uploads, Git diagnostics and branch-locked publishing.
+
+Last reviewed: 2026-09-01.
