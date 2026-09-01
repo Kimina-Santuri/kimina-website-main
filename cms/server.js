@@ -194,7 +194,7 @@ function git(args, options = {}) {
     encoding: "utf8",
     timeout: options.timeout || 30000,
     env: { ...process.env, GIT_TERMINAL_PROMPT: "0" }
-  }).trim();
+  }).trimEnd();
 }
 
 function gitState(checkRemote = false) {
