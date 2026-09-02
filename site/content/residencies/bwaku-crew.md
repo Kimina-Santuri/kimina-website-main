@@ -28,8 +28,8 @@ image_alt: bwaku crew assembled
 story_heading: Bwaku Crew
 hero_meta:
   - Bwaku Crew
-external_url: ""
-external_label: ""
+external_url: https://drive.google.com/drive/folders/1fV4mUVII_zKIFgPOXw3hohHiZ3xxRdTG?usp=sharing
+external_label: Residency Media
 gallery_title: ""
 gallery:
   - src: images/uploads/bwaku-crew/bwaku-crew-2.png
