@@ -44,6 +44,10 @@ gallery:
     alt: ""
     caption: ""
     wide: false
+  - src: images/uploads/bwaku-crew/img-4028.jpeg
+    alt: ""
+    caption: ""
+    wide: false
 credits: []
 work_title: Bwaku Crew
 work_summary: |-
