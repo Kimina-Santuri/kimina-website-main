@@ -60,6 +60,8 @@ gallery:
 credits:
   - label: Poster Design
     value: Sikhupi
+  - label: Photography
+    value: Sikhupi
 ---
 Experimental sound artist Nyokabi Kariũki (@nkariuki_)puts together a farewell show to give thanks to her musical community in Nairobi before she leaves the country to pursue further studies in the world of music composition 🌟
 
