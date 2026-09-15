@@ -28,6 +28,7 @@ image_alt: bwaku crew assembled
 story_heading: Bwaku Crew
 hero_meta:
   - Bwaku Crew
+  - The Greatest Collaboration Ever!
 external_url: https://drive.google.com/drive/folders/1fV4mUVII_zKIFgPOXw3hohHiZ3xxRdTG?usp=sharing
 external_label: Residency Media
 gallery_title: ""

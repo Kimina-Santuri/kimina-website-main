@@ -33,11 +33,27 @@ gallery:
     alt: ""
     caption: Poster
     wide: false
-  - src: images/uploads/nyokabi-kariuki-at-the-mist/whatsapp-image-2026-09-01-at-23-33-55-1.jpeg
+  - src: images/uploads/nyokabi-kariuki-at-the-mist/img-7701-2-jpg.jpg
     alt: ""
     caption: ""
     wide: false
-  - src: images/uploads/nyokabi-kariuki-at-the-mist/whatsapp-image-2026-09-01-at-23-33-55.jpeg
+  - src: images/uploads/nyokabi-kariuki-at-the-mist/img-7672-2-jpg.jpg
+    alt: ""
+    caption: ""
+    wide: false
+  - src: images/uploads/nyokabi-kariuki-at-the-mist/img-7703-3-jpg.jpg
+    alt: ""
+    caption: ""
+    wide: false
+  - src: images/uploads/nyokabi-kariuki-at-the-mist/img-7719-2-jpg.jpg
+    alt: ""
+    caption: ""
+    wide: false
+  - src: images/uploads/nyokabi-kariuki-at-the-mist/img-7651-2-jpg.jpg
+    alt: ""
+    caption: ""
+    wide: false
+  - src: images/uploads/nyokabi-kariuki-at-the-mist/img-7887-2-jpg.jpg
     alt: ""
     caption: ""
     wide: false
