@@ -53,6 +53,7 @@ module.exports = function (eleventyConfig) {
     "bookings.js",
     "landing.css",
     "landing.js",
+    "release-player.js",
     "stellar-player.js",
     "images",
     "downloads"

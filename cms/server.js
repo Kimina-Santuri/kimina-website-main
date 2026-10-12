@@ -127,6 +127,28 @@ function cleanField(type, field, value) {
   return cleaned;
 }
 
+function cleanTracks(value) {
+  if (!Array.isArray(value)) return [];
+  return value.map((track, index) => {
+    const title = String(track?.title || "").trim();
+    const src = String(track?.src || "").trim();
+    const duration = String(track?.duration || "").trim();
+    if (!title || !src) throw new Error(`Track ${index + 1} needs a title and an audio file or link.`);
+    if (/^[a-z]+:/i.test(src)) {
+      let parsed;
+      try { parsed = new URL(src); }
+      catch { throw new Error(`Track ${index + 1} audio link is not a valid web address.`); }
+      if (parsed.protocol !== "https:") throw new Error(`Track ${index + 1} audio link must use https.`);
+    } else if (!/^downloads\/[a-z0-9-]+\/[a-z0-9-]+\.(?:mp3|m4a|aac|ogg|oga|opus|wav|flac)$/.test(src)) {
+      throw new Error(`Track ${index + 1} audio must be an uploaded file or an https link.`);
+    } else if (!fs.existsSync(path.join(root, src))) {
+      throw new Error(`Track ${index + 1} audio file was not found: ${src}`);
+    }
+    if (duration && !/^\d{1,3}:[0-5]\d$/.test(duration)) throw new Error(`Track ${index + 1} duration should look like 3:42.`);
+    return duration ? { title, src, duration } : { title, src };
+  });
+}
+
 function saveEntry(type, payload) {
   const schema = schemas[type];
   if (!schema) throw new Error("Unknown content type.");
@@ -149,6 +171,7 @@ function saveEntry(type, payload) {
   for (const field of ["gallery_title", "gallery", "credits"]) {
     if (submitted[field] !== undefined) data[field] = submitted[field];
   }
+  if (type === "releases" && submitted.tracks !== undefined) data.tracks = cleanTracks(submitted.tracks);
   if (type === "residencies") {
     data.work_title = submitted.work_title || data.work_title || data.title;
     data.work_summary = submitted.work_summary || data.work_summary || data.summary;
@@ -167,13 +190,14 @@ function saveEntry(type, payload) {
 }
 
 function uploadFile(payload) {
-  const kind = payload.kind === "download" ? "download" : "image";
+  const kind = ["download", "audio"].includes(payload.kind) ? payload.kind : "image";
   const match = String(payload.data || "").match(/^data:([^;]+);base64,([A-Za-z0-9+/=]+)$/);
   if (!match) throw new Error("Invalid upload.");
   const originalExtension = path.extname(path.basename(String(payload.filename || ""))).toLowerCase();
   const imageExtensions = new Set([".jpg", ".jpeg", ".png", ".webp", ".gif", ".svg"]);
   const downloadExtensions = new Set([".pdf", ".zip", ".wav", ".mp3", ".aiff", ".aif", ".flac", ".txt"]);
-  const allowed = kind === "image" ? imageExtensions : downloadExtensions;
+  const audioExtensions = new Set([".mp3", ".m4a", ".aac", ".ogg", ".oga", ".opus", ".wav", ".flac"]);
+  const allowed = { image: imageExtensions, download: downloadExtensions, audio: audioExtensions }[kind];
   if (!allowed.has(originalExtension)) throw new Error(`Unsupported ${kind} file type.`);
   const slug = safeFilename(payload.slug || "general");
   const name = safeFilename(path.basename(payload.filename, originalExtension), originalExtension);

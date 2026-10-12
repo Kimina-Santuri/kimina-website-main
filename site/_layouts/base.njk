@@ -25,5 +25,6 @@
   {{ content | safe }}
   <script src="landing.js" defer></script>
   <script src="stellar-player.js" defer></script>
+  {% if tracks and tracks.length %}<script src="release-player.js" defer></script>{% endif %}
 </body>
 </html>

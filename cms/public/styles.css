@@ -52,6 +52,9 @@ h2 { margin-bottom: 0; font-size: 18px; font-weight: 400; }
 .repeaters { display: grid; gap: 12px; }
 .repeater { border: 1px solid #aaa; padding: 14px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
 .repeater .wide { grid-column: 1 / -1; }
+.hint { max-width:640px; margin:-8px 0 18px; color:var(--muted); font-size:12px; line-height:1.6; }
+.repeater-actions { display:flex; justify-content:flex-end; gap:14px; }
+.repeater-actions .remove { justify-self:auto; }
 .remove { justify-self: end; border: 0; background: transparent; text-decoration: underline; cursor: pointer; }
 .editor-footer { margin-top: 36px; padding-top: 18px; border-top: 1px solid var(--rule); display: flex; align-items: center; justify-content: space-between; gap: 20px; }
 .editor-footer p, #publish-status { margin: 0; color: var(--muted); white-space: pre-wrap; }

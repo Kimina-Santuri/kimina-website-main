@@ -16,16 +16,17 @@ module.exports = {
     fields: [
       ["title", "Title", "text", true],
       ["display_title", "Display title", "text", true],
+      ["artist", "Artist", "text", false],
       ["date", "Release date", "date", true],
       ["description", "Search description", "textarea", true],
       ["summary", "Archive summary", "textarea", true],
-      ["image", "Archive image", "image", true],
-      ["image_alt", "Archive image description", "textarea", true],
+      ["image", "Cover image", "image", true],
+      ["image_alt", "Cover image description", "textarea", true],
       ["socialImage", "Social image", "image", false],
       ["story_heading", "Story heading", "text", true],
       ["hero_meta", "Hero details", "lines", false],
-      ["external_url", "External link", "url", false],
-      ["external_label", "External link label", "text", false],
+      ["external_url", "Buy or stream link (e.g. Bandcamp)", "url", false],
+      ["external_label", "Buy button text", "text", false],
       ["published", "Published", "checkbox", false]
     ]
   },

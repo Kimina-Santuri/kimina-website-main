@@ -40,6 +40,11 @@
               <div class="section-heading"><div><p class="eyebrow">Editorial</p><h2>Story</h2></div></div>
               <label class="field field--wide"><span>Body <b>*</b></span><textarea name="body" rows="12" placeholder="Write the full project story in Markdown."></textarea></label>
             </section>
+            <section class="editor-section" id="tracks-section" hidden>
+              <div class="section-heading"><div><p class="eyebrow">Audio</p><h2>Tracks</h2></div><button class="button button--quiet" data-add="tracks" type="button">Add track</button></div>
+              <p class="hint">Upload an MP3 (recommended), M4A, OGG, WAV or FLAC up to about 25 MB, or paste a direct https link to an audio file. Bandcamp, SoundCloud and Google Drive page links will not play. Duration fills in automatically after an upload.</p>
+              <div id="track-items" class="repeaters"></div>
+            </section>
             <section class="editor-section" id="gallery-section">
               <div class="section-heading"><div><p class="eyebrow">Media</p><h2>Gallery</h2></div><button class="button button--quiet" data-add="gallery" type="button">Add image</button></div>
               <label class="field"><span>Gallery title</span><input name="gallery_title" type="text"></label>

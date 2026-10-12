@@ -53,6 +53,16 @@ Every page includes the dependency-free Web Audio stellar drone from `stellar-pl
 - Do not duplicate a photograph merely to make the gallery appear larger. Add gallery items only when the user supplies additional images.
 - The active SMEM detail gallery uses the twelve gallery JPEGs inside `images/smem/` (`performance.jpg` is the SMEM recap lead image). Keep their descriptive alt text, lazy loading and natural image proportions. Ignore `.DS_Store` and `jpegmini_optimized.zip`.
 
+## Releases and the release player
+
+- Releases live in `site/content/releases/` and currently contain no entries. Add releases only when the user supplies the music, artwork and details.
+- A release with a `tracks` list (each with `title`, `src` and optional `duration` as `m:ss`) gets a Bandcamp-style player on its detail page: cover, play/pause, previous/next, seek bar, clickable tracklist, auto-advance and Media Session (lock-screen) controls. The player lives in `release-player.js`, which `base.njk` loads only on pages with tracks.
+- Track `src` is either an uploaded file in `downloads/<slug>/` or a direct `https` link to an audio file. Bandcamp, SoundCloud and Google Drive page links are not audio files and will not play. MP3 is the recommended format.
+- The release `image` is the player cover. `external_url`/`external_label` become the player's Buy button (e.g. Bandcamp) instead of the credits link.
+- Playback stops on page change; do not add cross-page continuation without the user requesting it. Without JavaScript each track falls back to a native `<audio>` control.
+- The release player and stellar drone are mutually exclusive: each dispatches a `kimina:audio-start` event on `document` when it starts, and the other pauses.
+- Works shows "Listen" instead of "View project" for entries with tracks.
+
 ## Kilele performance
 
 - `kilele-performance.html` documents Kimina For Me Please at Kilele Experimental Night from 22:00 to 23:00 on 24 February 2026 at The Mist, The Mall, Westlands, Nairobi.
@@ -123,7 +133,7 @@ The remaining service images are already optimized JPEG assets. Prefer existing 
 
 ## Verification after edits
 
-- Run `npm run build` and `npm run check`. The latter checks `landing.js`, `bookings.js`, `stellar-player.js`, generated references and required content counts.
+- Run `npm run build` and `npm run check`. The latter checks `landing.js`, `bookings.js`, `stellar-player.js`, `release-player.js`, generated references (including track audio files) and required content counts.
 - Confirm every local `src` and stylesheet/script reference exists.
 - Confirm every main page uses `images/favicon.svg` and the exact tagline `MUSIC.EDUCATION.SOUND`.
 - Confirm Bookings still contains seven service cards and seven `booking-link` buttons unless the request changes that number.
@@ -136,7 +146,7 @@ The remaining service images are already optimized JPEG assets. Prefer existing 
 - Git uses the SSH remote `git@github.com:Kimina-Santuri/kimina-website-main.git` with a repository-specific SSH identity configured locally.
 - The dependency-light local CMS in `cms/` edits Markdown collections, accepts controlled image uploads, validates the generated site and publishes content through Git.
 - `cms/server.js` is bound only to `127.0.0.1`. It launches Eleventy preview, reads and writes the Markdown collections, validates before publishing and calls Git with argument arrays rather than shell interpolation.
-- `cms/public/` contains the local editorial interface. `cms/schema.js` defines Releases, Performances, Residencies and Downloads forms.
+- `cms/public/` contains the local editorial interface. `cms/schema.js` defines Releases, Performances, Residencies and Downloads forms. Releases also have a Tracks editor with audio upload (MP3, M4A, AAC, OGG, Opus, WAV, FLAC into `downloads/<slug>/`), reordering and automatic duration detection; the server rejects non-https links, paths outside `downloads/` and malformed durations.
 - The intended command is `npm run cms`, serving the editor at `http://127.0.0.1:3000` and preview at `http://127.0.0.1:8080`.
 - `Kimina-CMS.command` is the double-clickable macOS launcher; it installs dependencies only when missing, starts the CMS and opens the editor automatically.
 - Saving remains local and updates the preview. Publishing is locked to `main` by default and must remain a separate deliberate action.

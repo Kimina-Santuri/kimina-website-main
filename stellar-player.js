@@ -286,6 +286,7 @@
       master.gain.setValueAtTime(Math.max(master.gain.value, 0.0001), now);
       master.gain.exponentialRampToValueAtTime(targetGain(), now + (restoring ? 1.2 : 1.8));
       reflectPlayback(true);
+      document.dispatchEvent(new CustomEvent("kimina:audio-start", { detail: { source: "stellar" } }));
     } else {
       const now = audioContext.currentTime;
       master.gain.cancelScheduledValues(now);
@@ -328,6 +329,9 @@
     filter.frequency.setTargetAtTime(240 + (1 - event.clientY / innerHeight) * 900, now, 0.35);
     panner.pan.setTargetAtTime((event.clientX / innerWidth - 0.5) * 0.9, now, 0.4);
   }, { passive: true });
+  document.addEventListener("kimina:audio-start", (event) => {
+    if (event.detail?.source !== "stellar" && isPlaying) setPlaying(false);
+  });
   document.addEventListener("visibilitychange", () => {
     if (document.hidden && audioContext?.state === "running") audioContext.suspend();
     if (!document.hidden && isPlaying) audioContext?.resume();

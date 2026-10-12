@@ -6,6 +6,7 @@ const form = $("#entry-form");
 const fields = $("#fields");
 const galleryItems = $("#gallery-items");
 const creditItems = $("#credit-items");
+const trackItems = $("#track-items");
 
 async function api(url, options = {}) {
   const response = await fetch(url, {
@@ -109,6 +110,44 @@ function addGalleryItem(item = {}) {
   galleryItems.append(row);
 }
 
+function audioDuration(source) {
+  return new Promise((resolve) => {
+    const probe = new Audio();
+    probe.preload = "metadata";
+    probe.addEventListener("loadedmetadata", () => {
+      const seconds = Math.round(probe.duration);
+      resolve(Number.isFinite(seconds) ? `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}` : "");
+    }, { once: true });
+    probe.addEventListener("error", () => resolve(""), { once: true });
+    probe.src = source;
+  });
+}
+
+function addTrackItem(item = {}) {
+  const row = document.createElement("div");
+  row.className = "repeater";
+  row.innerHTML = `<label class="field"><span>Track title</span><input data-key="title" type="text"></label><label class="field"><span>Duration (m:ss, optional)</span><input data-key="duration" type="text" placeholder="3:42"></label><label class="field wide"><span>Audio file or https link</span><div class="upload"><input data-key="src" type="text"><input data-upload="audio" type="file" accept=".mp3,.m4a,.aac,.ogg,.oga,.opus,.wav,.flac,audio/*"></div></label><div class="repeater-actions wide"><button class="remove" data-move="up" type="button">Move up</button><button class="remove" data-move="down" type="button">Move down</button><button class="remove" data-remove type="button">Remove track</button></div>`;
+  for (const key of ["title", "duration", "src"]) row.querySelector(`[data-key="${key}"]`).value = item[key] || "";
+  row.querySelector("[data-remove]").addEventListener("click", () => row.remove());
+  row.querySelector('[data-move="up"]').addEventListener("click", () => row.previousElementSibling?.before(row));
+  row.querySelector('[data-move="down"]').addEventListener("click", () => row.nextElementSibling?.after(row));
+  row.querySelector('[data-upload="audio"]').addEventListener("change", async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+    const durationInput = row.querySelector('[data-key="duration"]');
+    const titleInput = row.querySelector('[data-key="title"]');
+    if (!titleInput.value) titleInput.value = file.name.replace(/\.[^.]+$/, "");
+    const objectUrl = URL.createObjectURL(file);
+    audioDuration(objectUrl).then((duration) => {
+      if (duration && !durationInput.value) durationInput.value = duration;
+      URL.revokeObjectURL(objectUrl);
+    });
+    try { row.querySelector('[data-key="src"]').value = await upload(file, "audio"); }
+    catch (error) { setStatus(error.message, true); }
+  });
+  trackItems.append(row);
+}
+
 function addCreditItem(item = {}) {
   const row = document.createElement("div");
   row.className = "repeater";
@@ -132,6 +171,7 @@ function renderForm(entry = { filename: null, data: {}, body: "" }) {
   fields.replaceChildren();
   galleryItems.replaceChildren();
   creditItems.replaceChildren();
+  trackItems.replaceChildren();
   const schema = state.schemas[state.type];
   const slugDefinition = { field: "slug", label: "URL slug", type: "text", required: true };
   fields.append(fieldElement(slugDefinition, entry.filename?.replace(/\.md$/, "") || slugify(entry.data.title)));
@@ -140,6 +180,8 @@ function renderForm(entry = { filename: null, data: {}, body: "" }) {
   form.elements.gallery_title.value = entry.data.gallery_title || "";
   for (const image of entry.data.gallery || []) addGalleryItem(image);
   for (const credit of entry.data.credits || []) addCreditItem(credit);
+  for (const track of entry.data.tracks || []) addTrackItem(track);
+  $("#tracks-section").hidden = state.type !== "releases";
   const simple = state.type === "downloads";
   $("#story-section").hidden = simple;
   $("#gallery-section").hidden = simple;
@@ -175,6 +217,7 @@ function collectForm() {
     data.gallery = repeaterData(galleryItems, ["src", "alt", "caption", "wide"]);
     data.credits = repeaterData(creditItems, ["label", "value"]);
   }
+  if (state.type === "releases") data.tracks = repeaterData(trackItems, ["title", "src", "duration"]);
   return { type: state.type, originalFilename: state.filename, slug: form.elements.slug.value, data, body: form.elements.body.value };
 }
 
@@ -233,6 +276,7 @@ form.addEventListener("submit", async (event) => {
 $("#new-entry").addEventListener("click", () => renderForm());
 document.querySelector('[data-add="gallery"]').addEventListener("click", () => addGalleryItem());
 document.querySelector('[data-add="credits"]').addEventListener("click", () => addCreditItem());
+document.querySelector('[data-add="tracks"]').addEventListener("click", () => addTrackItem());
 
 $("#check-git").addEventListener("click", async () => {
   const button = $("#check-git");

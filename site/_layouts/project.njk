@@ -12,6 +12,40 @@ ogType: article
     </div>
   </header>
 
+  {% if tracks and tracks.length %}
+  <section class="release-player" aria-labelledby="release-player-title" data-release-player data-artist="{{ artist or 'Kimina' }}" data-album="{{ title }}">
+    {% if image %}<img class="release-player__cover" src="{{ image }}" alt="{{ image_alt }}">{% endif %}
+    <div class="release-player__body">
+      <p class="section-label">Listen / {{ tracks.length | pad2 }} {% if tracks.length == 1 %}track{% else %}tracks{% endif %}</p>
+      <h2 id="release-player-title">{{ display_title | safe }}</h2>
+      <p class="release-player__byline">{{ artist or "Kimina" }} · {{ date | year }}</p>
+      <div class="release-player__deck" hidden>
+        <div class="release-player__controls">
+          <button type="button" data-player-action="previous" aria-label="Previous track">Prev</button>
+          <button type="button" class="release-player__toggle" data-player-action="toggle">Play</button>
+          <button type="button" data-player-action="next" aria-label="Next track">Next</button>
+        </div>
+        <p class="release-player__now"></p>
+        <input class="release-player__seek" type="range" min="0" max="1000" step="1" value="0" aria-label="Seek within track" disabled>
+        <p class="release-player__time"><span data-time-current>0:00</span><span data-time-total>--:--</span></p>
+      </div>
+      <ol class="release-tracks">
+        {% for track in tracks %}
+        <li class="release-track">
+          <button class="release-track__button" type="button" data-src="{{ track.src }}" data-title="{{ track.title }}" aria-label="Play {{ track.title }}">
+            <span class="release-track__number">{{ loop.index | pad2 }}</span><span class="release-track__title">{{ track.title }}</span><span class="release-track__duration">{{ track.duration }}</span>
+          </button>
+          <noscript><audio controls preload="none" src="{{ track.src }}"></audio></noscript>
+        </li>
+        {% endfor %}
+      </ol>
+      <p class="release-player__status" role="status"></p>
+      {% if external_url %}<a class="download-button release-player__buy" href="{{ external_url }}" target="_blank" rel="noopener">{{ external_label or "Buy" }} <span aria-hidden="true">↗</span></a>{% endif %}
+    </div>
+    <audio class="release-player__audio" preload="none"></audio>
+  </section>
+  {% endif %}
+
   {% if lead_image %}
   <figure class="project-lead">
     <img src="{{ lead_image }}" alt="{{ lead_alt }}">
@@ -42,7 +76,7 @@ ogType: article
   <section class="project-credits" aria-labelledby="credits-title">
     <p class="section-label" id="credits-title">Details</p>
     <dl>{% for credit in credits %}<div><dt>{{ credit.label }}</dt><dd>{{ credit.value | markdownInline | safe }}</dd></div>{% endfor %}</dl>
-    {% if external_url %}<a class="text-link" href="{{ external_url }}" target="_blank" rel="noopener">{{ external_label }} <span aria-hidden="true">↗</span></a>{% endif %}
+    {% if external_url and not (tracks and tracks.length) %}<a class="text-link" href="{{ external_url }}" target="_blank" rel="noopener">{{ external_label }} <span aria-hidden="true">↗</span></a>{% endif %}
   </section>
   {% endif %}
 

@@ -74,6 +74,18 @@ if ((smem.match(/<figure class="project-gallery__item/g) || []).length !== 12) {
   errors.push("smem-residency.html: expected twelve supplied gallery photographs");
 }
 
+for (const htmlFile of htmlFiles) {
+  const html = fs.readFileSync(htmlFile, "utf8");
+  if (!html.includes("data-release-player")) continue;
+  const page = path.relative(root, htmlFile);
+  const trackSources = [...html.matchAll(/class="release-track__button"[^>]*data-src="([^"]*)"/g)].map((match) => match[1]);
+  if (!trackSources.length) errors.push(`${page}: release player has no tracks`);
+  for (const source of trackSources) {
+    if (!source || /^http:/i.test(source)) errors.push(`${page}: track sources must be local files or https links`);
+  }
+  if (!html.includes('src="release-player.js"')) errors.push(`${page}: release player script missing`);
+}
+
 if (errors.length) {
   console.error(errors.join("\n"));
   process.exit(1);

@@ -78,8 +78,8 @@ a:focus-visible { outline:2px solid var(--ink); outline-offset:5px; }
 .download-item h2 { margin:0 0 5px; font-size:.9rem; font-weight:400; }
 .download-item p { margin:0; font-size:.62rem; line-height:1.6; text-transform:uppercase; }
 .download-item a,.download-item span { font-size:.62rem; letter-spacing:.08em; text-transform:uppercase; }
-.download-button { display:inline-flex; min-height:40px; align-items:center; justify-content:center; padding:10px 14px; border:1px solid var(--ink); background:var(--white); color:var(--ink); text-decoration:none; transition:background .2s ease,color .2s ease; }
-.download-button:hover,.download-button:focus-visible { background:var(--ink); color:var(--white); }
+.download-button { display:inline-flex; min-height:40px; align-items:center; justify-content:center; padding:10px 14px; border:1px solid var(--ink); background:var(--paper); color:var(--ink); text-decoration:none; transition:background .2s ease,color .2s ease; }
+.download-button:hover,.download-button:focus-visible { background:var(--ink); color:var(--paper); }
 .empty-state { margin:20px 0 0; font-size:.62rem; letter-spacing:.08em; text-transform:uppercase; }
 .performance-list { width:min(960px,100%); margin-top:64px; border-top:1px solid var(--ink); }
 .performance-item { display:grid; grid-template-columns:minmax(220px,.75fr) minmax(120px,.4fr) minmax(300px,1.1fr); gap:36px; align-items:start; padding:34px 0; border-bottom:1px solid var(--ink); }
@@ -149,6 +149,36 @@ a:focus-visible { outline:2px solid var(--ink); outline-offset:5px; }
 .project-credits .text-link { grid-column:2; justify-self:start; }
 .project-pagination { display:flex; justify-content:space-between; gap:30px; padding-top:26px; border-top:1px solid var(--ink); }
 .project-pagination a,.project-pagination span { font-size:.62rem; letter-spacing:.08em; text-decoration:none; text-transform:uppercase; }
+.release-player { display:grid; grid-template-columns:minmax(240px,.85fr) minmax(300px,1.15fr); gap:50px; align-items:start; padding:30px 0 110px; }
+.release-player__cover { display:block; width:100%; aspect-ratio:1; object-fit:cover; }
+.release-player__body { min-width:0; padding-top:20px; border-top:1px solid var(--ink); }
+.release-player__body h2 { margin:16px 0 10px; font-size:clamp(1.6rem,3vw,2.8rem); font-weight:300; letter-spacing:-.06em; line-height:1.05; }
+.release-player__byline { margin:0 0 34px; font-size:.62rem; letter-spacing:.07em; text-transform:uppercase; }
+.release-player__controls { display:flex; border-top:1px solid var(--ink); border-left:1px solid var(--ink); }
+.release-player__controls button { flex:1 1 0; min-height:44px; padding:10px 12px; border:0; border-right:1px solid var(--ink); border-bottom:1px solid var(--ink); background:var(--paper); color:var(--ink); font:300 .62rem/1 "JetBrains Mono",monospace; letter-spacing:.08em; text-transform:uppercase; cursor:pointer; transition:background .2s ease,color .2s ease; }
+.release-player__controls .release-player__toggle { flex-grow:2; }
+.release-player__controls button:hover:not(:disabled),.release-player[data-playing="true"] .release-player__toggle { background:var(--ink); color:var(--paper); }
+.release-player__controls button:disabled { color:var(--line); cursor:default; }
+.release-player__now { margin:22px 0 10px; overflow:hidden; font-size:.68rem; white-space:nowrap; text-overflow:ellipsis; }
+.release-player__seek { display:block; width:100%; margin:0; accent-color:var(--ink); }
+.release-player__time { display:flex; justify-content:space-between; margin:8px 0 0; font-size:.56rem; letter-spacing:.06em; font-variant-numeric:tabular-nums; }
+.release-tracks { margin:34px 0 0; padding:0; border-top:1px solid var(--ink); list-style:none; }
+.release-track { border-bottom:1px solid var(--line); }
+.release-track noscript audio { display:block; width:100%; margin:0 0 12px; }
+.release-track__button { display:grid; width:100%; grid-template-columns:44px minmax(0,1fr) auto; gap:12px; align-items:baseline; padding:13px 0; border:0; background:transparent; color:var(--ink); font:300 .7rem/1.5 "JetBrains Mono",monospace; text-align:left; cursor:pointer; }
+.release-player:not(.is-enhanced) .release-track__button { cursor:default; }
+.release-track__number,.release-track__duration { font-size:.58rem; letter-spacing:.06em; font-variant-numeric:tabular-nums; }
+.release-track__number { position:relative; padding-left:14px; }
+.release-track__number::before { position:absolute; top:50%; left:0; width:6px; height:6px; border:1px solid transparent; border-radius:50%; content:""; transform:translateY(-50%); }
+.release-track__button[data-state] .release-track__number::before { border-color:var(--ink); }
+.release-track__button[data-state="playing"] .release-track__number::before { background:var(--ink); }
+.release-track__button[aria-current="true"] .release-track__title { font-weight:400; }
+.release-track__button:hover .release-track__title { text-decoration:underline; text-underline-offset:3px; }
+.release-track__button:focus-visible,.release-player__controls button:focus-visible { outline:2px solid var(--ink); outline-offset:-2px; }
+.release-player__seek:focus-visible { outline:2px solid var(--ink); outline-offset:4px; }
+.release-player__status { min-height:1.6em; margin:14px 0 0; font-size:.58rem; letter-spacing:.05em; text-transform:uppercase; }
+.release-player__status:empty { min-height:0; }
+.release-player__buy { gap:8px; margin-top:22px; font-size:.62rem; letter-spacing:.08em; text-transform:uppercase; }
 @keyframes page-in { from{opacity:0} to{opacity:1} }
 @media (max-width:720px) {
   .site-header { padding:20px; }
@@ -185,6 +215,7 @@ a:focus-visible { outline:2px solid var(--ink); outline-offset:5px; }
   .project-main { width:auto; margin:0; padding:120px 20px 110px; }
   .project-hero { min-height:55svh; }
   .project-lead { padding:10px 0 78px; }
+  .release-player { grid-template-columns:1fr; gap:34px; padding:10px 0 78px; }
   .project-story,.project-credits { grid-template-columns:1fr; gap:36px; padding:78px 0; }
   .project-gallery { padding:78px 0; }
   .project-gallery__heading { align-items:start; flex-direction:column; }
@@ -192,4 +223,4 @@ a:focus-visible { outline:2px solid var(--ink); outline-offset:5px; }
   .project-gallery__item--wide { grid-column:1; }
   .project-credits .text-link { grid-column:1; }
 }
-@media (prefers-reduced-motion:reduce) { html{scroll-behavior:auto}body{animation:none;transition:none}.side-nav a::after,.text-link::after,.download-button,.stellar-player__dot{transition:none} }
+@media (prefers-reduced-motion:reduce) { html{scroll-behavior:auto}body{animation:none;transition:none}.side-nav a::after,.text-link::after,.download-button,.stellar-player__dot,.release-player__controls button{transition:none} }

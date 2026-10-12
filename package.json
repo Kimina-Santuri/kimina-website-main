@@ -7,7 +7,7 @@
     "build": "eleventy",
     "serve": "eleventy --serve",
     "cms": "node cms/server.js",
-    "check": "node --check landing.js && node --check bookings.js && node --check stellar-player.js && node tools/validate-site.js _site"
+    "check": "node --check landing.js && node --check bookings.js && node --check stellar-player.js && node --check release-player.js && node tools/validate-site.js _site"
   },
   "devDependencies": {
     "@11ty/eleventy": "3.1.6",
