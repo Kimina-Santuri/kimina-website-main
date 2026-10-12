@@ -21,7 +21,7 @@ description: Performance at The Mist
 summary: Farewell Performance for Nyokabi Kariuki at The Mist
 additional_summary: ""
 lead_image: images/uploads/nyokabi-kariuki-at-the-mist/nk-mist-1788298040152.png
-lead_alt: Event Poster
+lead_alt: "Black-and-white poster for Nyokabi Kariũki live at The Mist, 8 August 2026, 7pm till late, The Mall basement, Westlands, Nairobi, with support from Ng'at Maler b2b naisiS, Kimina and Coco Em: an experimental music night"
 lead_caption: Event Poster
 story_heading: Performance
 hero_meta: []
@@ -30,31 +30,31 @@ external_label: ""
 gallery_title: ""
 gallery:
   - src: images/uploads/nyokabi-kariuki-at-the-mist/nk-mist-1788298040152.png
-    alt: ""
+    alt: "Black-and-white poster for Nyokabi Kariũki live at The Mist, 8 August 2026, 7pm till late, The Mall basement, Westlands, Nairobi, with support from Ng'at Maler b2b naisiS, Kimina and Coco Em: an experimental music night"
     caption: Poster
     wide: false
   - src: images/uploads/nyokabi-kariuki-at-the-mist/img-7701-2-jpg.jpg
-    alt: ""
+    alt: "Kimina playing at the decks in The Mist's basement while a collaborator performs behind them, foil-draped wall and graffiti in the background"
     caption: ""
     wide: false
   - src: images/uploads/nyokabi-kariuki-at-the-mist/img-7672-2-jpg.jpg
-    alt: ""
+    alt: "Kimina at a microphone and controller beside a collaborator playing a wind instrument, in front of a translucent plastic backdrop"
     caption: ""
     wide: false
   - src: images/uploads/nyokabi-kariuki-at-the-mist/img-7703-3-jpg.jpg
-    alt: ""
+    alt: "Wider view of Kimina at the mixer with a collaborator beside them, a speaker stack and graffiti-covered concrete wall to the right"
     caption: ""
     wide: false
   - src: images/uploads/nyokabi-kariuki-at-the-mist/img-7719-2-jpg.jpg
-    alt: ""
+    alt: "A packed crowd standing in the low-ceilinged concrete basement of The Mist, facing the performance area"
     caption: ""
     wide: false
   - src: images/uploads/nyokabi-kariuki-at-the-mist/img-7651-2-jpg.jpg
-    alt: ""
+    alt: "The performance setup in The Mist's basement: a keyboard on a stand, a patterned table, speaker stacks and a green light beam on a plastic backdrop beneath a red pipe"
     caption: ""
     wide: false
   - src: images/uploads/nyokabi-kariuki-at-the-mist/img-7887-2-jpg.jpg
-    alt: ""
+    alt: "Audience members seen from behind, gathered close to the performers in the dimly lit basement"
     caption: ""
     wide: false
 credits:
