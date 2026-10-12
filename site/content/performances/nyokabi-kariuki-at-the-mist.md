@@ -58,6 +58,8 @@ gallery:
     caption: ""
     wide: false
 credits:
+  - label: Live set
+    value: Kimina · UNJUST
   - label: Poster Design
     value: Sikhupi
   - label: Photography
