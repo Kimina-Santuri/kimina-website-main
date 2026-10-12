@@ -70,8 +70,8 @@ if ((kilele.match(/<figure class="project-gallery__item/g) || []).length !== 7) 
 }
 
 const smem = fs.readFileSync(path.join(root, "smem-residency.html"), "utf8");
-if ((smem.match(/<figure class="project-gallery__item/g) || []).length !== 10) {
-  errors.push("smem-residency.html: expected ten supplied gallery photographs");
+if ((smem.match(/<figure class="project-gallery__item/g) || []).length !== 12) {
+  errors.push("smem-residency.html: expected twelve supplied gallery photographs");
 }
 
 if (errors.length) {

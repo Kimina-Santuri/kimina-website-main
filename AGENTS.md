@@ -26,7 +26,7 @@ This is Kimina’s static personal portfolio for music, education, sound enginee
 - `kilele-performance.html`: Kimina For Me Please at Kilele Experimental Night, poster, context and seven-image gallery
 - `bookings.html`: service cards and flowing signal waves
 - `residencies.html`: residency archive and orbital forms
-- `smem-residency.html`: dedicated SMEM residency story, ten-image gallery, credits and constellation field
+- `smem-residency.html`: dedicated SMEM residency story, twelve-image gallery, credits and constellation field
 - `downloads.html`: external shops/download destinations and rippling grid
 - `about.html`: full biography and connected threads
 - `contact.html`: enquiry routes and cursor-following pulse rings
@@ -51,7 +51,7 @@ Every page includes the dependency-free Web Audio stellar drone from `stellar-pl
 - The SMEM image should remain portrait-oriented to the left of the residency text on desktop and stack above it on mobile.
 - The SMEM index entry links to `smem-residency.html`. Use that detail page as the template for future residency pages, with an editorial introduction, factual project description, responsive gallery, credits and previous/next navigation.
 - Do not duplicate a photograph merely to make the gallery appear larger. Add gallery items only when the user supplies additional images.
-- The active SMEM detail gallery uses the ten JPEGs inside `images/smem/`. Keep their descriptive alt text, lazy loading and natural image proportions. Ignore `.DS_Store` and `jpegmini_optimized.zip`.
+- The active SMEM detail gallery uses the twelve gallery JPEGs inside `images/smem/` (`performance.jpg` is the SMEM recap lead image). Keep their descriptive alt text, lazy loading and natural image proportions. Ignore `.DS_Store` and `jpegmini_optimized.zip`.
 
 ## Kilele performance
 

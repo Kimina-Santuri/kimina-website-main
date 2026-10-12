@@ -67,6 +67,13 @@ gallery:
   - src: images/smem/93054F31-ADF9-4748-B976-5912981D93DA.jpg
     alt: Modular synthesizer patch with colourful cables in the SMEM Playroom
     caption: Patch study / 10
+  - src: images/smem/smem-console.jpg
+    alt: Kimina leaning over a large mixing console, adjusting a handheld recorder in a SMEM studio
+    caption: Console / 11
+  - src: images/smem/smem-gathering.jpg
+    alt: Residency participants gathered at dusk outside a large open doorway at SMEM
+    caption: Gathering / 12
+    wide: true
 credits:
   - label: Artists
     value: "Kimina · [Goffbaby](https://goffbaby.com)"
