@@ -78,6 +78,7 @@ a:focus-visible { outline:2px solid var(--ink); outline-offset:5px; }
 .download-item h2 { margin:0 0 5px; font-size:.9rem; font-weight:400; }
 .download-item p { margin:0; font-size:.62rem; line-height:1.6; text-transform:uppercase; }
 .download-item a,.download-item span { font-size:.62rem; letter-spacing:.08em; text-transform:uppercase; }
+.download-actions { display:flex; flex-wrap:wrap; gap:8px; justify-content:flex-end; }
 .download-button { display:inline-flex; min-height:40px; align-items:center; justify-content:center; padding:10px 14px; border:1px solid var(--ink); background:var(--paper); color:var(--ink); text-decoration:none; transition:background .2s ease,color .2s ease; }
 .download-button:hover,.download-button:focus-visible { background:var(--ink); color:var(--paper); }
 .empty-state { margin:20px 0 0; font-size:.62rem; letter-spacing:.08em; text-transform:uppercase; }
@@ -206,7 +207,8 @@ a:focus-visible { outline:2px solid var(--ink); outline-offset:5px; }
   .about-gallery__grid { grid-template-columns:1fr; gap:42px; }
   .about-gallery__item--wide { grid-column:1; }
   .archive-page main { padding:120px 20px 130px; }
-  .download-item { gap:15px; }
+  .download-item { grid-template-columns:1fr; gap:15px; }
+  .download-actions { justify-content:flex-start; }
   .work-item { grid-template-columns:1fr; gap:26px; }
   .performance-item { grid-template-columns:1fr; gap:26px; }
   .residency-item { grid-template-columns:1fr; gap:28px; }

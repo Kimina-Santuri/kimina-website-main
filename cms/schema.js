@@ -114,6 +114,8 @@ module.exports = {
       ["summary", "Description", "textarea", true],
       ["external_url", "Shop or download link", "url", true],
       ["external_label", "Button text", "text", true],
+      ["manual_url", "Optional manual link", "text", false],
+      ["manual_label", "Manual button text", "text", false],
       ["include_in_works", "Include in Works", "checkbox", false],
       ["work_types", "Works categories", "multiselect", false, ["release", "installation", "instrument", "research", "collaboration"]],
       ["work_image", "Optional Works image", "image", false],

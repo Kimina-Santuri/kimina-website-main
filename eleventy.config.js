@@ -56,7 +56,8 @@ module.exports = function (eleventyConfig) {
     "release-player.js",
     "stellar-player.js",
     "images",
-    "downloads"
+    "downloads",
+    "manuals"
   ].forEach((asset) => eleventyConfig.addPassthroughCopy(asset));
 
   return {

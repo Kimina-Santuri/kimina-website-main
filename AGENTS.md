@@ -76,6 +76,9 @@ Every page includes the dependency-free Web Audio stellar drone from `stellar-pl
 - `site/content/residencies/bwaku-crew.md` is the user-supplied Bwaku Crew collaboration/residency entry. Its images are in `images/uploads/bwaku-crew/`.
 - `site/content/downloads/signal-forms.md` is the SIGNAL FORMS collection: five Max for Live effects for reshaping time, texture and resonance. It links to the user-provided Google Drive folder and is included in Works as an instrument.
 - The verified local SIGNAL FORMS devices are KIMINA BLOOM, DUST, FRACTURE, LOOM and TIDE. Do not add technical or commercial claims beyond the user-supplied entry or verified device files.
+- `site/content/downloads/kimina-plugins.md` is KIMINA PLUGINS: eight free GPL VST3/CLAP effects (HALO, NEBULA, SPECTRA, TIDE, DUST, FRACTURE, BLOOM, LOOM), universal macOS and 64-bit Windows builds (0.3.0, 2026-10-23). It links to the user-supplied Google Drive folder holding both zips and to the hosted manuals, and is included in Works as an instrument.
+- `manuals/` holds the plugin manuals. They are generated in `~/Documents/KIMINA PLUGINS` (`cargo run -p manuals`) and copied here; do not hand-edit them. Plugins and manuals link back to `https://kimina.santuri.org/manuals/`.
+- Download entries may set optional `manual_url`/`manual_label`, rendered as a second button before the download button.
 
 ## About and contact
 
