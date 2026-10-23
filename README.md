@@ -87,13 +87,13 @@ Every booking button has the `booking-link` class. When the Calendly widget is u
 - `stellar-player.js` — dependency-free Web Audio player shared by every page. Its four voices use luminosity and distance values for Proxima Centauri, Sirius, Vega and Betelgeuse as musical control data.
 - `bookings.css` and `bookings.js` — Bookings layout, Calendly behavior and signal-wave animation
 
-The canonical site URL is `https://kimina.santuri.org/`. Social metadata uses absolute URLs on this domain.
+The canonical site URL is `https://kimina.co.ke/`. Social metadata uses absolute URLs on this domain.
 
 ## Deployment
 
 `.github/workflows/deploy.yml` installs the locked Eleventy version, builds `_site/`, validates the result and deploys the static artifact to GitHub Pages. The repository’s Pages source must be set to **GitHub Actions** before merging the migration into `main`.
 
-`CNAME` keeps the canonical `kimina.santuri.org` domain in the generated artifact. `.nojekyll` prevents additional Jekyll processing. `_redirects` works only on compatible hosts such as Netlify; GitHub Pages ignores it, so visible navigation retains `.html` links.
+`CNAME` keeps the canonical `kimina.co.ke` domain in the generated artifact. `.nojekyll` prevents additional Jekyll processing. `_redirects` works only on compatible hosts such as Netlify; GitHub Pages ignores it, so visible navigation retains `.html` links.
 
 ## Verification
 

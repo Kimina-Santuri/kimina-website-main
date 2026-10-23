@@ -77,7 +77,7 @@ Every page includes the dependency-free Web Audio stellar drone from `stellar-pl
 - `site/content/downloads/signal-forms.md` is the SIGNAL FORMS collection: five Max for Live effects for reshaping time, texture and resonance. It links to the user-provided Google Drive folder and is included in Works as an instrument.
 - The verified local SIGNAL FORMS devices are KIMINA BLOOM, DUST, FRACTURE, LOOM and TIDE. Do not add technical or commercial claims beyond the user-supplied entry or verified device files.
 - `site/content/downloads/kimina-plugins.md` is KIMINA PLUGINS: eight free GPL VST3/CLAP effects (HALO, NEBULA, SPECTRA, TIDE, DUST, FRACTURE, BLOOM, LOOM), universal macOS and 64-bit Windows builds (0.3.0, 2026-10-23). It links to the user-supplied Google Drive folder holding both zips and to the hosted manuals, and is included in Works as an instrument.
-- `manuals/` holds the plugin manuals. They are generated in `~/Documents/KIMINA PLUGINS` (`cargo run -p manuals`) and copied here; do not hand-edit them. Plugins and manuals link back to `https://kimina.santuri.org/manuals/`.
+- `manuals/` holds the plugin manuals. They are generated in `~/Documents/KIMINA PLUGINS` (`cargo run -p manuals`) and copied here; do not hand-edit them. Plugins and manuals link back to `https://kimina.co.ke/manuals/`.
 - Download entries may set optional `manual_url`/`manual_label`, rendered as a second button before the download button.
 
 ## About and contact
@@ -131,7 +131,7 @@ The remaining service images are already optimized JPEG assets. Prefer existing 
 - Prefer plain HTML, CSS and JavaScript over new dependencies.
 - Page transitions should ignore external, mailto, hash and new-tab links.
 - `.nojekyll` is included for GitHub Pages. `_redirects` is ignored by GitHub Pages and provides extensionless aliases only on compatible hosts. Visible links retain `.html` for GitHub Pages and direct-file compatibility.
-- The canonical production domain is `https://kimina.santuri.org/`. Keep social-image URLs absolute on this domain.
+- The canonical production domain is `https://kimina.co.ke/` (the GitHub Pages custom domain in `CNAME`; kimina.santuri.org points elsewhere and does not serve this site, checked 2026-10-23). Keep social-image URLs absolute on this domain.
 - Do not restore the obsolete booking-oriented `images/og-image.jpg` in current metadata unless explicitly requested.
 
 ## Verification after edits
