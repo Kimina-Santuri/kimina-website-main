@@ -15,6 +15,6 @@ manual_label: Cheat sheet
 include_in_works: true
 work_types:
   - instrument
-work_image: images/uploads/push2-traktor/push2-traktor-pads.jpg
-work_image_alt: "Cheat sheet of the Ableton Push 2 pad grid split into four colour-coded 4×4 decks, each with rows for stems, hotcues, loop lengths and play, cue, sync and load, below knobs labelled for jog and effects."
+work_image: ""
+work_image_alt: ""
 ---
