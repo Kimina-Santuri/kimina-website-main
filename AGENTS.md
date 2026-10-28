@@ -123,6 +123,14 @@ The service order is:
 
 The remaining service images are already optimized JPEG assets. Prefer existing images unless the user requests replacements.
 
+## Lessons
+
+- `lessons/` holds standalone teaching pages, copied through to the site like `manuals/`. They keep their own design (not the portfolio layout) but carry the `K.` link home and the `MUSIC.EDUCATION.SOUND` tagline, and use the site favicon.
+- `lessons/five-beats/` (2026-10-28) is the SEMA beginner pairs activity "Five Beats": five genre drum patterns (house, boom bap, Afrobeats, amapiano, gengetone), chords and bassline, and a 32-bar arrangement in Ableton Live 12. `index.html`, `lesson.css` and `lesson.js` (Web Audio previews, timers, per-device tick boxes in localStorage), `sema-logo.png` (from the user's `SEMA LOGO BLACK.png`, resized to 240 px) and `five-beats.pdf` (the printable A4 version with no audio controls).
+- The page is not linked from the navigation, Works or Downloads; it is reached by its URL, `https://kimina.co.ke/lessons/five-beats/`. Add a link only when the user asks.
+- The same activity is also published as a private claude.ai artifact (https://claude.ai/artifact/VegXzi248kQCWaCj3BZ5az). The two copies are separate, so a content change must be made in both and the PDF regenerated (headless Chrome print of a copy with `.play`, `.timer`, `.progress`, `.layers` and `.chips` hidden).
+- 2026-10-28 verified: `npm run build` and `npm run check` pass; the page renders at desktop and 375 px width with no horizontal scroll and no console errors; the beat and song Play buttons advance their step and bar highlights. Not verified: audio by ear. Published to `main` on 2026-10-28 from branch `add/five-beats-lesson`.
+
 ## Technical constraints
 
 - The public site remains static and database-free. Eleventy is now used as a local/deployment-time generator; no framework or runtime backend is shipped to visitors.

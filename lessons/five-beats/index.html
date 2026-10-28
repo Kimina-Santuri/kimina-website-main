@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Five Beats · SEMA</title>
+<meta name="description" content="A beginner pairs activity from SEMA: build house, boom bap, Afrobeats, amapiano and gengetone drum patterns in Ableton Live, add chords and a bassline, and arrange a short song.">
+<link rel="icon" href="../../images/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=IBM+Plex+Sans:wght@400;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<link rel="stylesheet" href="lesson.css">
+</head>
+<body>
+<div class="site"><a href="../../index.html">K.</a><span>MUSIC.EDUCATION.SOUND</span></div>
+<div class="wrap">
+  <header>
+    <img class="logo" src="sema-logo.png" alt="SEMA, Santuri Electronic Music Academy">
+    <div class="titles">
+      <p class="eyebrow">SEMA · Beat-making in pairs · Ableton Live 12 · 28 Oct 2026</p>
+      <h1>Five Beats: Drums, Bass, Chords, Song</h1>
+    </div>
+    <p class="question">What makes a beat sound like house, hip-hop, Afrobeats, amapiano or gengetone?</p>
+    <p class="lede">Today you run the session yourselves, in pairs. First you'll build five drum patterns. Then you'll add chords and a bassline to your favourite one and arrange it into a short song. Each mission has something to hear on this page, a game, and a box to tick. Total time is about 3 hours.</p>
+    <a class="pdf" href="five-beats.pdf" download>Download the printable PDF</a>
+  </header>
+
+
+  <div class="rule">
+    <h3>Pair rules</h3>
+    <ul>
+      <li><b>Take turns.</b> One of you works in Ableton while the other reads the grid out loud and checks each note. Then swap and build the same thing on the other set.</li>
+      <li><b>Listen first.</b> Press Play on the page before you build, so you know what you're aiming for.</li>
+      <li><b>Kick first, then snare or clap, then hats.</b> Build one row at a time and listen after each.</li>
+      <li><b>Mistakes are fine.</b> If it sounds wrong, your partner compares the clip to the grid, note by note.</li>
+    </ul>
+  </div>
+
+  <div class="progress" aria-live="polite"><div class="bar"><i id="barFill"></i></div><span id="progressText">0 missions</span></div>
+
+  <section class="missions">
+    <p class="part">Part 1 · Drums</p>
+
+    <article class="mission" data-min="20">
+      <div class="strip"><span class="num">1</span><span class="mins">20<br>min</span><button class="timer" type="button">▶ 20:00</button></div>
+      <div class="body">
+        <h2>Set Up the Drum Machine<small>One bar, sixteen steps.</small></h2>
+        <ol>
+          <li>Open Ableton Live and start a new set. Make a <b>MIDI track</b>.</li>
+          <li>In the Browser, go to <b>Drums</b> and drag a kit (a 909 or 808 kit is perfect) onto the MIDI track. That's your <b>Drum Rack</b>.</li>
+          <li>Double-click an empty clip slot to make a <b>1-bar clip</b>. Double-click the clip to open the note editor.</li>
+          <li>Right-click the note editor and set the grid to <b>Fixed Grid → 1/16</b>. Now you see 16 boxes per bar.</li>
+          <li>Press <kbd>B</kbd> to switch to Draw mode. Click to add a note, click again to remove it.</li>
+        </ol>
+        <div class="seq">
+          <h3>How to count one bar</h3>
+          <div class="seq-scroll"><div class="count" id="countRow"></div></div>
+          <p class="tip">The bar has 4 beats. Each beat is split into 4 steps: "<b>1</b> e &amp; a, <b>2</b> e &amp; a…". The dark boxes are the beats. Every grid on this page uses step numbers 1–16.</p>
+        </div>
+        <div class="game"><h3>Game: Count Along</h3><p>Turn Live's metronome on and press play. Together, say "1 e &amp; a 2 e &amp; a 3 e &amp; a 4 e &amp; a" out loud in time. Then one of you calls out a random step number ("step 7!") and the other points to it on the screen.</p></div>
+        <label class="check"><input type="checkbox" id="m1"><span>Drum Rack loaded, 1-bar clip open, grid on 1/16, and we can both count the 16 steps.</span></label>
+      </div>
+    </article>
+
+    <article class="mission" data-min="15">
+      <div class="strip"><span class="num">2</span><span class="mins">15<br>min</span><button class="timer" type="button">▶ 15:00</button></div>
+      <div class="body">
+        <h2>House<small>Steady, danceable, kick on every beat.</small></h2>
+        <div class="facts"><span>124 BPM</span><span>909 kit</span><span>Four-on-the-floor</span></div>
+        <div class="seq" data-pattern="house"></div>
+        <ol>
+          <li>Set the tempo to <b>124</b>.</li>
+          <li><b>Kick</b> on every beat: steps 1, 5, 9, 13.</li>
+          <li><b>Clap</b> on beats 2 and 4: steps 5 and 13.</li>
+          <li><b>Closed hat</b> on every "&amp;": steps 3, 7, 11, 15. This offbeat hat is what makes house bounce.</li>
+        </ol>
+        <div class="game"><h3>Game: What's Missing?</h3><p>One of you closes your eyes. The other mutes one row (select its notes and press <kbd>0</kbd>). Guess which drum went missing. Swap and repeat three times.</p></div>
+        <label class="check"><input type="checkbox" id="m2"><span>We both built the house beat and it matches the grid.</span></label>
+      </div>
+    </article>
+
+    <article class="mission" data-min="15">
+      <div class="strip"><span class="num">3</span><span class="mins">15<br>min</span><button class="timer" type="button">▶ 15:00</button></div>
+      <div class="body">
+        <h2>Hip-Hop (Boom Bap)<small>Slower, heavy snare, a little swing.</small></h2>
+        <div class="facts"><span>90 BPM</span><span>808 or acoustic kit</span><span>Swing</span></div>
+        <div class="seq" data-pattern="hiphop"></div>
+        <ol>
+          <li>Make a new clip and set the tempo to <b>90</b>.</li>
+          <li><b>Kick</b> on steps 1, 8 and 11. That's the "boom".</li>
+          <li><b>Snare</b> on steps 5 and 13. That's the "bap".</li>
+          <li><b>Closed hat</b> on every other step: 1, 3, 5, 7, 9, 11, 13, 15.</li>
+          <li><b>Swing it:</b> open the Groove Pool (the wavy-lines button at the bottom left of the Browser), pick a 16th swing groove such as <b>MPC 16 Swing-58</b>, and drag it onto your clip.</li>
+        </ol>
+        <div class="game"><h3>Game: Beatbox It First</h3><p>Before building, one of you beatboxes the pattern: "boom … tss … BAP …". Then build it and compare. Was the beatbox right? Then toggle the groove on and off: can you both hear the swing?</p></div>
+        <label class="check"><input type="checkbox" id="m3"><span>We both built the boom bap beat and added swing.</span></label>
+      </div>
+    </article>
+
+    <article class="mission" data-min="15">
+      <div class="strip"><span class="num">4</span><span class="mins">15<br>min</span><button class="timer" type="button">▶ 15:00</button></div>
+      <div class="body">
+        <h2>Afrobeats<small>Bouncy kick, clap on 2 and 4, busy shaker.</small></h2>
+        <div class="facts"><span>104 BPM</span><span>Kit with shaker and rim</span><span>Bounce</span></div>
+        <div class="seq" data-pattern="afro"></div>
+        <ol>
+          <li>Make a new clip and set the tempo to <b>104</b>.</li>
+          <li><b>Kick</b> on steps 1, 4, 9 and 12. The early kicks on 4 and 12 give it the bounce.</li>
+          <li><b>Clap</b> on steps 5 and 13.</li>
+          <li><b>Rim</b> on steps 7 and 15.</li>
+          <li><b>Shaker</b> on all 16 steps. Then make the in-between shakers quieter: select a note and drag its velocity bar down in the lane under the notes. The grey boxes on the grid are the quieter ones.</li>
+        </ol>
+        <div class="game"><h3>Game: Move One Kick</h3><p>One of you moves one kick note one step left or right. The other listens and votes: still Afrobeats, or broken? Try three different moves. Which kick matters most?</p></div>
+        <label class="check"><input type="checkbox" id="m4"><span>We both built the Afrobeats pattern, with quiet and loud shakers.</span></label>
+      </div>
+    </article>
+
+    <article class="mission" data-min="10">
+      <div class="strip"><span class="num">5</span><span class="mins">10<br>min</span><button class="timer" type="button">▶ 10:00</button></div>
+      <div class="body">
+        <h2>Break<small>Save, then rest your ears.</small></h2>
+        <ol>
+          <li>Save your set: <code>YourName_FiveBeats.als</code></li>
+          <li>Turn the speakers down, take headphones off, drink some water.</li>
+        </ol>
+        <label class="check"><input type="checkbox" id="m5"><span>Saved and rested.</span></label>
+      </div>
+    </article>
+
+    <article class="mission" data-min="15">
+      <div class="strip"><span class="num">6</span><span class="mins">15<br>min</span><button class="timer" type="button">▶ 15:00</button></div>
+      <div class="body">
+        <h2>Amapiano<small>Four-on-the-floor kick, rolling shaker, and the log drum.</small></h2>
+        <div class="facts"><span>113 BPM</span><span>Any kit + a low tom</span><span>Log drum</span></div>
+        <div class="seq" data-pattern="piano"></div>
+        <ol>
+          <li>Make a new clip and set the tempo to <b>113</b>.</li>
+          <li><b>Kick</b> on steps 1, 5, 9 and 13, like house, but keep it softer.</li>
+          <li><b>Clap</b> on steps 5 and 13.</li>
+          <li><b>Shaker</b> on all 16 steps, louder on 3, 7, 11 and 15.</li>
+          <li><b>Log drum</b> on steps 4, 7, 11 and 14. Use the lowest tom in your kit for now. It's the deep, bouncy sound amapiano is known for, and in Part 2 it becomes your bassline.</li>
+        </ol>
+        <div class="game"><h3>Game: Kick or No Kick?</h3><p>Amapiano tracks often drop the kick out for whole sections. One of you mutes the kick for 4 bars, then brings it back. The other says when it feels better: with or without? Try the same trick on the house beat. Does it work as well?</p></div>
+        <label class="check"><input type="checkbox" id="m6"><span>We both built the amapiano pattern with a log drum.</span></label>
+      </div>
+    </article>
+
+    <article class="mission" data-min="15">
+      <div class="strip"><span class="num">7</span><span class="mins">15<br>min</span><button class="timer" type="button">▶ 15:00</button></div>
+      <div class="body">
+        <h2>Gengetone<small>Nairobi's street sound: hard kick and a dancehall snare.</small></h2>
+        <div class="facts"><span>100 BPM</span><span>808 or punchy kit</span><span>Dembow snare</span></div>
+        <div class="seq" data-pattern="genge"></div>
+        <ol>
+          <li>Make a new clip and set the tempo to <b>100</b>.</li>
+          <li><b>Kick</b> on every beat: steps 1, 5, 9, 13. Make it loud and punchy.</li>
+          <li><b>Snare</b> on steps 4, 7, 12 and 15. This is the dancehall "dembow" rhythm that gengetone is built on.</li>
+          <li><b>Closed hat</b> on every other step: 1, 3, 5, 7, 9, 11, 13, 15.</li>
+        </ol>
+        <div class="game"><h3>Game: Desk Drummers</h3><p>Play the beat. One of you taps the kick on the desk while the other claps only the snare. Then mute the snare in Live and keep clapping it from memory for 4 bars. Unmute: are you still in time? Swap parts.</p></div>
+        <label class="check"><input type="checkbox" id="m7"><span>We both built the gengetone beat and can clap the dembow snare.</span></label>
+      </div>
+    </article>
+
+    <p class="part">Part 2 · Make it a song</p>
+
+    <article class="mission" data-min="30">
+      <div class="strip"><span class="num">8</span><span class="mins">30<br>min</span><button class="timer" type="button">▶ 30:00</button></div>
+      <div class="body">
+        <h2>Chords &amp; Bassline<small>Four chords and a bassline on top of your favourite beat.</small></h2>
+        <div class="facts"><span>Key: A minor</span><span>Am – F – C – G</span><span>One chord per bar</span></div>
+        <div class="song" id="song">
+          <h3>Hear it with each beat</h3>
+          <div class="chips" role="group" aria-label="Choose a beat">
+            <button class="chip" type="button" data-g="house" aria-pressed="false">House</button>
+            <button class="chip" type="button" data-g="hiphop" aria-pressed="false">Hip-hop</button>
+            <button class="chip" type="button" data-g="afro" aria-pressed="false">Afrobeats</button>
+            <button class="chip" type="button" data-g="piano" aria-pressed="true">Amapiano</button>
+            <button class="chip" type="button" data-g="genge" aria-pressed="false">Gengetone</button>
+          </div>
+          <div class="bars" id="bars">
+            <div><b>Am</b><span>A C E</span></div>
+            <div><b>F</b><span>F A C</span></div>
+            <div><b>C</b><span>C E G</span></div>
+            <div><b>G</b><span>G B D</span></div>
+          </div>
+          <div class="seq-scroll"><div class="grid" id="bassGrid"></div></div>
+          <div class="layers">
+            <label><input type="checkbox" id="layDrums" checked> Drums</label>
+            <label><input type="checkbox" id="layBass" checked> Bass</label>
+            <label><input type="checkbox" id="layChords" checked> Chords</label>
+          </div>
+          <button class="play" type="button" id="songPlay">▶ Play 4 bars</button>
+        </div>
+        <p><b>Chords</b></p>
+        <ol>
+          <li>Make a new MIDI track and drag on a keys or pad sound from <b>Instruments</b> (any piano or pad preset is fine).</li>
+          <li>Make a <b>4-bar clip</b>. In the clip's Notes panel, set the scale to <b>A Minor</b> and switch Scale on. The in-key rows light up, so you can't hit a wrong note.</li>
+          <li>Draw one chord per bar, each note lasting the whole bar:
+            <div class="tscroll"><table>
+              <tr><th>Bar</th><th>Chord</th><th>Notes</th></tr>
+              <tr><td>1</td><td>A minor</td><td class="mono">A3 · C4 · E4</td></tr>
+              <tr><td>2</td><td>F major</td><td class="mono">F3 · A3 · C4</td></tr>
+              <tr><td>3</td><td>C major</td><td class="mono">C4 · E4 · G4</td></tr>
+              <tr><td>4</td><td>G major</td><td class="mono">G3 · B3 · D4</td></tr>
+            </table></div>
+          </li>
+        </ol>
+        <p><b>Bassline</b></p>
+        <ol>
+          <li>Make another MIDI track with a bass sound (search the Browser for "bass"). For amapiano, use your log drum tom instead.</li>
+          <li>Make a 4-bar clip. The bass plays the <b>root</b> of each chord: <b>A</b> in bar 1, <b>F</b> in bar 2, <b>C</b> in bar 3, <b>G</b> in bar 4. Use the octave around A1–A2.</li>
+          <li>Put the bass notes on the steps shown in the "Bass" row above. It changes with each genre: house bass sits on the offbeats, hip-hop and Afrobeats bass follows the kick.</li>
+        </ol>
+        <div class="game"><h3>Game: Who Left the Band?</h3><p>Use the Drums, Bass and Chords switches above (or mute tracks in Live). One of you closes your eyes, the other turns one layer off. Name the missing layer. Then try a mood swap: play the chords in the order <b>F – G – Am – Am</b>. Happier or sadder? Keep the order you like.</p></div>
+        <label class="check"><input type="checkbox" id="m8"><span>We both have a 4-bar chord clip and a bassline that follow the same four chords.</span></label>
+      </div>
+    </article>
+
+    <article class="mission" data-min="25">
+      <div class="strip"><span class="num">9</span><span class="mins">25<br>min</span><button class="timer" type="button">▶ 25:00</button></div>
+      <div class="body">
+        <h2>Simple Arrangement<small>Turn a 4-bar loop into a 32-bar song.</small></h2>
+        <div class="facts"><span>4 sections</span><span>8 bars each</span><span>Add, then take away</span></div>
+        <div class="seq-scroll"><div class="arr" id="arr" role="img" aria-label="Arrangement: Intro has hats and chords. Build adds snare or clap and bass. Drop has everything including kick. Outro has hats, chords and bass."></div></div>
+        <ol>
+          <li>Make a copy of your drum clip and call it <b>Drums – no kick</b>. Delete the kick notes in the copy.</li>
+          <li>Press <kbd>Tab</kbd> to switch to <b>Arrangement View</b>.</li>
+          <li>Drag your clips onto the timeline following the chart. Select a clip and press <kbd>Cmd</kbd>+<kbd>D</kbd> (Mac) or <kbd>Ctrl</kbd>+<kbd>D</kbd> (Windows) to repeat it until it fills 8 bars.</li>
+          <li><b>Intro (bars 1–8):</b> hats or shaker and chords only.</li>
+          <li><b>Build (bars 9–16):</b> add the bass and the clap or snare. Still no kick.</li>
+          <li><b>Drop (bars 17–24):</b> everything, with the full drum clip and kick.</li>
+          <li><b>Outro (bars 25–32):</b> take the kick and snare out again, so it's chords, bass and hats.</li>
+        </ol>
+        <p class="tip">Bonus: in the last bar of the Build, delete all the drums for one bar. The silence makes the Drop hit harder.</p>
+        <div class="game"><h3>Game: Where Are We?</h3><p>One of you clicks somewhere random on the timeline and presses play while the other looks away. The listener names the section (Intro, Build, Drop or Outro) by ear. Three in a row and you swap.</p></div>
+        <label class="check"><input type="checkbox" id="m9"><span>We both have a 32-bar song with Intro, Build, Drop and Outro.</span></label>
+      </div>
+    </article>
+
+    <article class="mission" data-min="20">
+      <div class="strip"><span class="num">10</span><span class="mins">20<br>min</span><button class="timer" type="button">▶ 20:00</button></div>
+      <div class="body">
+        <h2>Listening Party<small>Play your song to another pair.</small></h2>
+        <ol>
+          <li>Swap seats with another pair.</li>
+          <li>Play each song from the start. Listeners don't look at the screen.</li>
+        </ol>
+        <div class="game"><h3>Game: Name That Genre</h3><p>For each song, the listeners guess the genre and say which drum gave it away. One point per correct genre, one bonus point for naming the right drum. Then they say the exact moment the Drop started. One point if they're right to the bar.</p></div>
+        <label class="check"><input type="checkbox" id="m10"><span>We played our songs to another pair and heard theirs.</span></label>
+      </div>
+    </article>
+  </section>
+
+  <section class="rule">
+    <h2>Before you leave</h2>
+    <ol>
+      <li>Save your set. Export your song as a WAV: <code>Name_Genre_Song.wav</code>. Also export each of the five drum loops (4 bars each).</li>
+      <li>Upload them to the usual class folder.</li>
+      <li>Write three sentences in your notes:
+        <ul>
+          <li>The genre I found easiest was … because …</li>
+          <li>The drum that makes the biggest difference between genres is …</li>
+          <li>Next time I want to try …</li>
+        </ul>
+      </li>
+    </ol>
+  </section>
+</div>
+<script src="lesson.js"></script>
+</body>
+</html>
