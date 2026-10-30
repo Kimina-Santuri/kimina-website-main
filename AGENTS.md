@@ -129,6 +129,7 @@ The remaining service images are already optimized JPEG assets. Prefer existing 
 - `lessons/five-beats/` (2026-10-28) is the SEMA beginner pairs activity "Five Beats": five genre drum patterns (house, boom bap, Afrobeats, amapiano, gengetone), chords and bassline, and a 32-bar arrangement in Ableton Live 12. `index.html`, `lesson.css` and `lesson.js` (Web Audio previews, timers, per-device tick boxes in localStorage), `sema-logo.png` (from the user's `SEMA LOGO BLACK.png`, resized to 240 px) and `five-beats.pdf` (the printable A4 version with no audio controls).
 - The page is not linked from the navigation, Works or Downloads; it is reached by its URL, `https://kimina.co.ke/lessons/five-beats/`. Add a link only when the user asks.
 - The same activity is also published as a private claude.ai artifact (https://claude.ai/artifact/VegXzi248kQCWaCj3BZ5az). The two copies are separate, so a content change must be made in both and the PDF regenerated (headless Chrome print of a copy with `.play`, `.timer`, `.progress`, `.layers` and `.chips` hidden).
+- `lessons/santuri-dna/` (2026-10-30) is the learner-facing pairs workbook for Lesson 12, "Santuri DNA: Music Industry and Culture": six no-screen tasks (listen and ask, influence map, consent and credit cases, follow the release, project interviews, ethics check and log). `index.html`, `lesson.css` (derived from Five Beats, without the sequencer styles; print rules hide the interactive parts), `lesson.js` (timers and per-device tick boxes only) and `santuri-dna.pdf` (A4, headless Chrome print of the page itself). It is also a claude.ai doc (https://claude.ai/artifact/Ui4qurdkK1sZ7r2FXrkb4d), with a facilitator guide at https://claude.ai/artifact/JQs1MXh6WWpgBKopMdChdy; the copies are separate. Reached by URL only: `https://kimina.co.ke/lessons/santuri-dna/`.
 - 2026-10-28 verified: `npm run build` and `npm run check` pass; the page renders at desktop and 375 px width with no horizontal scroll and no console errors; the beat and song Play buttons advance their step and bar highlights. Not verified: audio by ear. Published to `main` on 2026-10-28 from branch `add/five-beats-lesson`.
 
 ## Technical constraints
@@ -168,3 +169,16 @@ The remaining service images are already optimized JPEG assets. Prefer existing 
 - Local API verification covers collection reads, mutation-token rejection, save/read-back, uploads, Git diagnostics and branch-locked publishing.
 
 Last reviewed: 2026-09-02.
+
+## 2026-10-28: PUSH 2 × TRAKTOR cheat sheet
+
+- `downloads/push2-traktor/cheatsheet.svg` replaced with the repo's new one (stem pads solid/off, solid hotcues and
+  loops). Built with `npm run build`; only that file was committed (unrelated untracked SEMA files left alone) and
+  pushed (cbd448f). Not checked: the live page after deploy.
+
+## 2026-10-30: Santuri DNA pairs workbook
+
+- Added `lessons/santuri-dna/` on branch `add/santuri-dna-lesson` (see Lessons). Verified: `npm run build` and
+  `npm run check` pass; renders at 375 px with no horizontal scroll and no console errors; tick boxes update the
+  progress bar; the PDF is 7 A4 pages with timers, tick boxes and the site bar hidden. Not verified: timer beep by ear,
+  the live page after deploy. Not committed or pushed yet.
