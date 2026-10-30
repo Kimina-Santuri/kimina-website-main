@@ -180,5 +180,5 @@ Last reviewed: 2026-09-02.
 
 - Added `lessons/santuri-dna/` on branch `add/santuri-dna-lesson` (see Lessons). Verified: `npm run build` and
   `npm run check` pass; renders at 375 px with no horizontal scroll and no console errors; tick boxes update the
-  progress bar; the PDF is 7 A4 pages with timers, tick boxes and the site bar hidden. Not verified: timer beep by ear,
-  the live page after deploy. Not committed or pushed yet.
+  progress bar; the PDF is 7 A4 pages with timers, tick boxes and the site bar hidden. Not verified: timer beep by ear.
+  Published to `main` (c3d049a) and confirmed live with the PDF reachable.
