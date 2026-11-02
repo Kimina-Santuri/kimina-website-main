@@ -245,3 +245,27 @@ Last reviewed: 2026-09-02.
   the first save committed c31fc87 (YAML formatting only: quotes dropped from five alt texts, same as the Mac CMS
   writes), the second said "No changes to save". So list, read and a real commit work. Not verified: an upload, the
   deploy-status panel after a save.
+
+## 2026-11-02: Stage 3, Contact enquiries and records in /admin
+
+- Contact page: a form (name, email or phone, topic, message) below the email routes, which stay. It posts to the
+  public Edge Function `enquiry` (`supabase/functions/enquiry/index.ts`, `verify_jwt` off). `contact-form.js` sends it
+  as JSON and shows the reply inline; without JavaScript it is a normal form post and the function redirects to
+  `contact.html#enquiry-sent` / `-error` / `-limited`, shown by CSS `:target` alone.
+- Spam guards: hidden `website` trap field and a 3-second minimum from page load (both answered with a fake success),
+  then `public.submit_enquiry()` (migration `202611020003_contact_enquiries.sql`, service role only) allows 5 per hashed
+  IP per hour and 60 a day in total. Raw IPs are never stored; attempt rows are deleted after two days.
+- `enquiries.topic` added (collaboration, education, live-sound, booking, press, general); contact enquiries must have
+  an email or phone. There is no email notification yet: new enquiries show as a red count on Enquiries in /admin.
+- `/admin` now has Website (the CMS) and Records: **Enquiries** (status, notes, email/phone/WhatsApp links, "Add to
+  people"), **People** (clients and students; their invoices, payments and lessons), **Invoices** (new invoice with
+  the service price filled in, record M-Pesa/cash/bank payments, void, Print / PDF). `admin/records.js` talks to the
+  tables directly with the admin's token; RLS keeps them admin-only. Public-form values are always set as text.
+- Verified: migration applied; anon cannot call `submit_enquiry` or read any records query (each one parses and is
+  refused); the function stores real messages, drops the trap, rejects a form with no email/phone, rate-limits on the
+  sixth message, and redirects a no-JS post; the Contact page form sends from the browser and clears; Records render
+  with sample data at 375 px and desktop with no horizontal scroll and no errors; invoice print content is right.
+  Test rows were deleted. The user's signed-in test sent a real Contact message and the Records screens read
+  enquiries, people and invoices (200 in the API logs), but no person, invoice or payment was ever written (no POST or
+  PATCH logged, tables empty). Not verified: creating people, invoices and payments; the printed invoice on paper.
+  "Add to people" now shows its error instead of failing silently.

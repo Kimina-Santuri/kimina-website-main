@@ -226,3 +226,21 @@ a:focus-visible { outline:2px solid var(--ink); outline-offset:5px; }
   .project-credits .text-link { grid-column:1; }
 }
 @media (prefers-reduced-motion:reduce) { html{scroll-behavior:auto}body{animation:none;transition:none}.side-nav a::after,.text-link::after,.download-button,.stellar-player__dot,.release-player__controls button{transition:none} }
+
+/* Contact form */
+.enquiry-form { width:min(680px,100%); margin:0 0 50px; display:grid; gap:18px; }
+.enquiry-form .section-label { margin:0; }
+.enquiry-form label { display:grid; gap:7px; font-size:.62rem; letter-spacing:.06em; text-transform:uppercase; }
+.enquiry-form input, .enquiry-form select, .enquiry-form textarea { width:100%; min-height:44px; border:1px solid var(--ink); border-radius:0; padding:11px 12px; color:var(--ink); background:#fff; font:inherit; font-size:.8rem; letter-spacing:0; text-transform:none; }
+.enquiry-form textarea { resize:vertical; line-height:1.6; }
+.enquiry-pair { display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+.enquiry-hint { margin:-10px 0 0; font-size:.6rem; color:#555; }
+.enquiry-form button { justify-self:start; min-height:44px; border:1px solid var(--ink); border-radius:0; padding:11px 18px; color:#fff; background:var(--ink); font:inherit; font-size:.66rem; letter-spacing:.06em; text-transform:uppercase; cursor:pointer; }
+.enquiry-form button:disabled { opacity:.5; cursor:wait; }
+.enquiry-status { margin:0; min-height:1.4em; font-size:.72rem; line-height:1.6; }
+.enquiry-status.is-error, .enquiry-result--error { color:#b00020; }
+.enquiry-trap { position:absolute; left:-10000px; width:1px; height:1px; overflow:hidden; }
+.enquiry-result { display:none; margin:0; padding:12px 0; border-top:1px solid var(--ink); border-bottom:1px solid var(--ink); font-size:.72rem; line-height:1.6; }
+.enquiry-result:target { display:block; }
+@media (max-width:640px) { .enquiry-pair { grid-template-columns:1fr; } }
+.enquiry-form input:focus-visible, .enquiry-form select:focus-visible, .enquiry-form textarea:focus-visible, .enquiry-form button:focus-visible { outline:2px solid var(--ink); outline-offset:2px; }

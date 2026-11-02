@@ -365,7 +365,16 @@ function markSelectedEntry() {
   for (const button of entries.querySelectorAll("button")) button.setAttribute("aria-current", String(button.dataset.filename === state.filename));
 }
 
+// Switches the main area between the website collections and the records screens (records.js).
+function showArea(area) {
+  $("#cms-workspace").hidden = area !== "cms";
+  $("#records").hidden = area !== "records";
+  if (area === "records") for (const button of collections.querySelectorAll("button")) button.setAttribute("aria-current", "false");
+  else for (const button of document.querySelectorAll("#record-nav button")) button.setAttribute("aria-current", "false");
+}
+
 async function chooseCollection(type) {
+  showArea("cms");
   state.type = type;
   state.filename = null;
   form.hidden = true;
@@ -470,8 +479,20 @@ async function openStudio() {
   }
   if (!initial.githubReady) $("#welcome").insertAdjacentHTML("afterbegin", "<p><strong>Saving is not set up yet:</strong> the GitHub token is missing from the Supabase secrets.</p>");
   refreshDeploy();
+  window.kiminaRecords?.init();
   await chooseCollection(state.type);
 }
+
+// Shared with records.js, which reads and writes the records tables directly; the
+// database rules (admins only) are what protect them.
+window.kiminaAdmin = {
+  SUPABASE_URL,
+  SUPABASE_KEY,
+  freshToken,
+  showArea,
+  hasUnsavedUploads: () => state.uploads.size > 0 && !confirmLeave(),
+  showSignIn
+};
 
 state.session = loadSession();
 if (state.session) openStudio().catch((error) => showSignIn(error.message === "Please sign in again." ? "" : error.message));

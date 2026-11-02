@@ -30,7 +30,16 @@
 
   <div class="shell" id="studio" hidden>
     <aside>
-      <nav id="collections" aria-label="Content collections"></nav>
+      <div class="nav-groups">
+        <p class="eyebrow">Website</p>
+        <nav id="collections" aria-label="Website content"></nav>
+        <p class="eyebrow">Records</p>
+        <nav id="record-nav" aria-label="Records">
+          <button type="button" data-records="enquiries">Enquiries <span class="badge" id="new-enquiries"></span></button>
+          <button type="button" data-records="people">People</button>
+          <button type="button" data-records="invoices">Invoices</button>
+        </nav>
+      </div>
       <div class="side-panel">
         <p class="eyebrow">Live site</p>
         <p id="deploy-summary">Checking…</p>
@@ -42,7 +51,14 @@
       <section class="toolbar">
         <div><p class="eyebrow" id="collection-label">Content</p><h1 id="editor-title">Select an entry</h1></div>
       </section>
-      <div class="workspace">
+      <div class="workspace records" id="records" hidden>
+        <section class="entry-list" aria-label="Records list">
+          <div id="records-tools"></div>
+          <div id="records-list"></div>
+        </section>
+        <section class="editor" id="records-detail"></section>
+      </div>
+      <div class="workspace" id="cms-workspace">
         <section class="entry-list" aria-label="Entries">
           <button class="new-entry" id="new-entry" type="button">＋ New entry</button>
           <div id="entries"></div>
@@ -82,6 +98,8 @@
       </div>
     </main>
   </div>
+  <div id="print-area" aria-hidden="true"></div>
   <script src="admin.js" defer></script>
+  <script src="records.js" defer></script>
 </body>
 </html>

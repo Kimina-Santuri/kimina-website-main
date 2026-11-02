@@ -30,9 +30,37 @@
       <a href="mailto:kimina@santuri.org?subject=Live%20Sound%20Enquiry"><span>Live sound</span><span>↗</span></a>
       <a href="mailto:kimina@santuri.org?subject=Press%20or%20General%20Enquiry"><span>Press &amp; general</span><span>↗</span></a>
     </div>
+    <form class="enquiry-form" id="enquiry" action="https://akswkkcihswupkunstrj.supabase.co/functions/v1/enquiry" method="post">
+      <p class="section-label">Send a message</p>
+      <p class="enquiry-result" id="enquiry-sent" tabindex="-1">Thank you. Your message has been sent.</p>
+      <p class="enquiry-result enquiry-result--error" id="enquiry-error" tabindex="-1">The message could not be sent. Please check the form or email kimina@santuri.org.</p>
+      <p class="enquiry-result enquiry-result--error" id="enquiry-limited" tabindex="-1">Too many messages for now. Please try again later or email kimina@santuri.org.</p>
+      <label><span>Name</span><input name="name" type="text" autocomplete="name" maxlength="160" required></label>
+      <div class="enquiry-pair">
+        <label><span>Email</span><input name="email" type="email" autocomplete="email" maxlength="254"></label>
+        <label><span>Phone or WhatsApp</span><input name="phone" type="tel" autocomplete="tel" maxlength="40" pattern="[+0-9 ()\-]{7,40}"></label>
+      </div>
+      <p class="enquiry-hint">Email or phone, so I can reply.</p>
+      <label><span>About</span>
+        <select name="topic">
+          <option value="collaboration">Creative collaboration</option>
+          <option value="education">Workshops &amp; education</option>
+          <option value="live-sound">Live sound</option>
+          <option value="booking">Studio or tutoring</option>
+          <option value="press">Press</option>
+          <option value="general" selected>General</option>
+        </select>
+      </label>
+      <label><span>Message</span><textarea name="message" rows="6" maxlength="5000" required></textarea></label>
+      <label class="enquiry-trap" aria-hidden="true"><span>Leave this empty</span><input name="website" type="text" tabindex="-1" autocomplete="off"></label>
+      <input name="started" type="hidden" value="">
+      <p class="enquiry-status" role="status" aria-live="polite"></p>
+      <button type="submit">Send message <span aria-hidden="true">→</span></button>
+    </form>
     <p class="contact-note">For one-to-one services and studio sessions, use the <a href="bookings.html">bookings page</a>.</p>
   </main>
   <script src="landing.js" defer></script>
   <script src="stellar-player.js" defer></script>
+  <script src="contact-form.js" defer></script>
 </body>
 </html>

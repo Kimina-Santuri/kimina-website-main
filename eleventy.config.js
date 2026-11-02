@@ -51,6 +51,7 @@ module.exports = function (eleventyConfig) {
     "_redirects",
     "bookings.css",
     "bookings.js",
+    "contact-form.js",
     "landing.css",
     "landing.js",
     "release-player.js",
