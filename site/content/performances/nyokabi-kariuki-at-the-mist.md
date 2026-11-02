@@ -34,19 +34,19 @@ gallery:
     caption: Poster
     wide: false
   - src: images/uploads/nyokabi-kariuki-at-the-mist/img-7701-2-jpg.jpg
-    alt: "Kimina playing at the decks in The Mist's basement while UNJUST performs behind them, foil-draped wall and graffiti in the background"
+    alt: Kimina playing at the decks in The Mist's basement while UNJUST performs behind them, foil-draped wall and graffiti in the background
     caption: ""
     wide: false
   - src: images/uploads/nyokabi-kariuki-at-the-mist/img-7672-2-jpg.jpg
-    alt: "Kimina at a microphone and controller beside UNJUST playing a wind instrument, in front of a translucent plastic backdrop"
+    alt: Kimina at a microphone and controller beside UNJUST playing a wind instrument, in front of a translucent plastic backdrop
     caption: ""
     wide: false
   - src: images/uploads/nyokabi-kariuki-at-the-mist/img-7703-3-jpg.jpg
-    alt: "Wider view of Kimina at the mixer with UNJUST beside them, a speaker stack and graffiti-covered concrete wall to the right"
+    alt: Wider view of Kimina at the mixer with UNJUST beside them, a speaker stack and graffiti-covered concrete wall to the right
     caption: ""
     wide: false
   - src: images/uploads/nyokabi-kariuki-at-the-mist/img-7719-2-jpg.jpg
-    alt: "A packed crowd standing in the low-ceilinged concrete basement of The Mist, facing the performance area"
+    alt: A packed crowd standing in the low-ceilinged concrete basement of The Mist, facing the performance area
     caption: ""
     wide: false
   - src: images/uploads/nyokabi-kariuki-at-the-mist/img-7651-2-jpg.jpg
@@ -54,7 +54,7 @@ gallery:
     caption: ""
     wide: false
   - src: images/uploads/nyokabi-kariuki-at-the-mist/img-7887-2-jpg.jpg
-    alt: "Audience members seen from behind, gathered close to the performers in the dimly lit basement"
+    alt: Audience members seen from behind, gathered close to the performers in the dimly lit basement
     caption: ""
     wide: false
 credits:
