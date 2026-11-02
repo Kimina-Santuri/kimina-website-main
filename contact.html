@@ -23,18 +23,18 @@
     <p class="section-label">04 / Contact</p>
     <h1>Let’s talk.</h1>
     <p>For projects, collaborations, workshops, live sound and general enquiries.</p>
-    <a class="contact-email" href="mailto:kimina@santuri.org">kimina@santuri.org <span aria-hidden="true">↗</span></a>
+    <a class="contact-email" href="#enquiry">Send a message <span aria-hidden="true">↓</span></a>
     <div class="contact-routes">
-      <a href="mailto:kimina@santuri.org?subject=Creative%20Collaboration"><span>Creative collaborations</span><span>↗</span></a>
-      <a href="mailto:kimina@santuri.org?subject=Workshop%20or%20Education%20Enquiry"><span>Workshops &amp; education</span><span>↗</span></a>
-      <a href="mailto:kimina@santuri.org?subject=Live%20Sound%20Enquiry"><span>Live sound</span><span>↗</span></a>
-      <a href="mailto:kimina@santuri.org?subject=Press%20or%20General%20Enquiry"><span>Press &amp; general</span><span>↗</span></a>
+      <a href="?topic=collaboration#enquiry" data-topic="collaboration"><span>Creative collaborations</span><span aria-hidden="true">↓</span></a>
+      <a href="?topic=education#enquiry" data-topic="education"><span>Workshops &amp; education</span><span aria-hidden="true">↓</span></a>
+      <a href="?topic=live-sound#enquiry" data-topic="live-sound"><span>Live sound</span><span aria-hidden="true">↓</span></a>
+      <a href="?topic=press#enquiry" data-topic="press"><span>Press &amp; general</span><span aria-hidden="true">↓</span></a>
     </div>
     <form class="enquiry-form" id="enquiry" action="https://akswkkcihswupkunstrj.supabase.co/functions/v1/enquiry" method="post">
       <p class="section-label">Send a message</p>
       <p class="enquiry-result" id="enquiry-sent" tabindex="-1">Thank you. Your message has been sent.</p>
-      <p class="enquiry-result enquiry-result--error" id="enquiry-error" tabindex="-1">The message could not be sent. Please check the form or email kimina@santuri.org.</p>
-      <p class="enquiry-result enquiry-result--error" id="enquiry-limited" tabindex="-1">Too many messages for now. Please try again later or email kimina@santuri.org.</p>
+      <p class="enquiry-result enquiry-result--error" id="enquiry-error" tabindex="-1">The message could not be sent. Please check the form and try again.</p>
+      <p class="enquiry-result enquiry-result--error" id="enquiry-limited" tabindex="-1">Too many messages for now. Please try again later.</p>
       <label><span>Name</span><input name="name" type="text" autocomplete="name" maxlength="160" required></label>
       <div class="enquiry-pair">
         <label><span>Email</span><input name="email" type="email" autocomplete="email" maxlength="254"></label>

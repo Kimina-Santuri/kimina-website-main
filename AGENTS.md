@@ -85,7 +85,8 @@ Every page includes the dependency-free Web Audio stellar drone from `stellar-pl
 - `about.html` contains the full biography originally written for the booking page. Preserve its wording unless the user explicitly requests a rewrite.
 - The About portrait-and-copy composition is deliberately smaller and centered within the available page area, followed by a responsive editorial gallery using the seven photographs in `images/about/`.
 - The shorter biography on the landing page is an introduction and remains separate from the full About text.
-- Contact provides email routes for creative collaborations, workshops and education, live sound, and press/general enquiries.
+- Contact provides routes for creative collaborations, workshops and education, live sound, and press/general enquiries. Since 2026-11-02 they open the Contact form with that topic chosen (`?topic=…#enquiry`).
+- Do not publish Kimina's email address anywhere on the site (user's request, 2026-11-02, because of bots and spam). Visitors reach Kimina through the Contact form; outgoing emails may still come from kimina@santuri.org.
 - Do not add social links until the user supplies the actual profile URLs.
 
 ## Booking decisions to preserve
@@ -269,3 +270,10 @@ Last reviewed: 2026-09-02.
   enquiries, people and invoices (200 in the API logs), but no person, invoice or payment was ever written (no POST or
   PATCH logged, tables empty). Not verified: creating people, invoices and payments; the printed invoice on paper.
   "Add to people" now shows its error instead of failing silently.
+
+## 2026-11-02: Email address removed from the site
+
+- User's request (bots and spam). Contact: the big email link is now "Send a message ↓" to the form; the four routes
+  link to `?topic=…#enquiry` and `contact-form.js` chooses that topic. Bookings: "Email Kimina" became "Send a message"
+  (`contact.html?topic=booking#enquiry`). Error texts in the form, `contact-form.js` and the `enquiry` function no
+  longer mention the address. The printed invoice in /admin still shows it (it goes to the client, not the site).

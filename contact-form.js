@@ -7,6 +7,18 @@
   const button = form.querySelector('button[type="submit"]');
   form.elements.started.value = String(Date.now());
 
+  // Topic links (?topic=education#enquiry) choose the topic; they also work as plain links.
+  const chooseTopic = (topic) => {
+    if (topic && [...form.elements.topic.options].some((option) => option.value === topic)) form.elements.topic.value = topic;
+  };
+  chooseTopic(new URLSearchParams(window.location.search).get("topic"));
+  document.querySelectorAll("a[data-topic]").forEach((link) => link.addEventListener("click", (event) => {
+    event.preventDefault();
+    chooseTopic(link.dataset.topic);
+    form.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+    form.elements.name.focus({ preventScroll: true });
+  }));
+
   const show = (message, error = false) => {
     status.textContent = message;
     status.classList.toggle("is-error", error);
@@ -35,7 +47,7 @@
         form.elements.started.value = String(Date.now());
       }
     } catch {
-      show("No connection. Your message is still here; try again, or email kimina@santuri.org.", true);
+      show("No connection. Your message is still here; try again when you are back online.", true);
     }
     button.disabled = false;
   });

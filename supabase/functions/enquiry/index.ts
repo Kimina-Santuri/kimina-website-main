@@ -86,10 +86,10 @@ Deno.serve(async (request) => {
   });
   if (!response.ok) {
     console.error("submit_enquiry failed", response.status, await response.text());
-    return answer(500, "error", "Something went wrong. Please email kimina@santuri.org instead.");
+    return answer(500, "error", "Something went wrong. Please try again later.");
   }
   if ((await response.json()) === "limited") {
-    return answer(429, "limited", "Too many messages for now. Please try again later or email kimina@santuri.org.");
+    return answer(429, "limited", "Too many messages for now. Please try again later.");
   }
   return answer(200, "sent", "Thank you. Your message has been sent.");
 });
