@@ -58,7 +58,8 @@ module.exports = function (eleventyConfig) {
     "images",
     "downloads",
     "manuals",
-    "lessons"
+    "lessons",
+    "admin"
   ].forEach((asset) => eleventyConfig.addPassthroughCopy(asset));
 
   return {

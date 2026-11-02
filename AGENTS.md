@@ -220,4 +220,28 @@ Last reviewed: 2026-09-02.
 - `.github/workflows/supabase-keepalive.yml` calls it Mondays and Thursdays 06:00 UTC (09:00 Nairobi), plus a manual
   "Run workflow" button. It holds the project's publishable key (`sb_publishable_…`), which is public by design.
 - Verified: `curl` to `/rest/v1/rpc/ping` with that key returns `"ok"`; the same key reading `people` is refused
-  (permission denied). Not verified: the workflow running on GitHub (it only runs once it is on `main`).
+  (permission denied). A manual run on GitHub replied "ok".
+
+## 2026-11-02: Stage 2, hosted CMS at /admin
+
+- `admin/` (`index.html`, `admin.css`, `admin.js`; copied through by Eleventy, `noindex`): sign-in with Supabase Auth
+  email and password, then the same forms as the Mac CMS. **Save and publish** makes one commit on `main` and the
+  existing deploy updates the site in about two minutes; the side panel shows the latest deploy run (polls after a save).
+  Photos (JPEG/PNG/WebP) are resized in the browser to 2400 px on the long side before upload; audio up to 25 MB.
+  Uploads become GitHub blobs at once and are committed with the next save, only if the entry still uses them.
+- `supabase/functions/cms/index.ts` (Edge Function `cms`, deployed, `verify_jwt` off because it checks the user itself
+  through `/auth/v1/user` and `public.is_admin()`): actions `state`, `list`, `read`, `upload`, `save`, `status`.
+  Same field rules as `cms/server.js`; refuses a save if the file changed since it was opened (sha check) or the new
+  slug already exists; retries once if `main` moved. CORS allows kimina.co.ke and 127.0.0.1/localhost:8080.
+- Needs the Edge Function secret `GITHUB_TOKEN`: a fine-grained token for `Kimina-Santuri/kimina-website-main` only,
+  Contents read/write and Actions read, 1-year expiry. Renew it before it expires (the page says so if GitHub refuses it).
+- `supabase/functions/cms/schema.json` is generated from `cms/schema.js` by `node tools/export-cms-schema.js`;
+  `npm run check` fails if it is out of date. After changing the schema, regenerate it and redeploy the function.
+- The Mac CMS (`npm run cms`) stays as a fallback; both write the same files. Pull before using the Mac CMS after
+  saving on /admin, or its publish will refuse (GitHub ahead).
+- Verified: `npm run build` and `npm run check` pass; the function refuses no token, the publishable key and a forged
+  token (401); CORS preflight from kimina.co.ke passes; sign-in and studio layouts at 375 px and desktop, no horizontal
+  scroll, no console errors. The user signed in locally with `GITHUB_TOKEN` set and saved the Nyokabi entry unchanged:
+  the first save committed c31fc87 (YAML formatting only: quotes dropped from five alt texts, same as the Mac CMS
+  writes), the second said "No changes to save". So list, read and a real commit work. Not verified: an upload, the
+  deploy-status panel after a save.
