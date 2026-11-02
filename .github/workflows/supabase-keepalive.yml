@@ -1,0 +1,28 @@
+name: Keep Supabase awake
+
+# Free Supabase projects pause after about a week without activity. This calls the
+# harmless public.ping() function twice a week (times are UTC: 06:00 = 09:00 Nairobi).
+on:
+  schedule:
+    - cron: "0 6 * * 1,4"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    env:
+      # The URL and publishable key are public by design (the /admin page will ship them
+      # too); the database rules, not the key, keep the records private.
+      SUPABASE_URL: https://akswkkcihswupkunstrj.supabase.co
+      SUPABASE_KEY: sb_publishable_pNIsRMByIlC-hplzg9cqOg_4MNfno5Q
+    steps:
+      - name: Call public.ping()
+        run: |
+          reply=$(curl -sS --fail-with-body --retry 3 --retry-delay 10 -X POST \
+            "$SUPABASE_URL/rest/v1/rpc/ping" \
+            -H "apikey: $SUPABASE_KEY" -H "Content-Type: application/json" -d '{}')
+          echo "Supabase replied: $reply"
+          test "$reply" = '"ok"'

@@ -182,3 +182,42 @@ Last reviewed: 2026-09-02.
   `npm run check` pass; renders at 375 px with no horizontal scroll and no console errors; tick boxes update the
   progress bar; the PDF is 7 A4 pages with timers, tick boxes and the site bar hidden. Not verified: timer beep by ear.
   Published to `main` (c3d049a) and confirmed live with the PDF reachable.
+
+## 2026-11-02: Supabase project, stage 1 (admin sign-in and records)
+
+- Decision (user, 2026-11-02): a new, separate **Kimina** Supabase project (not Santuri's `gudbkpwxszdtirewawep`) for a hosted CMS at kimina.co.ke/admin, records for clients, students, invoices and payments, a personal booking calendar to replace Calendly, and student-only materials. Cloudflare was considered; Supabase was chosen for the calendar (same design as santuri-bookings). Only Kimina signs in for now.
+- Plan: 1 database and admin sign-in → 2 hosted CMS (an Edge Function holding a GitHub token commits content; GitHub Actions deploys as now; the Mac CMS stays as a fallback) → 3 records screens and Contact-page enquiries → 4 own calendar replacing Calendly → 5 student materials by private link.
+- This relaxes "static and database-free": visitors still get a static site; only /admin (and later the calendar and Contact form) talks to Supabase.
+- `supabase/migrations/202611020001_admin_and_records.sql`: `private.admins` + `public.is_admin()`; tables `services` (the seven Bookings services with prices), `people` (is_client / is_student), `enquiries`, `lessons` (Five Beats, Santuri DNA), `student_lessons`, `invoices` (numbered K-YYYY-NNN), `payments` (M-Pesa/cash/bank/card/other; trigger blocks overpaying, paying a void invoice, or a payment for a different person) and the `invoice_balances` view. RLS: admins only; anon has no grants at all.
+- Verified in PGlite (scratchpad test, not yet in the repo): anon refused everywhere; another signed-in account sees no rows and can't insert or update; admin flows, invoice numbering and payment rules work. `npm run build` and `npm run check` pass and `supabase/` is not in `_site`.
+- Not done: the user creates the project, runs the migration, signs in once and adds themself to `private.admins`; free projects pause after about a week idle (plan a weekly GitHub Actions ping); turn off public sign-ups in Supabase Auth.
+
+## 2026-11-02: Supabase MCP for this folder
+
+- Added the hosted Supabase MCP (`https://mcp.supabase.com/mcp`, HTTP, browser sign-in) in Claude Code local scope for this folder only, **full access** (user's choice) so the agent can create the Kimina project and run the migration, asking before each change.
+- Not scoped to a project yet because the Kimina project doesn't exist. Once it does, re-add it with `?project_ref=<ref>` so it can't touch Santuri's projects. (Done 2026-11-02, see below.)
+- Not done: the user signs in with `/mcp` → supabase → Authenticate.
+
+## 2026-11-02: Kimina Supabase project created, stage-1 migration applied
+
+- Project **kimina**, ref `akswkkcihswupkunstrj`, region eu-central-1 (Frankfurt), in the "Santuri East Africa"
+  organisation (free plan; user's choice, this uses the account's second free-project slot). URL
+  `https://akswkkcihswupkunstrj.supabase.co`.
+- Applied `supabase/migrations/202611020001_admin_and_records.sql` through the MCP (as migration `admin_and_records`,
+  without its `begin`/`commit` lines, since the tool wraps it in a transaction).
+- Verified: 7 services and 2 lessons seeded; all 7 public tables have RLS with one admin policy each; anon has no
+  select on `people` or `invoice_balances`. Security advisor raises one warning, that signed-in users can call
+  `public.is_admin()`; that is intended (it only answers "am I an admin?" and the policies depend on it).
+- 2026-11-02: the Supabase MCP for this folder is now scoped to `?project_ref=akswkkcihswupkunstrj` (still full access,
+  so it cannot see Santuri's projects).
+- 2026-11-02: user `kimina@santuri.org` created (confirmed) and added to `private.admins`; it is the only account.
+- Not done: turn off public sign-ups in Auth.
+
+## 2026-11-02: Supabase keep-alive
+
+- `supabase/migrations/202611020002_keepalive_ping.sql` adds `public.ping()` (returns 'ok', reads no tables; anon and
+  authenticated may call it). Applied through the MCP as migration `keepalive_ping`.
+- `.github/workflows/supabase-keepalive.yml` calls it Mondays and Thursdays 06:00 UTC (09:00 Nairobi), plus a manual
+  "Run workflow" button. It holds the project's publishable key (`sb_publishable_…`), which is public by design.
+- Verified: `curl` to `/rest/v1/rpc/ping` with that key returns `"ok"`; the same key reading `people` is refused
+  (permission denied). Not verified: the workflow running on GitHub (it only runs once it is on `main`).
