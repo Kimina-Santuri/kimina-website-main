@@ -277,3 +277,10 @@ Last reviewed: 2026-09-02.
   link to `?topic=…#enquiry` and `contact-form.js` chooses that topic. Bookings: "Email Kimina" became "Send a message"
   (`contact.html?topic=booking#enquiry`). Error texts in the form, `contact-form.js` and the `enquiry` function no
   longer mention the address. The printed invoice in /admin still shows it (it goes to the client, not the site).
+
+## 2026-11-02: GoatCounter visitor counts
+
+- Every published page loads GoatCounter (`https://kimina.goatcounter.com/count`, script `https://gc.zgo.at/count.js`,
+  async): the five static pages, `site/_layouts/base.njk` (all generated pages) and both lesson pages. No cookies;
+  stats at https://kimina.goatcounter.com (the user's account, created 2026-11-02). /admin is not counted.
+- Add the same line to any new standalone page (lessons, manuals are generated elsewhere and not counted).
