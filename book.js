@@ -138,14 +138,68 @@
     renderMonth(state.slots.get(`${state.service.slug}|${year}-${month}`) || []);
     $("#month-grid .day[aria-pressed='true']")?.focus({ preventScroll: true });
     renderTimes();
+    loadDay(key).then(() => { if (state.day === key) renderDayLine(); });
     if (window.matchMedia("(max-width: 720px)").matches) $("#time-list").scrollIntoView({ behavior: "smooth", block: "center" });
   }
 
-  // ---------- step 3: time ----------
+  // ---------- step 3: time, with a timeline of the day ----------
+  // public.booking_day() gives the open hours, merged busy periods (no details) and the earliest
+  // bookable moment; the bar shows free, busy and too-soon stretches, plus the chosen session.
+
+  const dayInfo = new Map();
+
+  async function loadDay(key) {
+    if (!dayInfo.has(key)) {
+      try { dayInfo.set(key, await rpc("booking_day", { p_day: key })); }
+      catch { return null; }
+    }
+    return dayInfo.get(key);
+  }
+
+  function renderDayLine() {
+    const box = $("#day-line");
+    const info = state.day && dayInfo.get(state.day);
+    if (!info) { box.hidden = true; box.replaceChildren(); return; }
+    const opens = new Date(info.opens).getTime();
+    const closes = new Date(info.closes).getTime();
+    const span = closes - opens;
+    const at = (ms) => `${((ms - opens) / span) * 100}%`;
+    const width = (a, b) => `${((b - a) / span) * 100}%`;
+    const segments = [];
+    const earliest = new Date(info.earliest).getTime();
+    if (earliest > opens) segments.push({ kind: "soon", a: opens, b: earliest, label: "Too soon to book" });
+    for (const busy of info.busy) segments.push({ kind: "busy", a: new Date(busy.start).getTime(), b: new Date(busy.end).getTime(), label: "Busy" });
+    if (state.slot) segments.push({ kind: "chosen", a: state.slot.getTime(), b: state.slot.getTime() + state.service.session_minutes * 60000, label: "Your session" });
+    const bar = el("div", { class: "day-line__bar" });
+    for (const seg of segments) {
+      const part = el("span", { class: `day-line__seg day-line__seg--${seg.kind}`, title: `${seg.label}: ${timeLabel(new Date(seg.a))}–${timeLabel(new Date(seg.b))}` });
+      part.style.left = at(Math.max(seg.a, opens));
+      part.style.width = width(Math.max(seg.a, opens), Math.min(seg.b, closes));
+      bar.append(part);
+    }
+    const hours = el("div", { class: "day-line__hours", "aria-hidden": "true" });
+    for (let t = opens; t <= closes; t += 3600000) {
+      const tick = el("span", {}, timeLabel(new Date(t)).slice(0, 2));
+      tick.style.left = at(t);
+      hours.append(tick);
+    }
+    // A plain-words version for screen readers.
+    const taken = segments.filter((seg) => seg.kind !== "chosen").map((seg) => `${seg.label.toLowerCase()} ${timeLabel(new Date(seg.a))} to ${timeLabel(new Date(seg.b))}`);
+    bar.setAttribute("role", "img");
+    bar.setAttribute("aria-label", `Open ${timeLabel(new Date(opens))} to ${timeLabel(new Date(closes))}. ${taken.length ? taken.join("; ") : "Nothing booked yet"}.`);
+    const legend = el("p", { class: "day-line__legend" });
+    for (const [kind, label] of [["free", "Free"], ["busy", "Busy"], ...(earliest > opens ? [["soon", "Too soon"]] : []), ...(state.slot ? [["chosen", "Your session"]] : [])]) {
+      const item = el("span");
+      item.append(el("i", { class: `day-line__key day-line__seg--${kind}`, "aria-hidden": "true" }), label);
+      legend.append(item);
+    }
+    box.replaceChildren(bar, hours, legend);
+    box.hidden = false;
+  }
 
   function renderTimes() {
     const list = $("#time-list");
-    if (!state.day) { list.replaceChildren(); $("#time-hint").textContent = "Choose a day first."; return; }
+    if (!state.day) { list.replaceChildren(); $("#time-hint").textContent = "Choose a day first."; renderDayLine(); return; }
     const { year, month } = state.month;
     const slots = (state.slots.get(`${state.service.slug}|${year}-${month}`) || []).filter((slot) => dayKey(slot) === state.day);
     $("#time-hint").textContent = `${longDay(slots[0] || new Date(`${state.day}T12:00:00+03:00`))} · ${state.service.session_minutes} minutes`;
@@ -154,6 +208,7 @@
       button.addEventListener("click", () => chooseTime(slot));
       return button;
     }));
+    renderDayLine();
   }
 
   function chooseTime(slot) {
@@ -199,9 +254,11 @@
       status.textContent = "Sorry, that time was just taken. Please choose another.";
       const { year, month } = state.month;
       state.slots.delete(`${state.service.slug}|${year}-${month}`);
+      dayInfo.delete(state.day);
       state.slot = null;
       await loadMonth();
       renderTimes();
+      if (state.day) loadDay(state.day).then(renderDayLine);
     } else if (reply.result === "limited") {
       status.textContent = "Too many bookings from this connection today. Please use the Contact form.";
     } else {
@@ -211,6 +268,7 @@
   }
 
   function showDone(reply, email) {
+    dayInfo.clear();
     const start = new Date(reply.starts_at);
     const end = new Date(reply.ends_at);
     const panel = $("#book-done");

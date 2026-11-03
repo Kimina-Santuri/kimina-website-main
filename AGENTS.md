@@ -416,3 +416,16 @@ Last reviewed: 2026-09-02.
   where the link is and offers "Ask Kimina for your link" (Contact form, education topic).
 - Verified: build and check pass; desktop render of the cards and both panels. Not verified: phone render of the
   new panel (same styles as the existing contact panel).
+
+## 2026-11-03: Day timeline next to the free times
+
+- User's request: "a simple visual with when I'm busy" by the Time step. Migration `202611030003_booking_day.sql`
+  (applied) adds `public.booking_day(date)` (anon may call it): the day's open hours, the earliest bookable moment
+  (minimum notice) and busy periods from bookings, blocks and Google Calendar busy times, merged (`range_agg`) and
+  clipped to the open hours, with no titles or details. Null for closed, past and out-of-window days.
+- `book.js` fetches it when a day is chosen (cached; cleared after a booking or a "taken" reply) and draws a bar:
+  black = busy, hatched = too soon, outlined = the chosen session, with hour marks, a legend and a plain-words
+  `aria-label`. Styles in `book.css` (`.day-line…`).
+- Verified: rolled-back SQL test (overlapping blocks merged, a block past closing clipped); real data shows the
+  11:00–13:00 Google busy time on 4 Nov in black with those hours missing from the buttons; desktop and 375 px.
+- Note: this does publish when Kimina is busy (not what or why), at the user's request.
