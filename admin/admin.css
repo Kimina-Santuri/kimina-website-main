@@ -132,3 +132,8 @@ button.row:hover { background: var(--soft); }
   #print-area tfoot th { font-weight: 500; border-bottom: 0; }
   #print-area .print-notes { margin-top: 26px; white-space: pre-wrap; line-height: 1.6; }
 }
+.hours { margin: 18px 0 24px; }
+.hours-row { grid-template-columns: minmax(0, 1fr) 130px 130px; }
+.hours-row input[type="time"] { min-height: 40px; border: 1px solid #aaa; border-radius: 0; padding: 8px; font: inherit; background: #fff; }
+.hours-row .checkbox { min-height: 40px; }
+@media (max-width: 680px) { .hours-row { grid-template-columns: 1fr 1fr; } .hours-row .checkbox { grid-column: 1 / -1; } }

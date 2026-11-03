@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Choose a time for a session with Kimina: tutoring, production, mixing and mastering, recording, live sound or a consultation.">
+  <link rel="canonical" href="https://kimina.co.ke/book.html">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Kimina">
+  <meta property="og:title" content="Book a session | Kimina">
+  <meta property="og:description" content="Choose a free time for a session with Kimina in Nairobi.">
+  <meta property="og:url" content="https://kimina.co.ke/book.html">
+  <meta property="og:image" content="https://kimina.co.ke/images/og-portfolio.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Kimina music production and sound engineering services">
+  <meta name="twitter:card" content="summary_large_image">
+  <title>Book a session | Kimina</title>
+  <link rel="icon" href="images/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
+  <link href="bookings.css" rel="stylesheet">
+  <link href="book.css" rel="stylesheet">
+</head>
+<body>
+  <canvas id="topography" aria-hidden="true"></canvas>
+  <a class="skip-link" href="#book">Skip to booking</a>
+  <header class="hero">
+    <div class="hero__content">
+      <div class="brand-lockup">
+        <a class="site-mark" href="index.html" aria-label="Return to Kimina home">K.</a>
+        <img class="logo" src="images/logo2.png" alt="Santuri East Africa">
+      </div>
+      <p class="eyebrow">MUSIC.EDUCATION.SOUND</p>
+    </div>
+  </header>
+  <nav class="booking-nav" aria-label="Primary navigation">
+    <a href="works.html">Works</a><a href="performances.html">Performances</a>
+    <a href="bookings.html" aria-current="page">Bookings</a>
+    <a href="residencies.html">Residencies</a>
+    <a href="downloads.html">Downloads</a>
+    <a href="about.html">About</a>
+    <a href="contact.html">Contact</a>
+  </nav>
+  <main id="book" class="container">
+    <section aria-labelledby="book-title">
+      <div class="section-heading">
+        <h2 id="book-title">Book a session</h2>
+        <p>Choose a service, a day and a free time. Times are Nairobi time (EAT). Your booking is confirmed straight away.</p>
+      </div>
+
+      <noscript><p class="book-note">The booking calendar needs JavaScript. Please use the <a href="contact.html?topic=booking#enquiry">Contact form</a> instead.</p></noscript>
+      <p class="book-note" id="book-loading">Loading free times…</p>
+
+      <div class="booker" id="booker" hidden>
+        <section class="book-step book-step--wide" aria-labelledby="step-service">
+          <p class="eyebrow" id="step-service">1 · Service</p>
+          <div class="service-list" id="service-list" role="radiogroup" aria-labelledby="step-service"></div>
+        </section>
+        <section class="book-step" aria-labelledby="step-day">
+          <p class="eyebrow" id="step-day">2 · Day</p>
+          <div class="month-head">
+            <button type="button" class="month-move" id="month-prev" aria-label="Previous month">←</button>
+            <h3 id="month-label" aria-live="polite"></h3>
+            <button type="button" class="month-move" id="month-next" aria-label="Next month">→</button>
+          </div>
+          <div class="month-grid" id="month-grid"></div>
+          <p class="book-hint" id="day-hint"></p>
+        </section>
+        <section class="book-step" aria-labelledby="step-time">
+          <p class="eyebrow" id="step-time">3 · Time</p>
+          <p class="book-hint" id="time-hint">Choose a day first.</p>
+          <div class="time-list" id="time-list"></div>
+        </section>
+        <section class="book-step book-step--wide" aria-labelledby="step-details" id="details" hidden>
+          <p class="eyebrow" id="step-details">4 · Your details</p>
+          <p class="book-summary" id="book-summary"></p>
+          <form id="book-form" class="book-form">
+            <label><span>Name</span><input name="name" type="text" autocomplete="name" maxlength="160" required></label>
+            <div class="book-pair">
+              <label><span>Email</span><input name="email" type="email" autocomplete="email" maxlength="254"></label>
+              <label><span>Phone or WhatsApp</span><input name="phone" type="tel" autocomplete="tel" maxlength="40"></label>
+            </div>
+            <p class="book-hint">Email or phone. With an email you get a confirmation, a reminder the day before and a link to cancel.</p>
+            <label><span>Anything I should know? (optional)</span><textarea name="message" rows="4" maxlength="2000"></textarea></label>
+            <label class="book-trap" aria-hidden="true"><span>Leave this empty</span><input name="website" type="text" tabindex="-1" autocomplete="off"></label>
+            <p class="book-status" id="book-status" role="status" aria-live="polite"></p>
+            <button class="button" type="submit">Confirm booking</button>
+          </form>
+        </section>
+      </div>
+
+      <div class="book-panel" id="book-done" hidden tabindex="-1"></div>
+      <div class="book-panel" id="cancel-view" hidden tabindex="-1"></div>
+    </section>
+  </main>
+  <footer>
+    <img src="images/logo2.png" alt="" class="footer__logo">
+    <p>&copy; <span id="year">2026</span> Santuri East Africa</p>
+  </footer>
+  <script src="bookings.js" defer></script>
+  <script src="book.js" defer></script>
+  <script src="stellar-player.js" defer></script>
+  <script data-goatcounter="https://kimina.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</body>
+</html>

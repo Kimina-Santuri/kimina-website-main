@@ -1,0 +1,51 @@
+/* Booking calendar on book.html; builds on bookings.css. */
+.book-note { max-width:620px; font-size:.76rem; line-height:1.8; }
+.booker { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); border-top:1px solid var(--ink); border-left:1px solid var(--ink); }
+.book-step { min-width:0; padding:24px; border-right:1px solid var(--ink); border-bottom:1px solid var(--ink); background:rgba(255,255,255,.92); }
+.book-step--wide { grid-column:1 / -1; }
+.book-hint { margin:0 0 14px; font-size:.66rem; line-height:1.7; color:#444; }
+.service-list { display:grid; grid-template-columns:repeat(auto-fill,minmax(210px,1fr)); gap:8px; }
+.service-option, .day, .time, .month-move { border:1px solid var(--ink); border-radius:0; background:#fff; color:var(--ink); font:inherit; cursor:pointer; }
+.service-option { display:grid; gap:6px; padding:14px; text-align:left; }
+.service-option strong { font-size:.8rem; font-weight:400; }
+.service-option span { font-size:.56rem; letter-spacing:.04em; text-transform:uppercase; color:#444; }
+.service-option[aria-checked="true"], .day[aria-pressed="true"], .time[aria-pressed="true"] { background:var(--ink); color:#fff; }
+.service-option[aria-checked="true"] span { color:#ddd; }
+.month-head { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:14px; }
+.month-head h3 { margin:0; font-size:.9rem; font-weight:400; }
+.month-move { width:44px; height:44px; font-size:1rem; }
+.month-move:disabled { opacity:.25; cursor:default; }
+.month-grid { display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); gap:4px; }
+.month-grid[aria-busy="true"] { opacity:.5; }
+.weekday { padding:4px 0; font-size:.54rem; letter-spacing:.08em; text-align:center; text-transform:uppercase; color:#555; }
+.day { min-height:44px; padding:0; font-size:.78rem; }
+.day:disabled { border-color:transparent; background:transparent; color:#b5b5b5; cursor:default; }
+.day.is-today:not([aria-pressed="true"]) { text-decoration:underline; text-underline-offset:4px; }
+.time-list { display:grid; grid-template-columns:repeat(auto-fill,minmax(86px,1fr)); gap:6px; }
+.time { min-height:44px; font-size:.8rem; }
+.book-summary { margin:0 0 20px; padding:12px 0; border-top:1px solid var(--ink); border-bottom:1px solid var(--ink); font-size:.76rem; line-height:1.7; }
+.book-form { display:grid; gap:16px; max-width:680px; }
+.book-form label { display:grid; gap:7px; font-size:.6rem; letter-spacing:.06em; text-transform:uppercase; }
+.book-form input, .book-form textarea { width:100%; min-height:44px; border:1px solid var(--ink); border-radius:0; padding:11px 12px; background:#fff; color:var(--ink); font:inherit; font-size:.8rem; letter-spacing:0; text-transform:none; }
+.book-form textarea { resize:vertical; line-height:1.6; }
+.book-form .book-hint { margin:-8px 0 0; }
+.book-pair { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+.book-form .button { justify-self:start; cursor:pointer; }
+.book-form .button:disabled { opacity:.5; cursor:wait; }
+.book-status { margin:0; min-height:1.4em; font-size:.74rem; line-height:1.6; }
+.book-status.is-error { color:#b00020; }
+.book-trap { position:absolute; left:-10000px; width:1px; height:1px; overflow:hidden; }
+.book-panel { max-width:680px; padding:28px; border:1px solid var(--ink); background:#fff; }
+.book-panel h3 { margin:0 0 10px; font-size:clamp(1.4rem,3vw,2.2rem); font-weight:300; letter-spacing:-.05em; }
+.book-panel p { font-size:.76rem; line-height:1.8; }
+.book-panel .button { margin-top:10px; cursor:pointer; }
+.book-when { font-size:.9rem !important; }
+.book-cancel-link { overflow-wrap:anywhere; }
+.service-option:focus-visible, .day:focus-visible, .time:focus-visible, .month-move:focus-visible, .book-form input:focus-visible, .book-form textarea:focus-visible, .book-form .button:focus-visible, .book-panel .button:focus-visible { outline:2px solid var(--ink); outline-offset:2px; }
+@media (max-width:920px) { .booker { grid-template-columns:1fr; } }
+@media (max-width:720px) {
+  .book-step { padding:18px 14px; }
+  .book-pair { grid-template-columns:1fr; }
+  .month-grid { gap:3px; }
+  .book-panel { padding:22px 18px; }
+}

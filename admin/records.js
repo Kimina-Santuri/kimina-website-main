@@ -107,12 +107,12 @@
     if (A().hasUnsavedUploads()) return;
     view.screen = screen;
     view.selected = null;
-    view.filter = screen === "people" ? "all" : "open";
+    view.filter = screen === "people" ? "all" : screen === "calendar" ? "upcoming" : "open";
     view.search = "";
     A().showArea("records");
     for (const button of document.querySelectorAll("#record-nav button")) button.setAttribute("aria-current", button.dataset.records === screen ? "page" : "false");
     $("#collection-label").textContent = "Records";
-    $("#editor-title").textContent = { enquiries: "Enquiries", people: "People", invoices: "Invoices" }[screen];
+    $("#editor-title").textContent = { enquiries: "Enquiries", people: "People", invoices: "Invoices", calendar: "Calendar" }[screen];
     detail.replaceChildren(h("div", { class: "welcome" }, h("p", {}, "Choose an entry on the left, or add a new one.")));
     renderTools();
     await refreshList();
@@ -128,10 +128,14 @@
       );
     }
     if (view.screen === "invoices") tools.append(h("button", { class: "new-entry", type: "button", onclick: () => showNewInvoice() }, "＋ New invoice"));
+    if (view.screen === "calendar") tools.append(
+      h("button", { class: "new-entry", type: "button", onclick: () => showNewBlock() }, "＋ Block time"),
+      h("button", { class: "new-entry", type: "button", onclick: () => showSettings() }, "Hours & settings"));
     const filters = {
       enquiries: [["open", "Open"], ["all", "All"]],
       people: [["all", "All"], ["clients", "Clients"], ["students", "Students"]],
-      invoices: [["open", "Unpaid"], ["all", "All"]]
+      invoices: [["open", "Unpaid"], ["all", "All"]],
+      calendar: [["upcoming", "Upcoming"], ["past", "Past"], ["cancelled", "Cancelled"]]
     }[view.screen];
     tools.append(h("div", { class: "filters", role: "group", "aria-label": "Filter" }, filters.map(([value, label]) =>
       h("button", { type: "button", "aria-pressed": String(view.filter === value), onclick: () => { view.filter = value; renderTools(); refreshList(); } }, label))));
@@ -143,6 +147,7 @@
       if (view.screen === "enquiries") await listEnquiries();
       if (view.screen === "people") await listPeople();
       if (view.screen === "invoices") await listInvoices();
+      if (view.screen === "calendar") await listCalendar();
     } catch (error) {
       list.replaceChildren(h("p", { class: "is-error" }, error.message));
     }
@@ -522,6 +527,181 @@
 
   function markSelected() {
     for (const button of list.querySelectorAll(".entry-button")) button.setAttribute("aria-current", String(button.dataset.id === view.selected));
+  }
+
+  // ---------- calendar: bookings, blocks, hours ----------
+
+  const STATUS_LABEL = { confirmed: "Booked", cancelled: "Cancelled", completed: "Done", no_show: "No-show" };
+  const nairobi = (value, options) => new Date(value).toLocaleString("en-GB", { timeZone: "Africa/Nairobi", ...options });
+  const slotLabel = (start, end) => `${nairobi(start, { weekday: "short", day: "2-digit", month: "short" })} ${nairobi(start, { hour: "2-digit", minute: "2-digit", hour12: false })}–${nairobi(end, { hour: "2-digit", minute: "2-digit", hour12: false })}`;
+  const toInstant = (date, time) => new Date(`${date}T${time}:00+03:00`).toISOString();
+
+  async function listCalendar() {
+    const now = new Date().toISOString();
+    let query = "bookings?select=id,name,starts_at,ends_at,status,services(name)&limit=200";
+    if (view.filter === "upcoming") query += `&status=eq.confirmed&ends_at=gte.${enc(now)}&order=starts_at`;
+    if (view.filter === "past") query += `&status=neq.cancelled&ends_at=lt.${enc(now)}&order=starts_at.desc`;
+    if (view.filter === "cancelled") query += "&status=eq.cancelled&order=starts_at.desc";
+    const [rows, blocks] = await Promise.all([
+      rest(query),
+      view.filter === "upcoming" ? rest(`booking_blocks?ends_at=gte.${enc(now)}&order=starts_at&limit=100`) : Promise.resolve([])
+    ]);
+    const items = [
+      ...rows.map((row) => ({ at: row.starts_at, node: listButton(`${slotLabel(row.starts_at, row.ends_at)} · ${row.name}`,
+        `${row.services?.name || ""} · ${STATUS_LABEL[row.status]}`, row.id, () => showBooking(row.id)) })),
+      ...blocks.map((block) => ({ at: block.starts_at, node: listButton(`${slotLabel(block.starts_at, block.ends_at)} · Blocked`,
+        block.reason || "No reason given", block.id, () => showBlock(block)) }))
+    ].sort((a, b) => view.filter === "upcoming" ? a.at.localeCompare(b.at) : b.at.localeCompare(a.at));
+    list.replaceChildren(...(items.length ? items.map((item) => item.node) : [h("p", {}, view.filter === "upcoming" ? "Nothing booked yet." : "Nothing here.")]));
+  }
+
+  async function showBooking(id) {
+    view.selected = id;
+    markSelected();
+    const b = await rest(`bookings?id=eq.${id}&select=*,services(name,price_note)`, { single: true });
+    const digits = (b.phone || "").replace(/[^0-9]/g, "");
+    const whatsapp = digits ? `https://wa.me/${digits.startsWith("0") ? `254${digits.slice(1)}` : digits}` : null;
+    const upcoming = b.status === "confirmed" && new Date(b.ends_at) > new Date();
+    const setStatus = (status, question) => async () => {
+      if (question && !window.confirm(question)) return;
+      try {
+        await rest(`bookings?id=eq.${id}`, { method: "PATCH", body: status === "cancelled" ? { status, cancelled_by: "admin" } : { status } });
+        await refreshList();
+        await showBooking(id);
+      } catch (error) { form.querySelector(".record-status").textContent = error.message; }
+    };
+    const calendarNote = b.calendar_state === "synced" ? "In Google Calendar" : b.calendar_state === "error" ? `Google Calendar error: ${b.calendar_error}` : "Waiting for Google Calendar";
+    const form = h("form", { class: "record-form" },
+      h("div", { class: "record-summary" },
+        h("p", { class: "eyebrow" }, `${STATUS_LABEL[b.status]}${b.cancelled_by ? ` by ${b.cancelled_by}` : ""} · booked ${when(b.created_at)} · ${calendarNote}`),
+        h("h2", {}, `${b.services.name} · ${b.name}`),
+        h("p", { class: "money" }, h("strong", {}, `${nairobi(b.starts_at, { weekday: "long", day: "numeric", month: "long", year: "numeric" })}, ${slotLabel(b.starts_at, b.ends_at).split(" ").pop()}`), h("span", {}, b.services.price_note)),
+        h("p", { class: "contact-lines" },
+          b.email ? h("a", { href: `mailto:${b.email}` }, b.email) : null,
+          b.phone ? h("a", { href: `tel:${b.phone.replace(/\s/g, "")}` }, b.phone) : null,
+          whatsapp ? h("a", { href: whatsapp, target: "_blank", rel: "noopener" }, "WhatsApp") : null,
+          b.person_id ? h("a", { href: "#", onclick: (event) => { event.preventDefault(); open("people").then(() => showPerson(b.person_id)); } }, "Open person") : null),
+        b.message ? h("p", { class: "message" }, b.message) : null),
+      h("div", { class: "form-grid" }, field("Your notes (private)", textarea("admin_notes", b.admin_notes), true)),
+      h("footer", { class: "editor-footer" },
+        status(),
+        h("div", { class: "footer-actions" },
+          upcoming ? h("button", { class: "button button--quiet", type: "button", onclick: setStatus("cancelled", `Cancel ${b.name}'s booking? They will get an email if they gave one.`) }, "Cancel booking") : null,
+          b.status === "confirmed" && !upcoming ? h("button", { class: "button button--quiet", type: "button", onclick: setStatus("completed") }, "Mark done") : null,
+          b.status === "confirmed" && !upcoming ? h("button", { class: "button button--quiet", type: "button", onclick: setStatus("no_show") }, "No-show") : null,
+          h("button", { class: "button button--dark", type: "submit" }, "Save notes")))
+    );
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      guarded(form, () => rest(`bookings?id=eq.${id}`, { method: "PATCH", body: { admin_notes: form.elements.admin_notes.value } }));
+    });
+    reveal(form);
+  }
+
+  function showNewBlock() {
+    view.selected = null;
+    markSelected();
+    const today = new Date().toLocaleDateString("en-CA", { timeZone: "Africa/Nairobi" });
+    const form = h("form", { class: "record-form" },
+      heading("Block time", "Make time unavailable"),
+      h("p", { class: "hint" }, "For gigs, travel or time off. Times already booked are not affected; cancel those separately."),
+      h("div", { class: "form-grid" },
+        field("From date", input("from_date", today, "date", { required: true })),
+        field("From time", input("from_time", "09:00", "time", { required: true })),
+        field("To date", input("to_date", today, "date", { required: true })),
+        field("To time", input("to_time", "18:00", "time", { required: true })),
+        field("Reason (only you see it)", input("reason", "", "text", { maxLength: 200 }), true)),
+      h("footer", { class: "editor-footer" }, status(), h("button", { class: "button button--dark", type: "submit" }, "Block"))
+    );
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      guarded(form, async () => {
+        const starts = toInstant(form.elements.from_date.value, form.elements.from_time.value);
+        const ends = toInstant(form.elements.to_date.value, form.elements.to_time.value);
+        if (ends <= starts) throw new Error("The end must be after the start.");
+        await rest("booking_blocks", { method: "POST", body: { starts_at: starts, ends_at: ends, reason: form.elements.reason.value.trim() } });
+        await refreshList();
+      });
+    });
+    reveal(form);
+  }
+
+  function showBlock(block) {
+    view.selected = block.id;
+    markSelected();
+    const form = h("form", { class: "record-form" },
+      heading("Blocked time", slotLabel(block.starts_at, block.ends_at)),
+      h("p", {}, block.reason || "No reason given."),
+      h("footer", { class: "editor-footer" }, status(), h("button", { class: "button button--dark", type: "submit" }, "Remove block")));
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      guarded(form, async () => {
+        await rest(`booking_blocks?id=eq.${block.id}`, { method: "DELETE" });
+        await refreshList();
+        detail.replaceChildren(h("div", { class: "welcome" }, h("p", {}, "Block removed.")));
+      });
+    });
+    reveal(form);
+  }
+
+  const WEEKDAYS = [[1, "Monday"], [2, "Tuesday"], [3, "Wednesday"], [4, "Thursday"], [5, "Friday"], [6, "Saturday"], [0, "Sunday"]];
+
+  async function showSettings() {
+    view.selected = null;
+    markSelected();
+    const [settings, hours, health] = await Promise.all([
+      rest("booking_settings?select=*", { single: true }),
+      rest("booking_hours?select=*"),
+      rest("rpc/booking_system_status", { method: "POST", body: {} })
+    ]);
+    const byDay = Object.fromEntries(hours.map((row) => [row.weekday, row]));
+    const form = h("form", { class: "record-form" },
+      heading("Calendar", "Hours & settings"),
+      checkbox("bookings_open", settings.bookings_open, "Bookings open (untick to pause all new bookings)"),
+      h("div", { class: "rows hours" }, WEEKDAYS.map(([day, label]) => h("div", { class: "row hours-row" },
+        checkbox(`open_${day}`, Boolean(byDay[day]), label),
+        input(`opens_${day}`, byDay[day]?.opens?.slice(0, 5) || "09:00", "time", { "aria-label": `${label} opens` }),
+        input(`closes_${day}`, byDay[day]?.closes?.slice(0, 5) || "18:00", "time", { "aria-label": `${label} closes` })))),
+      h("div", { class: "form-grid" },
+        field("Minimum notice (hours)", input("min_notice_hours", settings.min_notice_hours, "number", { min: "0", max: "336", required: true })),
+        field("Bookable days ahead", input("days_ahead", settings.days_ahead, "number", { min: "1", max: "365", required: true })),
+        field("Google Calendar ID", input("google_calendar_id", settings.google_calendar_id, "text", { placeholder: "e.g. your Gmail address" }), true),
+        field("Send alerts to", input("notify_email", settings.notify_email, "email", { required: true }), true)),
+      h("footer", { class: "editor-footer" }, status(), h("button", { class: "button button--dark", type: "submit" }, "Save")),
+      h("section", { class: "editor-section" }, heading("Health", "Google & email"),
+        h("div", { class: "rows" },
+          h("p", { class: "row" }, h("span", {}, "Google"), h("span", {}, health.calendar_error
+            ? `Problem: ${health.calendar_error}`
+            : health.calendar_refreshed_at ? `Busy times read ${when(health.calendar_refreshed_at)} (${health.busy_blocks} upcoming)` : "Not connected yet"), h("span", {}, "")),
+          h("p", { class: "row" }, h("span", {}, "Email"), h("span", {}, health.last_email_error
+            ? `Last error: ${health.last_email_error}`
+            : health.last_email_sent ? `Last sent ${when(health.last_email_sent)}` : "Nothing sent yet"),
+            h("span", {}, `${health.emails_waiting} waiting${health.emails_failed ? `, ${health.emails_failed} failed` : ""}`))))
+    );
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      guarded(form, async () => {
+        const rows = [];
+        for (const [day, label] of WEEKDAYS) {
+          if (!form.elements[`open_${day}`].checked) continue;
+          const opens = form.elements[`opens_${day}`].value;
+          const closes = form.elements[`closes_${day}`].value;
+          if (!opens || !closes || closes <= opens) throw new Error(`${label}: closing time must be after opening time.`);
+          rows.push({ weekday: day, opens, closes });
+        }
+        await rest(`booking_settings?id=eq.true`, { method: "PATCH", body: {
+          bookings_open: form.elements.bookings_open.checked,
+          min_notice_hours: Number(form.elements.min_notice_hours.value),
+          days_ahead: Number(form.elements.days_ahead.value),
+          google_calendar_id: form.elements.google_calendar_id.value.trim(),
+          notify_email: form.elements.notify_email.value.trim(),
+          updated_at: new Date().toISOString()
+        } });
+        await rest("booking_hours?weekday=gte.0", { method: "DELETE" });
+        if (rows.length) await rest("booking_hours", { method: "POST", body: rows });
+      });
+    });
+    reveal(form);
   }
 
   // ---------- start ----------

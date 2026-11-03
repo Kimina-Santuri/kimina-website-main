@@ -107,9 +107,8 @@ The service order is:
 - Keep the compact bordered contact panel below the cards.
 - The full About section no longer belongs on Bookings; it lives at `about.html`.
 - Keep the `K.` and Santuri logo lockup in the booking masthead.
-- All seven booking links currently use `https://calendly.com/kimina-santuri/one-on-one-sessions`.
+- Since stage 4 (2026-11-02) the seven booking links go to `book.html?service=<slug>` (Kimina's own calendar, see below); Calendly is no longer used.
 - Every booking button must retain the `booking-link` class.
-- Calendly must degrade gracefully: if its widget is unavailable, links navigate normally.
 
 ## Important shared assets
 
@@ -286,6 +285,39 @@ Last reviewed: 2026-09-02.
   stats at https://kimina.goatcounter.com (the user's account, created 2026-11-02). /admin is not counted.
 - Add the same line to any new standalone page (lessons, manuals are generated elsewhere and not counted).
 
+## 2026-11-02: Stage 4, own booking calendar (replaces Calendly)
+
+- User's choices: bookings are confirmed instantly; busy = this system's bookings and blocks plus Kimina's Google
+  Calendar; emails from kimina@santuri.org through Zoho SMTP; hours Mon–Sat 09:00–18:00 (editable in /admin).
+  Defaults chosen by the agent and editable in /admin → Calendar → Hours & settings: 60-minute sessions starting on
+  the hour, 12 hours' minimum notice, 60 days ahead. Services keep their `price_note`; no payment at booking.
+- Database: migrations `202611020004_booking_calendar.sql` and `202611020005_booking_cancel_link.sql` (both applied).
+  Tables `booking_settings`, `booking_hours` (0 = Sunday), `booking_blocks`, `bookings` (an exclusion constraint makes
+  overlapping live bookings impossible), `services.session_minutes`; private `calendar_busy`, `calendar_state`,
+  `email_outbox`, `booking_attempts`. A trigger on `bookings` queues every email (confirmation, Kimina's alert,
+  cancellation, client-cancel notice, moved) and marks the Google event for sync; Contact enquiries now queue an alert
+  email too. Public (anon) may only call `booking_services()` and `booking_slots()`; booking, cancelling and the worker
+  helpers are service-role only. Clients are added to People (matched by email or phone) as clients.
+- Edge Functions: `booking` (public: book, look up and cancel by the 48-hex cancel token; asks Google about the exact
+  time first, then `create_booking()` re-checks; 3 bookings per visitor per day, 40 a day in total; honeypot and 4 s
+  minimum) and `worker` (pg_cron `kimina-booking-worker` every 5 minutes with the Vault secret `worker_secret`, and
+  nudged right after a booking or cancel): reminders 12–30 h ahead for bookings made earlier than that, Google busy
+  times for the bookable window, Google events (`kb<uuid>` ids, deleted on cancel), then the email queue (6 tries with
+  growing gaps). Shared Google code: `supabase/functions/_shared/google.ts` (service account, `calendar.events` scope).
+  Email wording: `supabase/functions/worker/emails.ts`.
+- Pages: `book.html`, `book.css`, `book.js` (service → month grid → times → details; `?service=` preselects,
+  `?cancel=<token>` shows the cancel screen; phone-only clients see their cancel link on screen). /admin Records →
+  Calendar: upcoming/past/cancelled bookings (cancel, done, no-show, private notes), blocks, hours and settings, and a
+  health panel (Google busy-time refresh, email queue and last error).
+- Secrets (all set 2026-11-03, see below): `GOOGLE_SERVICE_ACCOUNT_EMAIL`, `GOOGLE_PRIVATE_KEY` (calendar
+  kimina@santuri.org shared with the service account, "Make changes to events") and the SMTP ones for ZeptoMail.
+- Verified: free times (12 h notice, 09:00–17:00 starts, Sunday closed); in a rolled-back transaction a booking,
+  a refused overlap, person linking, the four queued emails and cancel-by-token; anon refused on every table and
+  private function; worker refuses no/wrong secret and runs from pg_cron (200); a real browser booking on the local
+  preview, a refused second booking of the same time for another service, and cancelling by link (test rows, person,
+  queued emails and attempts deleted afterwards); /admin Calendar screens with sample data; 375 px layouts.
+  Not verified: Google Calendar and Zoho (no credentials yet), reminder emails, the admin screens against real data.
+
 ## 2026-11-03: The Business of DJing pairs workbook
 
 - Added `lessons/business-of-djing/` on `main` (user chose not to branch; see Lessons). Verified: `npm run build` and
@@ -294,3 +326,29 @@ Last reviewed: 2026-09-02.
   Not verified: the PDF pages by eye (no PDF renderer here), timer beep by ear. Committed and pushed on its own;
   unrelated uncommitted changes (admin, bookings, eleventy config) were already in the tree and left alone. The `lessons` table
   in Supabase does not list this lesson yet.
+
+## 2026-11-03: Google Calendar connected
+
+- The user set up the Google service account and the secrets. The first real runs found two bugs, both fixed:
+  `set_calendar_busy()` updated `calendar_state` with no WHERE clause, which Supabase refuses (migration
+  `202611030001_calendar_busy_fix.sql`, applied; 0004 edited to match), and Google's freeBusy needs the
+  `calendar.freebusy` scope as well as `calendar.events` (`_shared/google.ts`; `worker` and `booking` redeployed).
+- Verified: a worker run read 9 busy periods from kimina@santuri.org. Not verified yet: creating an event (no
+  bookings exist), email (the worker still reports SMTP_USER or SMTP_PASS missing).
+- Email (same day): Zoho refuses every SMTP sign-in from Supabase (535 Authentication Failed) on smtppro.zoho.com
+  and smtp.zoho.com, with PLAIN and LOGIN, although the same address and the same app password (matching 6-character
+  SHA-256 fingerprint) sign in fine from the Mac (`smtplib`, both servers). IMAP/POP are on and the user is the Zoho
+  admin. So Zoho is blocking sign-ins from Supabase's servers. The worker now cleans pasted values, tries both Zoho
+  servers and both methods when `SMTP_HOST` is unset, only signs in when emails are queued, and logs server, method,
+  username and a password fingerprint (never the password) with each failure. The two test emails were paused
+  (`next_try_at` +7 days) to avoid locking the Zoho account. Test booking 05fbf484… (6 Nov 09:00) and its Google
+  event still exist. Next: user's choice of a fix (see the chat), then cancel the test booking.
+- Fix (same day): email now goes through **ZeptoMail** (Zoho's service for website email, already paid for on the
+  user's account), Mail Agent `KiminaWebsite` on santuri.org. Secrets: `SMTP_HOST` smtp.zeptomail.com, `SMTP_USER`
+  emailapikey, `SMTP_PASS` the agent's SMTP password (set by the user), `SMTP_FROM` kimina@santuri.org (needed because
+  the username isn't an address), `SMTP_SENDER_NAME` Kimina. Save dashboard secrets one at a time: "Bulk save" with
+  several rows stored nothing (twice). The dashboard's Digest column is SHA-256 of the value, handy for checking.
+- Verified end to end: the test booking's confirmation and Kimina's alert sent through Zepto and arrived (user
+  confirmed); cancelling by its link sent both cancellation emails and deleted the Google event. Test booking,
+  its TEST person, four emails and attempt row deleted afterwards. Not verified: the reminder email, /admin
+  Calendar screens against real data, book.html live (not pushed yet).

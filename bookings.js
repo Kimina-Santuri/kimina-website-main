@@ -1,11 +1,3 @@
-document.querySelectorAll(".booking-link").forEach((bookingLink) => {
-  bookingLink.addEventListener("click", (event) => {
-    if (!window.Calendly) return;
-    event.preventDefault();
-    window.Calendly.initPopupWidget({ url: bookingLink.href });
-  });
-});
-
 const year = document.querySelector("#year");
 if (year) year.textContent = new Date().getFullYear();
 
