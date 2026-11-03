@@ -51,19 +51,28 @@ export async function google(path: string, init: RequestInit = {}) {
   });
 }
 
-// Busy periods on the calendar between two times (titles are never read).
-export async function busyBetween(calendarId: string, from: Date, to: Date): Promise<{ start: string; end: string }[]> {
+// Busy periods across several calendars between two times (titles are never read). Returns the
+// merged busy list plus a problem message per calendar that could not be read, so one unshared
+// calendar does not hide the others.
+export async function busyAcross(calendarIds: string[], from: Date, to: Date) {
+  const ids = [...new Set(calendarIds.map((id) => id.trim()).filter(Boolean))].slice(0, 20);
   const response = await google("freeBusy", {
     method: "POST",
-    body: JSON.stringify({ timeMin: from.toISOString(), timeMax: to.toISOString(), timeZone: "Africa/Nairobi", items: [{ id: calendarId }] }),
+    body: JSON.stringify({ timeMin: from.toISOString(), timeMax: to.toISOString(), timeZone: "Africa/Nairobi", items: ids.map((id) => ({ id })) }),
   });
   if (!response.ok) throw new Error(`Google free/busy failed (${response.status}): ${(await response.text()).slice(0, 200)}`);
-  const result = (await response.json()).calendars?.[calendarId];
-  if (result?.errors?.length) {
-    const reason = result.errors[0].reason;
-    throw new Error(reason === "notFound"
-      ? "The calendar was not found or is not shared with the service account."
-      : `Google calendar error: ${reason}`);
+  const calendars = (await response.json()).calendars || {};
+  const busy: { start: string; end: string }[] = [];
+  const problems: string[] = [];
+  for (const id of ids) {
+    const result = calendars[id];
+    if (!result || result.errors?.length) {
+      const reason = result?.errors?.[0]?.reason || "missing";
+      problems.push(reason === "notFound" ? `${id} is not shared with the booking system` : `${id}: ${reason}`);
+      continue;
+    }
+    busy.push(...(result.busy || []));
   }
-  return result?.busy || [];
+  busy.sort((a, b) => a.start.localeCompare(b.start));
+  return { busy, problems, readable: ids.length - problems.length };
 }

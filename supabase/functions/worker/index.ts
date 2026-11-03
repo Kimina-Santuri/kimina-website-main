@@ -3,7 +3,7 @@
 // Each run: queue day-before reminders, copy busy times from Kimina's Google Calendar, add
 // or remove booking events in that calendar, and send queued emails through Zoho SMTP.
 import nodemailer from "npm:nodemailer@6.9.16";
-import { busyBetween, google, googleConfigured } from "../_shared/google.ts";
+import { busyAcross, google, googleConfigured } from "../_shared/google.ts";
 import { emailFor } from "./emails.ts";
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
@@ -21,10 +21,10 @@ async function rpc(name: string, args: Record<string, unknown> = {}) {
 }
 
 async function settings() {
-  const response = await fetch(`${SUPABASE_URL}/rest/v1/booking_settings?select=google_calendar_id,days_ahead`, {
+  const response = await fetch(`${SUPABASE_URL}/rest/v1/booking_settings?select=google_calendar_id,busy_calendar_ids,days_ahead`, {
     headers: { apikey: SERVICE_KEY, Authorization: `Bearer ${SERVICE_KEY}` },
   });
-  return (await response.json())[0] as { google_calendar_id: string; days_ahead: number };
+  return (await response.json())[0] as { google_calendar_id: string; busy_calendar_ids: string[]; days_ahead: number };
 }
 
 type Job = {
@@ -72,15 +72,21 @@ async function syncEvent(job: Job) {
 
 async function runCalendar(report: Record<string, unknown>) {
   if (!googleConfigured()) return (report.calendar = "Google is not set up yet");
-  const { google_calendar_id: calendarId, days_ahead } = await settings();
+  const { google_calendar_id: calendarId, busy_calendar_ids: extra = [], days_ahead } = await settings();
   if (!calendarId) return (report.calendar = "No calendar ID in /admin settings yet");
   try {
+    // The main calendar plus any extra calendars that only count as busy.
     const now = new Date();
-    const busy = await busyBetween(calendarId, now, new Date(now.getTime() + (days_ahead + 1) * 86400_000));
-    await rpc("set_calendar_busy", { p_busy: busy, p_error: null });
+    const { busy, problems, readable } = await busyAcross([calendarId, ...extra], now, new Date(now.getTime() + (days_ahead + 1) * 86400_000));
+    const problem = problems.length ? problems.join("; ") : null;
+    // If nothing could be read, keep the last good copy rather than showing everything free.
+    await rpc("set_calendar_busy", { p_busy: readable ? busy : null, p_error: problem });
     report.busy = busy.length;
+    report.calendars = readable;
+    if (problem) report.busy_error = problem;
+    if (problems.some((text) => text.startsWith(calendarId))) return; // events can't be written either
   } catch (error) {
-    await rpc("set_calendar_busy", { p_busy: [], p_error: String((error as Error).message) });
+    await rpc("set_calendar_busy", { p_busy: null, p_error: String((error as Error).message) });
     report.busy_error = String((error as Error).message);
     return;
   }

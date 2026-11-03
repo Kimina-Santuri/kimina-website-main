@@ -671,7 +671,9 @@
       h("div", { class: "form-grid" },
         field("Minimum notice (hours)", input("min_notice_hours", settings.min_notice_hours, "number", { min: "0", max: "336", required: true })),
         field("Bookable days ahead", input("days_ahead", settings.days_ahead, "number", { min: "1", max: "365", required: true })),
-        field("Google Calendar ID", input("google_calendar_id", settings.google_calendar_id, "text", { placeholder: "e.g. your Gmail address" }), true),
+        field("Google Calendar ID (bookings are added here)", input("google_calendar_id", settings.google_calendar_id, "text", { placeholder: "e.g. your Gmail address" }), true),
+        field("Other calendars that count as busy (one calendar ID per line)", textarea("busy_calendar_ids", (settings.busy_calendar_ids || []).join("\n"), 3), true),
+        h("p", { class: "hint field--wide" }, "Find a calendar's ID in Google Calendar → Settings → the calendar → Integrate calendar. Share each one with the booking system's Google account (the service account email) with \"See only free/busy\"; nothing about the events is read."),
         field("Send alerts to", input("notify_email", settings.notify_email, "email", { required: true }), true)),
       h("footer", { class: "editor-footer" }, status(), h("button", { class: "button button--dark", type: "submit" }, "Save")),
       h("section", { class: "editor-section" }, heading("Health", "Google & email"),
@@ -700,6 +702,7 @@
           min_notice_hours: Number(form.elements.min_notice_hours.value),
           days_ahead: Number(form.elements.days_ahead.value),
           google_calendar_id: form.elements.google_calendar_id.value.trim(),
+          busy_calendar_ids: [...new Set(form.elements.busy_calendar_ids.value.split(/[\s,]+/).map((id) => id.trim()).filter(Boolean))].slice(0, 20),
           notify_email: form.elements.notify_email.value.trim(),
           updated_at: new Date().toISOString()
         } });

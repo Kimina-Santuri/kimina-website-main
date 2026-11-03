@@ -431,3 +431,19 @@ Last reviewed: 2026-09-02.
 - Note: this does publish when Kimina is busy (not what or why), at the user's request.
 - 2026-11-03: minimum notice changed from 12 to 6 hours (user's request), in `booking_settings.min_notice_hours`
   (also editable in /admin → Calendar → Hours & settings). No page text mentions the number.
+
+## 2026-11-03: Extra calendars that count as busy
+
+- User's report: real busy times were missing because they live in other Google calendars. Migration
+  `202611030004_extra_busy_calendars.sql` (applied) adds `booking_settings.busy_calendar_ids` (up to 20) and changes
+  `set_calendar_busy()`: a non-null list always replaces the busy copy (with any problem recorded as the error);
+  null only records the error, so a total failure keeps the last good copy.
+- `_shared/google.ts`: `busyAcross(ids, from, to)` asks freeBusy for all calendars in one request and returns the
+  merged busy list plus one problem line per unreadable calendar (`busyBetween` removed). `worker` and `booking`
+  (live check before saving) use the main calendar plus the extras; bookings are still written only to
+  `google_calendar_id`. /admin → Calendar → Hours & settings has "Other calendars that count as busy" (one ID per
+  line) with a hint on finding IDs and sharing them ("See only free/busy" is enough).
+- Verified: worker with no extras reads 9 busy periods; with a made-up extra ID it kept the 9, reported
+  "… is not shared with the booking system" in the health panel's error, and the error cleared once removed.
+  Not verified: a real second calendar (the user adds their IDs and shares them).
+- Calendars that are only subscribed by URL (iCal links) or live outside Google can't be checked this way.

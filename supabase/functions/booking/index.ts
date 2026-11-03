@@ -2,7 +2,7 @@
 // or cancel it. Free times are read straight from public.booking_slots(); this function only
 // handles changes. Before saving, it asks Google Calendar about that exact time (if set up),
 // then public.create_booking() re-checks the slot, limits repeat bookings and saves it.
-import { busyBetween, googleConfigured } from "../_shared/google.ts";
+import { busyAcross, googleConfigured } from "../_shared/google.ts";
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SERVICE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
@@ -56,14 +56,15 @@ async function nudgeWorker() {
 async function googleSaysBusy(service: string, startsAt: Date) {
   if (!googleConfigured()) return false;
   try {
-    const settings = await (await fetch(`${SUPABASE_URL}/rest/v1/booking_settings?select=google_calendar_id`, {
+    const settings = await (await fetch(`${SUPABASE_URL}/rest/v1/booking_settings?select=google_calendar_id,busy_calendar_ids`, {
       headers: { apikey: SERVICE_KEY, Authorization: `Bearer ${SERVICE_KEY}` },
     })).json();
     const calendarId = settings?.[0]?.google_calendar_id;
     if (!calendarId) return false;
     const services: { slug: string; session_minutes: number }[] = await rpc("booking_services");
     const minutes = services.find((item) => item.slug === service)?.session_minutes || 60;
-    const busy = await busyBetween(calendarId, startsAt, new Date(startsAt.getTime() + minutes * 60_000));
+    const extra: string[] = settings?.[0]?.busy_calendar_ids || [];
+    const { busy } = await busyAcross([calendarId, ...extra], startsAt, new Date(startsAt.getTime() + minutes * 60_000));
     return busy.length > 0;
   } catch (error) {
     // If Google is unreachable, the copy of busy times (refreshed every 5 minutes) still applies.
