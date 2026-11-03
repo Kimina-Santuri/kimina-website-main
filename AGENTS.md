@@ -352,3 +352,21 @@ Last reviewed: 2026-09-02.
   confirmed); cancelling by its link sent both cancellation emails and deleted the Google event. Test booking,
   its TEST person, four emails and attempt row deleted afterwards. Not verified: the reminder email, /admin
   Calendar screens against real data, book.html live (not pushed yet).
+
+## 2026-11-03: Bookings page cards redesigned
+
+- User's request ("rework the bookings page", then "Redesign the cards"; no specific notes). Kept every booking
+  decision above: three columns with the seventh centred, two on tablet, one on mobile, the metadata line, the
+  contact panel, the masthead and seven `booking-link` buttons; card wording unchanged.
+- Each card now has a numbered top row (01–07 with the category), a 3:2 photo, and a full-width "Choose a time →"
+  bar (54 px tall; a visually hidden "for <service>" keeps the seven links distinct for screen readers). A
+  three-step strip under the heading says how booking works (choose a session; pick a free day and time in Nairobi
+  time; confirmation email with a cancel link). Card borders are drawn per card, so no stray line runs beside the
+  centred seventh card.
+- Photos: the seven originals totalled about 16 MB (four were 6000 px wide). `images/services/<slug>-480.jpg` and
+  `-900.jpg` are 3:2 centre crops (Pillow, quality 70, progressive) used with `srcset`: about 144 KB for all seven at
+  480 px and 368 KB at 900 px. Originals are kept and unchanged. Each crop was checked by eye (no black frames).
+- Alt texts rewritten to describe what each photo actually shows (several described a different scene).
+- Verified: `npm run build` and `npm run check` pass; desktop (prices and buttons aligned across each row), 800 px
+  (two columns) and 375 px (one column) with no horizontal scroll; book.html still renders and preselects the
+  service; no console errors. Not verified: a real phone on mobile data.
