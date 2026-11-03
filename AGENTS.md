@@ -429,3 +429,5 @@ Last reviewed: 2026-09-02.
 - Verified: rolled-back SQL test (overlapping blocks merged, a block past closing clipped); real data shows the
   11:00–13:00 Google busy time on 4 Nov in black with those hours missing from the buttons; desktop and 375 px.
 - Note: this does publish when Kimina is busy (not what or why), at the user's request.
+- 2026-11-03: minimum notice changed from 12 to 6 hours (user's request), in `booking_settings.min_notice_hours`
+  (also editable in /admin → Calendar → Hours & settings). No page text mentions the number.
