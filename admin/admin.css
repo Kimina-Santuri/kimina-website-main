@@ -137,3 +137,10 @@ button.row:hover { background: var(--soft); }
 .hours-row input[type="time"] { min-height: 40px; border: 1px solid #aaa; border-radius: 0; padding: 8px; font: inherit; background: #fff; }
 .hours-row .checkbox { min-height: 40px; }
 @media (max-width: 680px) { .hours-row { grid-template-columns: 1fr 1fr; } .hours-row .checkbox { grid-column: 1 / -1; } }
+/* Student pages and materials */
+.checklist { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 0 18px; margin: 0 0 18px; padding: 10px 14px; border: 1px solid #aaa; }
+.checklist[disabled] { opacity: .4; }
+.share { margin: 0 0 22px; padding: 16px 18px; border: 1px solid currentColor; }
+.share .eyebrow { margin: 0 0 6px; }
+.share__link { margin: 0 0 12px; font-size: .74rem; overflow-wrap: anywhere; user-select: all; }
+.share__actions { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }

@@ -43,7 +43,7 @@ module.exports = function (eleventyConfig) {
     );
   });
 
-  const staticPages = ["404.html", "about.html", "book.html", "bookings.html", "contact.html", "index.html"];
+  const staticPages = ["404.html", "about.html", "book.html", "bookings.html", "contact.html", "index.html", "learn.html"];
   staticPages.forEach((page) => eleventyConfig.addPassthroughCopy(page));
   [
     "CNAME",
@@ -55,6 +55,8 @@ module.exports = function (eleventyConfig) {
     "bookings.js",
     "contact-form.js",
     "landing.css",
+    "learn.css",
+    "learn.js",
     "landing.js",
     "release-player.js",
     "stellar-player.js",

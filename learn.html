@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="referrer" content="no-referrer">
+  <title>Your materials | Kimina</title>
+  <link rel="icon" href="images/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
+  <link href="bookings.css" rel="stylesheet">
+  <link href="learn.css" rel="stylesheet">
+</head>
+<body>
+  <canvas id="topography" aria-hidden="true"></canvas>
+  <a class="skip-link" href="#materials">Skip to materials</a>
+  <header class="hero">
+    <div class="hero__content">
+      <div class="brand-lockup">
+        <a class="site-mark" href="index.html" aria-label="Return to Kimina home">K.</a>
+        <img class="logo" src="images/logo2.png" alt="Santuri East Africa">
+      </div>
+      <p class="eyebrow">MUSIC.EDUCATION.SOUND</p>
+    </div>
+  </header>
+  <nav class="booking-nav" aria-label="Primary navigation">
+    <a href="works.html">Works</a><a href="performances.html">Performances</a>
+    <a href="bookings.html">Bookings</a>
+    <a href="residencies.html">Residencies</a>
+    <a href="downloads.html">Downloads</a>
+    <a href="about.html">About</a>
+    <a href="contact.html">Contact</a>
+  </nav>
+  <main id="materials" class="container">
+    <section aria-labelledby="learn-title">
+      <div class="section-heading">
+        <div><p class="eyebrow">Your materials</p><h2 id="learn-title">Loading…</h2></div>
+        <p id="learn-intro">Files and links from Kimina. Keep this link private; anyone who has it can open this page.</p>
+      </div>
+      <noscript><p class="learn-message">This page needs JavaScript to show your materials.</p></noscript>
+      <div id="learn-note" class="learn-note" hidden></div>
+      <p id="learn-message" class="learn-message" role="status"></p>
+      <ul id="learn-list" class="learn-list"></ul>
+    </section>
+  </main>
+  <footer>
+    <img src="images/logo2.png" alt="" class="footer__logo">
+    <p>&copy; <span id="year">2026</span> Santuri East Africa</p>
+  </footer>
+  <script src="bookings.js" defer></script>
+  <script src="learn.js" defer></script>
+  <script src="stellar-player.js" defer></script>
+</body>
+</html>

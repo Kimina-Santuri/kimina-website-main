@@ -1,0 +1,19 @@
+/* Student materials page (learn.html); builds on bookings.css. */
+.section-heading h2#learn-title { font-size:clamp(2.2rem,5vw,4.4rem); overflow-wrap:anywhere; }
+.learn-message { max-width:620px; font-size:.76rem; line-height:1.8; }
+.learn-message:empty { display:none; }
+.learn-note { max-width:760px; margin:0 0 40px; padding:24px 26px; border:1px solid var(--ink); background:rgba(255,255,255,.94); font-size:.8rem; line-height:1.85; white-space:pre-wrap; overflow-wrap:anywhere; }
+.learn-note::before { display:block; margin-bottom:10px; content:"A note from Kimina"; font-size:.58rem; letter-spacing:.12em; text-transform:uppercase; }
+.learn-list { display:grid; gap:14px; margin:0; padding:0; list-style:none; }
+.learn-item { display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:center; gap:18px 28px; padding:20px 24px; border:1px solid var(--ink); background:rgba(255,255,255,.94); }
+.learn-item h3 { margin:0 0 6px; font-size:1.05rem; font-weight:400; letter-spacing:-.03em; overflow-wrap:anywhere; }
+.learn-item p { margin:0; font-size:.72rem; line-height:1.7; overflow-wrap:anywhere; }
+.learn-item .learn-meta { margin-top:8px; font-size:.62rem; letter-spacing:.02em; color:#444; }
+.learn-item .button { min-width:150px; cursor:pointer; }
+.learn-item .button:disabled { opacity:.5; cursor:wait; }
+.learn-item .button:focus-visible { outline:2px solid var(--ink); outline-offset:3px; }
+@media (max-width:720px) {
+  .learn-note { padding:20px 18px; }
+  .learn-item { grid-template-columns:1fr; padding:18px; }
+  .learn-item .button { width:100%; }
+}

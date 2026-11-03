@@ -383,3 +383,27 @@ Last reviewed: 2026-09-02.
 - Verified: build and check pass; a card button selected Mixing & Mastering, scrolled to the calendar and loaded
   its free days; `book.html?cancel=…` and `book.html?service=recording` forward with their query; 375 px with no
   horizontal scroll; no console errors. Not verified: a booking made from the new page (same code as before).
+
+## 2026-11-03: Stage 5, student materials by private link
+
+- User's choices: private link per student (no sign-in, no email codes, no checking against People "for now, low
+  traffic, might change"); materials are uploaded files, links and a note per student.
+- Migration `202611030002_student_materials.sql` (applied): `student_pages` (name, note, 48-hex `token`, `active`,
+  `last_opened_at`, optional `person_id`), `materials` (file with `storage_path`/`file_name`/`size_bytes`, or https
+  `url`; `for_all`), `material_pages` (which pages get which material). RLS admin-only. Private Storage bucket
+  `materials` (50 MB per file, the free plan's limit; 1 GB in total on the free plan), admin-only policy on
+  `storage.objects`. `public.student_page(token)` and `public.student_file(token, id)` are service-role only.
+- Edge Function `learn` (public, `verify_jwt` off): `page` returns the note and items; `file` returns a Storage
+  download link valid 5 minutes, made only when the student taps Download.
+- `learn.html` + `learn.js` + `learn.css`: the student page, opened as `kimina.co.ke/learn.html#<token>`. The token is
+  after `#`, so it never reaches servers or analytics; `noindex`, `no-referrer`, no GoatCounter. Not linked anywhere.
+- /admin Records: **Student pages** (create; copy link, "Send on WhatsApp", "New link" which ends the old one; note;
+  switch off; tick materials; delete) and **Materials** (upload a file or add a link, give it to all students or tick
+  students; delete removes the stored file too).
+- Verified: rolled-back SQL test (a page sees its own and all-students items only; another student's file refused;
+  switched-off and unknown links return nothing); anon refused on the tables, functions and bucket; through the
+  local /admin (user's existing session): created page and link, uploaded a PDF, the student page listed both, the
+  download returned the file intact, switching the link off showed "Link not found", deleting removed rows and the
+  stored file. Test data deleted. Security advisor: nothing new. Not verified: a real phone, large files, the
+  WhatsApp button.
+- Later, if traffic grows: email codes or a People check could be added on top of `student_pages`.
