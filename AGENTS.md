@@ -131,6 +131,7 @@ The remaining service images are already optimized JPEG assets. Prefer existing 
 - The page is not linked from the navigation, Works or Downloads; it is reached by its URL, `https://kimina.co.ke/lessons/five-beats/`. Add a link only when the user asks.
 - The same activity is also published as a private claude.ai artifact (https://claude.ai/artifact/VegXzi248kQCWaCj3BZ5az). The two copies are separate, so a content change must be made in both and the PDF regenerated (headless Chrome print of a copy with `.play`, `.timer`, `.progress`, `.layers` and `.chips` hidden).
 - `lessons/santuri-dna/` (2026-10-30) is the learner-facing pairs workbook for Lesson 12, "Santuri DNA: Music Industry and Culture": six no-screen tasks (listen and ask, influence map, consent and credit cases, follow the release, project interviews, ethics check and log). `index.html`, `lesson.css` (derived from Five Beats, without the sequencer styles; print rules hide the interactive parts), `lesson.js` (timers and per-device tick boxes only) and `santuri-dna.pdf` (A4, headless Chrome print of the page itself). It is also a claude.ai doc (https://claude.ai/artifact/Ui4qurdkK1sZ7r2FXrkb4d), with a facilitator guide at https://claude.ai/artifact/JQs1MXh6WWpgBKopMdChdy; the copies are separate. Reached by URL only: `https://kimina.co.ke/lessons/santuri-dna/`.
+- `lessons/business-of-djing/` (2026-11-03) is the pairs workbook for SEMA DJ102 Lesson 10, "The Business of DJing", from the user's Google Doc lesson plan and learner worksheet: seven tasks matching the plan's timings (offer and proof, costing a fee, fishbowl and contract clinic, EPK build with a 60-second booker test, event design with the peer booking rule and break-even, negotiation role-play, action plan to Jadili). Same files as Santuri DNA, plus a fee calculator and a break-even calculator (`.calc`, hidden in print). `business-of-djing.pdf` is a headless Chrome print of the page (9 A4 pages). Reached by URL only: `https://kimina.co.ke/lessons/business-of-djing/`. No claude.ai doc copy or facilitator guide yet.
 - 2026-10-28 verified: `npm run build` and `npm run check` pass; the page renders at desktop and 375 px width with no horizontal scroll and no console errors; the beat and song Play buttons advance their step and bar highlights. Not verified: audio by ear. Published to `main` on 2026-10-28 from branch `add/five-beats-lesson`.
 
 ## Technical constraints
@@ -284,3 +285,12 @@ Last reviewed: 2026-09-02.
   async): the five static pages, `site/_layouts/base.njk` (all generated pages) and both lesson pages. No cookies;
   stats at https://kimina.goatcounter.com (the user's account, created 2026-11-02). /admin is not counted.
 - Add the same line to any new standalone page (lessons, manuals are generated elsewhere and not counted).
+
+## 2026-11-03: The Business of DJing pairs workbook
+
+- Added `lessons/business-of-djing/` on `main` (user chose not to branch; see Lessons). Verified: `npm run build` and
+  `npm run check` pass; renders at 375 px with no horizontal scroll and no console errors; both calculators reproduce the
+  worked examples (KES 8,500 / 12,800 / 17,000; 64,900 and 130 tickets); tick boxes update the progress bar.
+  Not verified: the PDF pages by eye (no PDF renderer here), timer beep by ear. Committed and pushed on its own;
+  unrelated uncommitted changes (admin, bookings, eleventy config) were already in the tree and left alone. The `lessons` table
+  in Supabase does not list this lesson yet.
