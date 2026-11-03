@@ -37,9 +37,10 @@
     try { return new URL(url).hostname.replace(/^www\./, ""); } catch { return ""; }
   }
 
-  function fail(title, message) {
+  function fail(title, message, help = false) {
     $("#learn-title").textContent = title;
     $("#learn-message").textContent = message;
+    $("#learn-help").hidden = !help;
     document.title = `${title} | Kimina`;
   }
 
@@ -84,10 +85,10 @@
   }
 
   async function start() {
-    if (!token) return fail("Link needed", "Open this page with the private link Kimina sent you.");
+    if (!token) return fail("Learner materials", "Your files and links are on the private link Kimina sent you, by WhatsApp or email. Open that link to see them. Don't have it?", true);
     const reply = await call({ action: "page" }).catch(() => ({ result: "error" }));
     if (reply.result === "ok") return render(reply.page);
-    if (reply.result === "not_found") return fail("Link not found", "This link is not active. It may be mistyped or switched off. Ask Kimina for a new one.");
+    if (reply.result === "not_found") return fail("Link not found", "This link is not active. It may be mistyped or switched off. Ask Kimina for a new one.", true);
     fail("Could not load", "Your materials could not be loaded. Check your connection and reload the page.");
   }
 

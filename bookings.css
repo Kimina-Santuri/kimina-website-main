@@ -31,14 +31,12 @@ img { display:block; max-width:100%; }
 .card:hover .card__image,.card:focus-within .card__image { filter:saturate(1); }
 .card__top { display:flex; align-items:baseline; justify-content:space-between; gap:16px; margin:0; padding:13px 24px; border-bottom:1px solid var(--ink); font-size:.62rem; letter-spacing:.12em; text-transform:uppercase; }
 .card__top .card__category { margin:0; }
-.card__index { font-weight:400; }
 .button.card__book { width:100%; gap:12px; min-height:54px; justify-content:space-between; margin:0; padding:0 24px; border:0; border-top:1px solid var(--ink); }
 .card__book span[aria-hidden] { transition:transform .25s ease; }
 .card__book:hover span[aria-hidden],.card__book:focus-visible span[aria-hidden] { transform:translateX(5px); }
 .card__book:focus-visible { outline:2px solid var(--ink); outline-offset:-6px; }
 .steps { display:grid; grid-template-columns:repeat(3,1fr); gap:24px; margin:-40px 0 48px; padding:0; list-style:none; }
 .steps li { display:flex; gap:12px; font-size:.66rem; line-height:1.65; }
-.steps span { font-weight:400; }
 .book-section { scroll-margin-top:24px; }
 .book-section:focus { outline:none; }
 .sessions { margin-top:110px; }
@@ -61,6 +59,8 @@ img { display:block; max-width:100%; }
 .contact { display:flex; align-items:center; justify-content:space-between; gap:28px; margin-top:64px; padding:26px 28px; border:1px solid var(--ink); background:var(--white); }
 .contact h2 { font-size:clamp(1.2rem,2.2vw,1.7rem); letter-spacing:-.04em; line-height:1.15; }
 .contact .eyebrow { margin-bottom:8px; font-size:.58rem; }
+.contact--learners { margin-top:16px; }
+.contact__text { max-width:520px; margin:10px 0 0; font-size:.68rem; line-height:1.7; }
 .button--light { min-height:40px; flex:0 0 auto; margin:0; }
 footer { display:flex; align-items:center; justify-content:space-between; padding:24px 32px; border-top:1px solid var(--line); font-size:.62rem; letter-spacing:.08em; text-transform:uppercase; }
 .footer__logo { width:62px; margin:0; opacity:.7; }

@@ -407,3 +407,12 @@ Last reviewed: 2026-09-02.
   stored file. Test data deleted. Security advisor: nothing new. Not verified: a real phone, large files, the
   WhatsApp button.
 - Later, if traffic grows: email codes or a People check could be added on top of `student_pages`.
+
+## 2026-11-03: Bookings numbers removed, learners link
+
+- User's request: removed the 01–07 card numbers and the 01–03 numbers in the how-booking-works strip (nothing else
+  changed; a centre-everything version was tried and dropped at the user's request). Added a "For learners" panel
+  under "Not sure what you need?" linking to `learn.html`; opened without a private link, that page now explains
+  where the link is and offers "Ask Kimina for your link" (Contact form, education topic).
+- Verified: build and check pass; desktop render of the cards and both panels. Not verified: phone render of the
+  new panel (same styles as the existing contact panel).
