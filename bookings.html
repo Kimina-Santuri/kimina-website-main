@@ -24,10 +24,11 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
   <link href="bookings.css" rel="stylesheet">
+  <link href="book.css" rel="stylesheet">
 </head>
 <body>
   <canvas id="topography" aria-hidden="true"></canvas>
-  <a class="skip-link" href="#services">Skip to services</a>
+  <a class="skip-link" href="#book">Skip to booking</a>
   <header class="hero">
     <div class="hero__content">
       <div class="brand-lockup">
@@ -46,86 +47,136 @@
     <a href="contact.html">Contact</a>
   </nav>
   <main id="services" class="container">
-    <section aria-labelledby="services-title">
+    <section id="book" class="book-section" aria-labelledby="book-title" tabindex="-1">
       <div class="section-heading">
-        <h2 id="services-title">Choose your session</h2>
-        <p>Practical guidance for artists, producers, DJs and independent studios.</p>
+        <h2 id="book-title">Book a session</h2>
+        <p>Lessons, studio sessions and live sound for artists, producers, DJs and independent studios. Pick a session, then a free time. Your booking is confirmed straight away.</p>
       </div>
       <ol class="steps" aria-label="How booking works">
         <li><span>01</span>Choose a session</li>
         <li><span>02</span>Pick a free day and time, in Nairobi time</li>
         <li><span>03</span>Get a confirmation by email, with a link to cancel</li>
       </ol>
+      <noscript><p class="book-note">The booking calendar needs JavaScript. Please use the <a href="contact.html?topic=booking#enquiry">Contact form</a> instead.</p></noscript>
+      <p class="book-note" id="book-loading">Loading free times…</p>
+
+      <div class="booker" id="booker" hidden>
+        <section class="book-step book-step--wide" aria-labelledby="step-service">
+          <p class="eyebrow" id="step-service">1 · Service</p>
+          <div class="service-list" id="service-list" role="radiogroup" aria-labelledby="step-service"></div>
+        </section>
+        <section class="book-step" aria-labelledby="step-day">
+          <p class="eyebrow" id="step-day">2 · Day</p>
+          <div class="month-head">
+            <button type="button" class="month-move" id="month-prev" aria-label="Previous month">←</button>
+            <h3 id="month-label" aria-live="polite"></h3>
+            <button type="button" class="month-move" id="month-next" aria-label="Next month">→</button>
+          </div>
+          <div class="month-grid" id="month-grid"></div>
+          <p class="book-hint" id="day-hint"></p>
+        </section>
+        <section class="book-step" aria-labelledby="step-time">
+          <p class="eyebrow" id="step-time">3 · Time</p>
+          <p class="book-hint" id="time-hint">Choose a day first.</p>
+          <div class="time-list" id="time-list"></div>
+        </section>
+        <section class="book-step book-step--wide" aria-labelledby="step-details" id="details" hidden>
+          <p class="eyebrow" id="step-details">4 · Your details</p>
+          <p class="book-summary" id="book-summary"></p>
+          <form id="book-form" class="book-form">
+            <label><span>Name</span><input name="name" type="text" autocomplete="name" maxlength="160" required></label>
+            <div class="book-pair">
+              <label><span>Email</span><input name="email" type="email" autocomplete="email" maxlength="254"></label>
+              <label><span>Phone or WhatsApp</span><input name="phone" type="tel" autocomplete="tel" maxlength="40"></label>
+            </div>
+            <p class="book-hint">Email or phone. With an email you get a confirmation, a reminder the day before and a link to cancel.</p>
+            <label><span>Anything I should know? (optional)</span><textarea name="message" rows="4" maxlength="2000"></textarea></label>
+            <label class="book-trap" aria-hidden="true"><span>Leave this empty</span><input name="website" type="text" tabindex="-1" autocomplete="off"></label>
+            <p class="book-status" id="book-status" role="status" aria-live="polite"></p>
+            <button class="button" type="submit">Confirm booking</button>
+          </form>
+        </section>
+      </div>
+
+      <div class="book-panel" id="book-done" hidden tabindex="-1"></div>
+      <div class="book-panel" id="cancel-view" hidden tabindex="-1"></div>
+    </section>
+
+    <section class="sessions" aria-labelledby="services-title">
+      <div class="sessions-heading">
+        <h2 id="services-title">The sessions</h2>
+        <p>Read about each session, then choose a time for it in the calendar above.</p>
+      </div>
       <div class="cards">
         <article class="card">
           <p class="card__top"><span class="card__index">01</span><span class="card__category">Education</span></p>
           <img class="card__image" src="images/services/production-tutoring-480.jpg" srcset="images/services/production-tutoring-480.jpg 480w, images/services/production-tutoring-900.jpg 900w" sizes="(max-width: 720px) calc(100vw - 40px), (max-width: 920px) 45vw, 360px" width="480" height="320" alt="A producer at a keyboard and microphone in a studio lit green and blue" loading="lazy" decoding="async">
           <div class="card__content">
             <h3>Music Production Tutoring</h3>
-            <p>Build your production skills through tutoring shaped around your music, workflow and goals.</p>
+            <p>Learn production through your own music, with tutoring shaped around your workflow, your ideas and where you want to go.</p>
             <p class="card__meta">15 Hours. In Person. 40,000 KES</p>
           </div>
-          <a class="button booking-link card__book" href="book.html?service=production-tutoring">Choose a time<span class="visually-hidden"> for Music Production Tutoring</span> <span aria-hidden="true">→</span></a>
+          <a class="button booking-link card__book" href="bookings.html?service=production-tutoring#book" data-service="production-tutoring">Choose a time<span class="visually-hidden"> for Music Production Tutoring</span> <span aria-hidden="true">→</span></a>
         </article>
         <article class="card">
           <p class="card__top"><span class="card__index">02</span><span class="card__category">Education</span></p>
           <img class="card__image" src="images/services/dj-tutoring-480.jpg" srcset="images/services/dj-tutoring-480.jpg 480w, images/services/dj-tutoring-900.jpg 900w" sizes="(max-width: 720px) calc(100vw - 40px), (max-width: 920px) 45vw, 360px" width="480" height="320" alt="Close-up of a music controller's lit screen, buttons and knobs" loading="lazy" decoding="async">
           <div class="card__content">
             <h3>DJ Tutoring</h3>
-            <p>Develop confident transitions, set preparation and performance technique through hands-on tutoring.</p>
+            <p>Hands-on tutoring in transitions, set preparation and performance, so you play with confidence.</p>
             <p class="card__meta">15 Hours. In Person. 40,000 KES</p>
           </div>
-          <a class="button booking-link card__book" href="book.html?service=dj-tutoring">Choose a time<span class="visually-hidden"> for DJ Tutoring</span> <span aria-hidden="true">→</span></a>
+          <a class="button booking-link card__book" href="bookings.html?service=dj-tutoring#book" data-service="dj-tutoring">Choose a time<span class="visually-hidden"> for DJ Tutoring</span> <span aria-hidden="true">→</span></a>
         </article>
         <article class="card">
           <p class="card__top"><span class="card__index">03</span><span class="card__category">Production</span></p>
           <img class="card__image" src="images/services/production-session-480.jpg" srcset="images/services/production-session-480.jpg 480w, images/services/production-session-900.jpg 900w" sizes="(max-width: 720px) calc(100vw - 40px), (max-width: 920px) 45vw, 360px" width="480" height="320" alt="A tutor at a whiteboard while learners in headphones work in music software on laptops" loading="lazy" decoding="async">
           <div class="card__content">
             <h3>Production Session</h3>
-            <p>Work together on an original track—from shaping the idea and arrangement to finishing the production.</p>
+            <p>We work on your original track together, from the first idea and arrangement to a finished production.</p>
             <p class="card__meta">In studio. From 1,000 KES per hour</p>
           </div>
-          <a class="button booking-link card__book" href="book.html?service=production-session">Choose a time<span class="visually-hidden"> for Production Session</span> <span aria-hidden="true">→</span></a>
+          <a class="button booking-link card__book" href="bookings.html?service=production-session#book" data-service="production-session">Choose a time<span class="visually-hidden"> for Production Session</span> <span aria-hidden="true">→</span></a>
         </article>
         <article class="card">
           <p class="card__top"><span class="card__index">04</span><span class="card__category">Sound Engineering</span></p>
           <img class="card__image" src="images/services/mixing-mastering-480.jpg" srcset="images/services/mixing-mastering-480.jpg 480w, images/services/mixing-mastering-900.jpg 900w" sizes="(max-width: 720px) calc(100vw - 40px), (max-width: 920px) 45vw, 360px" width="480" height="320" alt="Black-and-white photo of a musician at a mixing desk during a live set, with a saxophonist behind" loading="lazy" decoding="async">
           <div class="card__content">
             <h3>Mixing &amp; Mastering</h3>
-            <p>Give your release clarity, impact and a consistent sound across headphones, speakers and platforms.</p>
+            <p>Clarity, impact and a consistent sound for your release, on headphones, speakers and every platform.</p>
             <p class="card__meta">From 5,000 KES</p>
           </div>
-          <a class="button booking-link card__book" href="book.html?service=mixing-mastering">Choose a time<span class="visually-hidden"> for Mixing &amp; Mastering</span> <span aria-hidden="true">→</span></a>
+          <a class="button booking-link card__book" href="bookings.html?service=mixing-mastering#book" data-service="mixing-mastering">Choose a time<span class="visually-hidden"> for Mixing &amp; Mastering</span> <span aria-hidden="true">→</span></a>
         </article>
         <article class="card">
           <p class="card__top"><span class="card__index">05</span><span class="card__category">Recording</span></p>
           <img class="card__image" src="images/services/recording-480.jpg" srcset="images/services/recording-480.jpg 480w, images/services/recording-900.jpg 900w" sizes="(max-width: 720px) calc(100vw - 40px), (max-width: 920px) 45vw, 360px" width="480" height="320" alt="Close-up of a pad controller's lit grid and display" loading="lazy" decoding="async">
           <div class="card__content">
             <h3>Recording Services</h3>
-            <p>Capture vocals, instruments and creative ideas with practical support throughout the recording process.</p>
+            <p>Record vocals, instruments and ideas with practical support from setup to the final take.</p>
             <p class="card__meta">In studio. From 1,000 KES per hour</p>
           </div>
-          <a class="button booking-link card__book" href="book.html?service=recording">Choose a time<span class="visually-hidden"> for Recording Services</span> <span aria-hidden="true">→</span></a>
+          <a class="button booking-link card__book" href="bookings.html?service=recording#book" data-service="recording">Choose a time<span class="visually-hidden"> for Recording Services</span> <span aria-hidden="true">→</span></a>
         </article>
         <article class="card">
           <p class="card__top"><span class="card__index">06</span><span class="card__category">Live Sound</span></p>
           <img class="card__image" src="images/services/sound-tech-480.jpg" srcset="images/services/sound-tech-480.jpg 480w, images/services/sound-tech-900.jpg 900w" sizes="(max-width: 720px) calc(100vw - 40px), (max-width: 920px) 45vw, 360px" width="480" height="320" alt="A technician adjusting amplifiers in an equipment rack" loading="lazy" decoding="async">
           <div class="card__content">
             <h3>Sound Tech &amp; Live Engineer</h3>
-            <p>Professional technical support and live sound engineering for performances, events and productions.</p>
+            <p>Technical support and live sound engineering for performances, events and productions.</p>
             <p class="card__meta">From 5,000 KES</p>
           </div>
-          <a class="button booking-link card__book" href="book.html?service=sound-tech">Choose a time<span class="visually-hidden"> for Sound Tech &amp; Live Engineer</span> <span aria-hidden="true">→</span></a>
+          <a class="button booking-link card__book" href="bookings.html?service=sound-tech#book" data-service="sound-tech">Choose a time<span class="visually-hidden"> for Sound Tech &amp; Live Engineer</span> <span aria-hidden="true">→</span></a>
         </article>
         <article class="card">
           <p class="card__top"><span class="card__index">07</span><span class="card__category">Consultation</span></p>
           <img class="card__image" src="images/services/consultation-480.jpg" srcset="images/services/consultation-480.jpg 480w, images/services/consultation-900.jpg 900w" sizes="(max-width: 720px) calc(100vw - 40px), (max-width: 920px) 45vw, 360px" width="480" height="320" alt="Hands playing a keyboard with lit keys" loading="lazy" decoding="async">
           <div class="card__content">
             <h3>General Consultation</h3>
-            <p>Get focused guidance on your creative direction, technical setup, career questions or next project.</p>
+            <p>Focused advice on your creative direction, technical setup, career questions or next project.</p>
             <p class="card__meta">From 1,000 KES</p>
           </div>
-          <a class="button booking-link card__book" href="book.html?service=consultation">Choose a time<span class="visually-hidden"> for General Consultation</span> <span aria-hidden="true">→</span></a>
+          <a class="button booking-link card__book" href="bookings.html?service=consultation#book" data-service="consultation">Choose a time<span class="visually-hidden"> for General Consultation</span> <span aria-hidden="true">→</span></a>
         </article>
       </div>
     </section>
@@ -139,6 +190,7 @@
     <p>&copy; <span id="year">2026</span> Santuri East Africa</p>
   </footer>
   <script src="bookings.js" defer></script>
+  <script src="book.js" defer></script>
   <script src="stellar-player.js" defer></script>
   <script data-goatcounter="https://kimina.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
 </body>

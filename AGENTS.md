@@ -24,7 +24,7 @@ This is Kimina’s static personal portfolio for music, education, sound enginee
 - `works.html`: selected work and reactive dot field
 - `performances.html`: live archive and layered waveforms
 - `kilele-performance.html`: Kimina For Me Please at Kilele Experimental Night, poster, context and seven-image gallery
-- `bookings.html`: service cards and flowing signal waves
+- `bookings.html`: booking calendar at the top, service cards below, flowing signal waves
 - `residencies.html`: residency archive and orbital forms
 - `smem-residency.html`: dedicated SMEM residency story, twelve-image gallery, credits and constellation field
 - `downloads.html`: external shops/download destinations and rippling grid
@@ -101,13 +101,13 @@ The service order is:
 6. Sound Tech & Live Engineer
 7. General Consultation
 
-- Desktop uses three columns and centers the seventh card. Tablet uses two columns and mobile uses one.
+- Desktop uses three columns and centers the seventh card. Tablet uses two columns and mobile uses one. The page column is centred on desktop (clear of the fixed left navigation) and the cards are separate boxes with a gap (24 px desktop, 20 px tablet, 16 px mobile).
 - Do not add feature lists unless explicitly requested.
 - Keep the small regular-weight metadata line on every card with its duration, format and price.
 - Keep the compact bordered contact panel below the cards.
 - The full About section no longer belongs on Bookings; it lives at `about.html`.
 - Keep the `K.` and Santuri logo lockup in the booking masthead.
-- Since stage 4 (2026-11-02) the seven booking links go to `book.html?service=<slug>` (Kimina's own calendar, see below); Calendly is no longer used.
+- Since 2026-11-03 the booking calendar sits at the top of `bookings.html` (`#book`), with the seven service cards below it; each card's "Choose a time" button (`data-service`) selects that service in the calendar and scrolls up to it (without JavaScript it opens `bookings.html?service=<slug>#book`). `book.html` only forwards old links, keeping `?service=` and `?cancel=`. Calendly is no longer used.
 - Every booking button must retain the `booking-link` class.
 
 ## Important shared assets
@@ -370,3 +370,16 @@ Last reviewed: 2026-09-02.
 - Verified: `npm run build` and `npm run check` pass; desktop (prices and buttons aligned across each row), 800 px
   (two columns) and 375 px (one column) with no horizontal scroll; book.html still renders and preselects the
   service; no console errors. Not verified: a real phone on mobile data.
+
+## 2026-11-03: Calendar moved onto the Bookings page
+
+- User's request: the booking calendar at the top of the Bookings page and the cards below it, linking back up;
+  cards centred with space between them; new card text (drafted by the agent from the old wording, same prices and
+  metadata, approved by the user). Heading "Book a session" with the intro, the three-step strip and the calendar;
+  then "The sessions" with the seven cards.
+- `book.js` handles the card buttons (selects the service, hides a finished booking panel, scrolls to `#book` and
+  focuses it; a click before the services load is kept and applied). `book.html` is now a noindex forwarding page.
+  Email links (cancel, book again) point to `bookings.html…#book`; `worker` redeployed.
+- Verified: build and check pass; a card button selected Mixing & Mastering, scrolled to the calendar and loaded
+  its free days; `book.html?cancel=…` and `book.html?service=recording` forward with their query; 375 px with no
+  horizontal scroll; no console errors. Not verified: a booking made from the new page (same code as before).

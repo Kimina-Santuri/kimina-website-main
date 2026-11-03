@@ -11,7 +11,7 @@ const day = (value: unknown) =>
 const time = (value: unknown) =>
   new Intl.DateTimeFormat("en-GB", { timeZone: "Africa/Nairobi", hour: "2-digit", minute: "2-digit", hour12: false }).format(new Date(String(value)));
 const when = (p: Payload) => `${day(p.starts_at)}, ${time(p.starts_at)}–${time(p.ends_at)} (Nairobi time)`;
-const cancelLink = (p: Payload) => `${SITE}/book.html?cancel=${p.cancel_token}`;
+const cancelLink = (p: Payload) => `${SITE}/bookings.html?cancel=${p.cancel_token}#book`;
 
 function build(subject: string, greeting: string, paragraphs: string[], details: [string, unknown][], link?: [string, string], replyTo?: string): Mail {
   const rows = details.filter(([, value]) => value != null && String(value).trim() !== "");
@@ -53,10 +53,10 @@ export function emailFor(kind: string, p: Payload): Mail {
       return p.cancelled_by === "admin"
         ? build(`Cancelled: ${p.service}, ${day(p.starts_at)}`, hello,
           ["I'm sorry, I have had to cancel this session. Please choose another time that suits you."],
-          session, ["Book a new time", `${SITE}/book.html`])
+          session, ["Book a new time", `${SITE}/bookings.html#book`])
         : build(`Cancelled: ${p.service}, ${day(p.starts_at)}`, hello,
           ["Your booking is cancelled. You are welcome to book another time."],
-          session, ["Book a new time", `${SITE}/book.html`]);
+          session, ["Book a new time", `${SITE}/bookings.html#book`]);
     case "booking_moved":
       return build(`New time: ${p.service}`, hello, ["Your session has moved to a new time."],
         session, ["Cancel this booking", cancelLink(p)]);

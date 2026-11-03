@@ -1,4 +1,5 @@
-// Booking calendar for kimina.co.ke/book.html. Reads services and free times straight from
+// Booking calendar at the top of kimina.co.ke/bookings.html (book.html forwards here).
+// Reads services and free times straight from
 // Supabase with the public key (read-only functions), and books or cancels through the
 // `booking` Edge Function. One month of free times is fetched at a time to keep data use low.
 (() => {
@@ -227,7 +228,7 @@
       line.append(el("a", { href: cancelUrl, class: "book-cancel-link" }, cancelUrl));
       panel.append(line);
     }
-    panel.append(el("a", { class: "button", href: "bookings.html" }, "Back to Bookings"));
+    panel.append(el("a", { class: "button", href: "bookings.html#book" }, "Book another session"));
     $("#booker").hidden = true;
     panel.hidden = false;
     panel.focus();
@@ -244,7 +245,7 @@
     const reply = await bookingApi({ action: "lookup", token }).catch(() => ({ result: "error" }));
     if (reply.result !== "found") {
       panel.replaceChildren(el("p", { class: "eyebrow" }, "Cancel a booking"), el("p", {}, "This cancel link was not found. It may be mistyped."),
-        el("a", { class: "button", href: "book.html" }, "Book a session"));
+        el("a", { class: "button", href: "bookings.html#book" }, "Book a session"));
       return;
     }
     const b = reply.booking;
@@ -252,7 +253,7 @@
     const end = new Date(b.ends_at);
     const heading = [el("p", { class: "eyebrow" }, "Your booking"), el("h3", {}, b.service), el("p", { class: "book-when" }, `${longDay(start)}, ${timeLabel(start)}–${timeLabel(end)} (Nairobi time)`)];
     if (b.status === "cancelled") {
-      panel.replaceChildren(...heading, el("p", {}, "This booking is already cancelled."), el("a", { class: "button", href: "book.html" }, "Book another time"));
+      panel.replaceChildren(...heading, el("p", {}, "This booking is already cancelled."), el("a", { class: "button", href: "bookings.html#book" }, "Book another time"));
       return;
     }
     if (b.status !== "confirmed" || b.past) {
@@ -266,7 +267,7 @@
       status.textContent = "Cancelling…";
       const result = await bookingApi({ action: "cancel", token }).catch(() => ({ result: "error" }));
       if (result.result === "cancelled" || result.result === "already") {
-        panel.replaceChildren(...heading, el("p", {}, "Cancelled. The time is free again."), el("a", { class: "button", href: "book.html" }, "Book another time"));
+        panel.replaceChildren(...heading, el("p", {}, "Cancelled. The time is free again."), el("a", { class: "button", href: "bookings.html#book" }, "Book another time"));
       } else {
         status.textContent = "Could not cancel. Check your connection and try again.";
         button.disabled = false;
@@ -277,7 +278,33 @@
 
   // ---------- start ----------
 
+  // The service cards below the calendar choose their service here and scroll back up to it.
+  function scrollToCalendar() {
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const section = $("#book");
+    section.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
+    section.focus({ preventScroll: true });
+  }
+
+  function watchCards() {
+    document.querySelectorAll("a[data-service]").forEach((link) => {
+      link.addEventListener("click", (event) => {
+        // On a cancel link page the calendar isn't loaded, so let the link open the page normally.
+        if (params.get("cancel") || event.metaKey || event.ctrlKey || event.shiftKey || event.button !== 0) return;
+        event.preventDefault();
+        const slug = link.dataset.service;
+        $("#book-done").hidden = true;
+        if (state.services.length) {
+          $("#booker").hidden = false;
+          chooseService(slug);
+        } else state.pending = slug; // still loading: start() picks it up
+        scrollToCalendar();
+      });
+    });
+  }
+
   async function start() {
+    watchCards();
     const token = params.get("cancel");
     if (token) return showCancel(token);
     const [ty, tm] = todayKey().split("-").map(Number);
@@ -294,7 +321,7 @@
     $("#month-prev").addEventListener("click", () => moveMonth(-1));
     $("#month-next").addEventListener("click", () => moveMonth(1));
     $("#book-form").addEventListener("submit", submit);
-    const wanted = params.get("service");
+    const wanted = state.pending || params.get("service");
     if (wanted && state.services.some((service) => service.slug === wanted)) await chooseService(wanted);
     else await loadMonth();
   }

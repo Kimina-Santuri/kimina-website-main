@@ -1,4 +1,4 @@
-// Public endpoint for kimina.co.ke/book.html: make a booking, look one up by its cancel link,
+// Public endpoint for the booking calendar on kimina.co.ke/bookings.html: make a booking, look one up by its cancel link,
 // or cancel it. Free times are read straight from public.booking_slots(); this function only
 // handles changes. Before saving, it asks Google Calendar about that exact time (if set up),
 // then public.create_booking() re-checks the slot, limits repeat bookings and saves it.
