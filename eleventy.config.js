@@ -58,6 +58,7 @@ module.exports = function (eleventyConfig) {
     "learn.css",
     "learn.js",
     "landing.js",
+    "orrery.js",
     "release-player.js",
     "stellar-player.js",
     "images",

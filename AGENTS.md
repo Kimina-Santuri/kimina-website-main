@@ -20,7 +20,7 @@ This is Kimina’s static personal portfolio for music, education, sound enginee
 
 ## Current pages and animation themes
 
-- `index.html`: landing page, short introduction and Lissajous curves
+- `index.html`: landing page, short introduction and the alien orrery (`orrery.js`, not `landing.js`; see 2026-11-06 below)
 - `works.html`: selected work and reactive dot field
 - `performances.html`: live archive and layered waveforms
 - `kilele-performance.html`: Kimina For Me Please at Kilele Experimental Night, poster, context and seven-image gallery
@@ -447,3 +447,37 @@ Last reviewed: 2026-09-02.
   "… is not shared with the booking system" in the health panel's error, and the error cleared once removed.
   Not verified: a real second calendar (the user adds their IDs and shares them).
 - Calendars that are only subscribed by URL (iCal links) or live outside Google can't be checked this way.
+
+## 2026-11-06: Alien orrery on the landing page
+
+- User's request: "the green and white and red version" of the Alien Orrery (`~/Documents/alien-orrery`) on the landing
+  page, with systems randomising automatically. I took that to be the deep green and red look of chart 108 and put it on
+  the site's pure white instead of pale pink: paper `#ffffff`, ink `#17463f`, ink2 `#7a9272`, accent `#b81f24`.
+- `orrery.js` is generated once from the orrery's `index.html` and then lives here on its own: later changes must be made
+  in both copies. Differences: one palette, no caption or buttons, no URL hash (the page uses `#about`), no page-wide CSS
+  variables, suns kept right or top and clear of the navigation, home view not used. It draws on `.orrery-canvas`; the
+  landing page no longer has `.ambient-canvas`, so `landing.js` draws nothing there (the Lissajous code is simply unused).
+- Behaviour: a random system per visit, a 6 s dissolve to a new one every 120-180 s (only while resting on the chart), the
+  random zoom from home world to supercluster. Nothing is drawn while the intro is scrolled away or the tab is hidden.
+  `LITE` devices (4 cores or fewer, or 4 GB or less) get charts with no zoom; reduced-motion and Save-Data get one still.
+  Test with `?seed=42`, `?still=1`, `?t=30`, `?z=2`.
+- `landing.css`: `.orrery-canvas` uses `100lvh` so a phone's address bar doesn't trigger rebuilds; `.home .bio` is solid
+  white; small home-page labels have white backings for legibility. `package.json` check and `eleventy.config.js` include
+  `orrery.js`. Adds 92 KB (about 27 KB compressed).
+- Verified: `npm run build` and `npm run check` pass; desktop and 390 px stills across several systems, with no horizontal
+  scroll at 1440 px. In real Chrome at 1440x900 with shortened timers: the animation runs, systems change on their own
+  (dissolve hides a stall of 0.3-0.4 s, up to about 0.6 s when LITE was forced), 0 frames while scrolled away, 120 frames
+  a second after returning, no page errors, a median frame gap of 8.3 ms. Reduced motion with Chrome's own flag: one
+  identical still at 3 s and 12 s.
+- Not verified: a real phone (LITE memory and speed are the main risk), a real Save-Data connection, normal-speed swap
+  timing watched by eye, Safari. **Not committed or pushed**: waiting for the user's go-ahead after the local preview.
+  Unrelated untracked `Five Beats - SEMA.pdf` and `lesson-10-mix-missions.html` were left alone.
+- Same day, user's requests: everything slowed ("20-30 secs"): journeys and pauses 20-30 s, and `PACE` 0.43 runs orbits, ships
+  and suns at under half the full orrery's speed. Lanes to quick worlds (orbit under 90 s) end at a fixed port on the orbit,
+  and ships are timed to meet the world there (`syncShips`), because tied lanes swung wildly. Radio and FTL comms added
+  (`makeComms`, `drawComms`): radio from living worlds and home out to neighbourhood scale, FTL flashes at every scale.
+  Verified: 60 systems with no lane still tied to a quick world and a 0 px miss between ships and worlds at ports (measured
+  on the full orrery, same code); site test with shortened timers in real Chrome, full and LITE, no page errors; build and check
+  pass. Not verified: a real phone (the user is testing after this push), Safari on iPhone. Pushed to `main` at the user's
+  request. This supersedes "not committed or pushed" above.
+
