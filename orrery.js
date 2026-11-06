@@ -1,12 +1,13 @@
 /* The site's background: one universe across all the pages. Each page is a world in the same system, joined by routes,
    with the same civilisation and stories carrying on as you move between them. Generated from the Alien Orrery
    (github.com/Kimina-Santuri/alien-orrery) by tools/make_site_orrery.py there; change it there, not here. */
-(() => {
+const bootOrrery = OPTS => {
 'use strict';
 
 /* Each civilisation gets one set of pigments. */
 const PALETTES = [
   { name: 'site', paper: '#ffffff', ink: '#050505', ink2: '#8e8e8e', accent: '#000000' },
+  { name: 'carbon', paper: '#0a0a0c', ink: '#e8e8ea', ink2: '#5a5a63', accent: '#e83f3f' },
 ];
 
 const TAU = Math.PI * 2;
@@ -77,21 +78,26 @@ function orbitXY(a, e, w, M, out) {
   out[1] = x * s + y * c;
 }
 
-const canvas = document.querySelector('.orrery-canvas');
+const canvas = OPTS.canvas || document.querySelector('.orrery-canvas');
 if (!canvas) return;
 /* Set here as well as in the stylesheet: a cached old stylesheet must never leave the canvas in the page flow. */
-Object.assign(canvas.style, { position: 'fixed', top: '0', left: '0', zIndex: '-1', width: '100%', pointerEvents: 'none', opacity: '0', transition: 'opacity .9s ease' });
-canvas.style.height = '100vh';
-canvas.style.height = '100lvh';
+if (OPTS.mini) Object.assign(canvas.style, { opacity: '0', transition: 'opacity .9s ease' });
+else {
+  Object.assign(canvas.style, { position: 'fixed', top: '0', left: '0', zIndex: '-1', width: '100%', pointerEvents: 'none', opacity: '0', transition: 'opacity .9s ease' });
+  canvas.style.height = '100vh';
+  canvas.style.height = '100lvh';
+}
 const ctx = canvas.getContext('2d', { alpha: false });
 const params = new URLSearchParams(location.search);
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const saveData = !!(navigator.connection && navigator.connection.saveData);
-const frozen = params.has('still') || reduceMotion || saveData;
+const lowEnd = (navigator.hardwareConcurrency || 4) <= 4 || (navigator.deviceMemory || 8) <= 4;
+const frozen = params.has('still') || reduceMotion || saveData || !!(OPTS.mini && lowEnd);
 const startAt = parseFloat(params.get('t')) || 0;
 const testZ = params.has('z') ? parseFloat(params.get('z')) : null;
+const explore = false; /* clicking is the Mac app's for now */
 const wallpaper = true; /* civilisations and stories on */
-let forcedPalette = null, customPalette = null, dustMul = 1;
+let forcedPalette = OPTS.palette || null, customPalette = null, dustMul = 1;
 
 let sys = null;
 
@@ -400,7 +406,7 @@ function* buildGen(seed, W, H) {
   }
 
   assignPages(sysObj);
-  if (SITE.page === 'home') yield* drawStatic(sysObj, r, R); else sysObj.scene = true;
+  if (SITE.chart) yield* drawStatic(sysObj, r, R); else sysObj.scene = true;
   yield;
   worlds.forEach(o => { if (o.r > 3 * px || sysObj.scene) o.sprite = worldSprite(sysObj, o); });
 
@@ -3425,7 +3431,7 @@ function drawLive(s, t, alpha01, scale) {
     drawComets(s, t);
   }
   for (const o of worlds) drawWorld(s, o, t);
-  if (scale === 1 && cam.k === 0) drawPageLabels(s);
+  if (scale === 1 && cam.k === 0 && SITE.page === 'home') drawPageLabels(s);
 
   /* Alignments. In star view they are measured from the suns; in home view, from home,
      because that is the sky they actually see. */
@@ -3728,6 +3734,7 @@ function stepCam(dt) {
     return;
   }
   if (cam.stopAtChart) { cam.stopAtChart = false; cam.auto = false; return; }
+  if (cam.stay) { stayStep(); return; }
   if (cam.planned === null || cam.planned === undefined) planNext(sys);
   cam.hold -= dt;
   /* Wait until the destination is painted, so the journey itself never stalls. */
@@ -3801,7 +3808,7 @@ function loop(now) {
   /* Up to 60 frames a second while the camera moves on capable devices; otherwise 30, which
      is plenty for slow orbits and kinder to batteries. */
   const moving = cam.u < 1 || cam.k !== cam.viewTo;
-  if (now - lastDraw < (moving && !LITE && quality > 0.7 ? 15 : 32)) return;
+  if (now - lastDraw < (OPTS.mini ? 66 : moving && !LITE && quality > 0.7 ? 15 : 32)) return;
   const gap = now - lastDraw;
   /* Steady slow frames lower the detail; a long run of good ones slowly brings it back. */
   slowFrames = gap > 48 ? slowFrames + 1 : Math.max(0, slowFrames - 0.25);
@@ -3980,6 +3987,7 @@ function civHistory(seed, s, age) {
   /* Finish to the exact moment, so an arc you started keeps moving between six-hour ticks. */
   while (storyAt < story.length && story[storyAt].d <= age) { beginArc(story[storyAt].d, story[storyAt].kind, story[storyAt].dur); storyAt++; }
   advanceArc(age);
+  st.worldNames = worldNames;
   return st;
 }
 
@@ -4334,6 +4342,7 @@ function drawOverlays() {
     }
   }
   if (showChronicle && s.civState) drawChronicle(s);
+  if (explore) drawExplore(s);
 }
 
 /* The panel is a real cipher: every letter has its own glyph in this civilisation's script. Now and then
@@ -4506,7 +4515,7 @@ function setPaused(on) {
 }
 if (wallpaper) {
   document.body.classList.add('wallpaper');
-  window.orrery = {
+  window[OPTS.mini ? 'orreryMini' : 'orrery'] = {
     next() { swapSystem(newSeed()); },
     setPalette(name) { forcedPalette = name || null; swapSystem(sys.seed); },
     setView(mode) {
@@ -4563,6 +4572,10 @@ if (wallpaper) {
       cam.from = cam.z; cam.to = 0; cam.u = 0; cam.dur = ASKED_JOURNEY;
     },
     options() { return JSON.stringify(focusOptions(sys).map(f => f.label)); },
+    /* For testing: where each clickable place is right now. */
+    pos() { return JSON.stringify(explore ? focusOptions(sys, true).map(f => { const [x, y] = xyOf(sys, f); return { id: f.id, kind: f.kind, x, y }; }) : []); },
+    /* For tools/trait_table.py: what a seed decides, at the current size, without showing it. */
+    traitsFor(seed) { const b = build(seed, canvas.clientWidth || 400, canvas.clientHeight || 300); return traitsOf(b).map(x => [x[0], x[2]]); },
     report: tellApp,
     history(age) { return JSON.stringify(civHistory(sys.seed, sys, age)); },
     state() {
@@ -4573,8 +4586,26 @@ if (wallpaper) {
   };
 }
 
+/* ---- Explore: every system can be named, shared and touched. Used by the Mac app's Explore window and the website. ---- */
+const exp = { hover: null, sel: null, flights: [], log: [], want: null, seed: 0, els: null, wheel: 0, refreshed: 0, lastPick: 0 };
+function zoomLevel(l) {
+  if (frozen || cam.u < 1 || exp.want !== null) return;
+  l = clamp(l, 0, LEVEL_MAX);
+  if (l === Math.round(cam.z)) return;
+  for (let L = 1; L <= LEVEL_MAX; L++) if (l >= L) { queueJob(sys, () => plateDisc(sys, L)); queueJob(sys, () => plate(sys, L)); }
+  exp.want = l;
+}
+/* Called by the camera while it stays where it was put. */
+function stayStep() {
+  if (exp.want === null || backlog.some(j => j.s === sys)) return;
+  cam.from = cam.z; cam.to = exp.want; cam.u = 0; cam.dur = 3.5; exp.want = null;
+  if (exp.els) exploreRefresh(true);
+}
+
 /* ---- The site layer: pages as worlds, routes between them, and one continuing story ---- */
 function pageFromUrl() {
+  if (OPTS.mini) return 'mini';
+  if (document.body.classList.contains('orrery-page')) return 'sliders';
   const current = document.querySelector('.side-nav a[aria-current="page"]');
   const name = (current ? current.getAttribute('href') : location.pathname.split('/').pop() || 'index.html').replace(/\.html.*$/, '');
   if (document.body.classList.contains('home') || name === 'index' || name === '') return 'home';
@@ -4591,6 +4622,8 @@ function assignPages(s) {
   s.worldOf = new Map([...s.pageOf].map(([o, n]) => [n, o]));
 }
 const SITE = { page: pageFromUrl(), hover: null, cameFrom: null, arrivedAt: 0 };
+SITE.chart = ['home', 'sliders', 'mini'].includes(SITE.page);
+const onSliders = SITE.page === 'sliders';
 
 function drawPageLabels(s) {
   ctx.font = '400 10px "JetBrains Mono", ui-monospace, Menlo, monospace';
@@ -4917,8 +4950,9 @@ function useUniverse(u) {
 }
 /* When a civilisation is finished, watch the ruins for a minute, then another begins. */
 function siteTick() {
+  sliderTick();
   const c = sys && sys.civState;
-  if (!c || !c.final || pendingBuild || forcedSeed) return;
+  if (!c || !c.final || pendingBuild || forcedSeed || OPTS.mini) return;
   if (c.age - c.final.d0 > 1) {
     universe = freshUniverse();
     saveUniverse(universe);
@@ -4948,14 +4982,16 @@ function start(seed, built) {
   cam.u = 1;
   cam.hold = 20;
   /* Only the home page wanders through the scales, and only on devices with room. */
-  cam.auto = !frozen && !LITE && SITE.page === 'home';
+  cam.auto = !frozen && (onSliders || (!LITE && SITE.page === 'home'));
+  cam.stay = onSliders;
+  exp.want = null;
   render(startAt);
   /* Full strength on the map; quieter behind a page's text. */
-  canvas.style.opacity = SITE.page === 'home' ? '1' : '0.4';
+  canvas.style.opacity = SITE.chart ? '1' : '0.4';
   if (frozen) return;
   startedAt = performance.now();
   lastDraw = startedAt;
-  if (SITE.cameFrom) SITE.arrivedAt = startedAt + 700;
+  if (SITE.cameFrom && sys.scene) SITE.arrivedAt = startedAt + 700;
   if (!sys.scene && cam.auto) preload(sys); else sys.ready = true;
   resume();
 }
@@ -4968,6 +5004,42 @@ function resume() {
 let inView = true;
 function newSeed() { return 1 + Math.floor(Math.random() * 99998); }
 
+/* The sliders on the Orrery's own page. Nothing on the universe itself is clickable here. */
+let sliderScale = 0;
+function sliderTick() {
+  if (!onSliders || !sys || frozen || cam.u < 1 || exp.want !== null) return;
+  if (sliderScale !== Math.round(cam.z)) zoomLevel(sliderScale);
+}
+function setHistoryRate(rate) {
+  /* Keep today's date in their history: only how fast it runs from here changes. */
+  const age = (Date.now() - civFounded) * civRate / DAY_MS;
+  civRate = rate;
+  civFounded = Date.now() - age * DAY_MS / rate;
+  civTimer = 0;
+}
+function wireSliders() {
+  const box = document.querySelector('.orrery-sliders');
+  if (!box) return;
+  if (frozen) { box.hidden = true; return; }
+  const words = { scale: ['A solar system', 'Nearby stars', 'A galaxy', 'A galaxy group', 'A supercluster'] };
+  const show = (i, text) => { const o = i.parentElement.querySelector('output'); if (o) o.textContent = text; };
+  box.querySelectorAll('input[type=range]').forEach(i => {
+    const kind = i.dataset.control;
+    const apply = () => {
+      const v = parseFloat(i.value);
+      if (kind === 'speed') { simSpeed = v; show(i, `${v.toFixed(2)}×`); }
+      if (kind === 'history') { setHistoryRate(RATE * v); show(i, `${(v * 24 * 60 / 60).toFixed(v < 1 ? 1 : 0)} hours a minute`); }
+      if (kind === 'scale') { sliderScale = v; show(i, words.scale[v]); }
+      if (kind === 'dust') show(i, `${v.toFixed(1)}×`);
+    };
+    i.addEventListener('input', apply);
+    /* Dust is painted into the chart, so it redraws only when you let go. */
+    if (kind === 'dust') i.addEventListener('change', () => { dustMul = parseFloat(i.value); swapSystem(sys.seed); });
+    apply();
+  });
+}
+
+if (!OPTS.mini) {
 /* Pointing at a page in the menu lights up its route. */
 document.querySelectorAll('.side-nav a').forEach(a => {
   const name = (a.getAttribute('href') || '').replace(/\.html.*$/, '');
@@ -4994,13 +5066,45 @@ window.addEventListener('resize', () => {
   }, 200);
 });
 
+}
+
 viewMode = 'star';
 changeEvery = 0;
+if (OPTS.mini) {
+  /* Painted only once it scrolls into view, and resting whenever it's out of view. */
+  civFounded = Date.now() - 60 * DAY_MS / RATE;
+  civRate = RATE;
+  civStory = [];
+  let begun = false;
+  const begin = () => {
+    begun = true;
+    if (frozen) { start(OPTS.seed); return; }
+    const gen = buildGen(OPTS.seed, canvas.clientWidth, canvas.clientHeight);
+    const step = () => {
+      const until = performance.now() + 6;
+      while (performance.now() < until) {
+        const x = gen.next();
+        if (x.done) { start(OPTS.seed, x.value); return; }
+      }
+      requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  };
+  new IntersectionObserver(entries => {
+    inView = entries[entries.length - 1].isIntersecting;
+    if (inView && !begun) begin(); else resume();
+  }, { rootMargin: '200px' }).observe(canvas);
+  document.addEventListener('visibilitychange', resume);
+  return;
+}
 useUniverse(universe);
-if (universe.last && universe.last !== SITE.page) SITE.cameFrom = universe.last;
-universe.last = SITE.page;
-universe.at = Date.now();
-saveUniverse(universe);
+if (onSliders) wireSliders();
+if (!onSliders) {
+  if (universe.last && universe.last !== SITE.page) SITE.cameFrom = universe.last;
+  universe.last = SITE.page;
+  universe.at = Date.now();
+  saveUniverse(universe);
+}
 
 /* The page's words come first; the universe is painted a slice at a time behind them, and fades in. */
 if (frozen) start(universe.seed);
@@ -5018,4 +5122,7 @@ else {
   requestAnimationFrame(step);
 }
 
-})();
+};
+bootOrrery({});
+/* A small live chart wherever a page asks for one, using this same script, so it costs no extra download. */
+document.querySelectorAll('.orrery-mini').forEach(c => bootOrrery({ canvas: c, mini: true, seed: parseInt(c.dataset.seed, 10) || 314, palette: 'carbon' }));
