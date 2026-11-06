@@ -1,0 +1,27 @@
+---
+layout: base.njk
+permalink: lessons.html
+title: Lessons
+description: Lesson workbooks and assignments by Kimina, for SEMA and Santuri learners, to work through in pairs.
+currentPage: lessons
+animation: constellation
+---
+<main>
+  <p class="section-label">Lessons</p>
+  <h1>Lessons</h1>
+  <p class="page-intro">Workbooks and assignments from my teaching at SEMA and Santuri. Each one runs in pairs and prints as a PDF.</p>
+  <div class="work-list lesson-list">
+    {% set lessons = [
+      { title: "The Business of DJing", image: "images/lessons/business-of-djing.jpg", alt: "The first page of The Business of DJing pair workbook", type: "SEMA · DJ102 · Lesson 10", url: "lessons/business-of-djing/", pdf: "lessons/business-of-djing/business-of-djing.pdf", text: "Your offer and image, costing a fee, booking and contracts, building an EPK, designing an event with a budget, and negotiating. Seven tasks, with fee and break-even calculators." },
+      { title: "Santuri DNA", image: "images/lessons/santuri-dna.jpg", alt: "The first page of the Santuri DNA pair workbook", type: "Santuri · Lesson 12", url: "lessons/santuri-dna/", pdf: "lessons/santuri-dna/santuri-dna.pdf", text: "Music industry and culture: talk through influence, consent, credit and ownership, then plan a final project. Six tasks, mostly screen-free. About 3 hours." },
+      { title: "Five Beats", image: "images/lessons/five-beats.jpg", alt: "The first page of the Five Beats activity, with the SEMA logo", type: "SEMA · Beat-making · Ableton Live 12", url: "lessons/five-beats/", pdf: "lessons/five-beats/five-beats.pdf", text: "Build house, boom bap, Afrobeats, amapiano and gengetone drum patterns in Ableton Live, add chords and a bassline, and arrange a short song. About 3 hours." }
+    ] %}
+    {% for item in lessons %}
+    <article class="work-item">
+      <a class="work-item__image-link" href="{{ item.url }}" aria-label="Open {{ item.title }}"><img src="{{ item.image }}" alt="{{ item.alt }}" loading="lazy"></a>
+      <div class="work-item__meta"><p>{{ item.type }}</p></div>
+      <div class="work-item__content"><h2>{{ item.title }}</h2><p>{{ item.text }}</p><a class="text-link" href="{{ item.url }}">Open workbook <span aria-hidden="true">↗</span></a><br><a class="text-link" href="{{ item.pdf }}">Printable PDF <span aria-hidden="true">↗</span></a></div>
+    </article>
+    {% endfor %}
+  </div>
+</main>

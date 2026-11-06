@@ -216,7 +216,7 @@ function* buildGen(seed, W, H) {
   const culture = CULTURES[Math.floor(mulberry(seed * 2654435761 + 1013)() * CULTURES.length)];
   const sunRoll = r();
   const nRoll = r();
-  const n = Math.max(9, kind === 'compact' ? 5 + Math.floor(nRoll * 3) : kind === 'pulsar' ? 3 + Math.floor(nRoll * 2) : kind === 'debris' ? 3 + Math.floor(nRoll * 3) : 3 + Math.floor(nRoll * 8));
+  const n = Math.max(10, kind === 'compact' ? 5 + Math.floor(nRoll * 3) : kind === 'pulsar' ? 3 + Math.floor(nRoll * 2) : kind === 'debris' ? 3 + Math.floor(nRoll * 3) : 3 + Math.floor(nRoll * 8));
   const wildRoll = r();
   const wild = wildRoll < 0.25 && (kind === 'single' || kind === 'hole');    /* long, crossing orbits */
   const dustRoll = r();
@@ -4578,11 +4578,11 @@ function pageFromUrl() {
   const current = document.querySelector('.side-nav a[aria-current="page"]');
   const name = (current ? current.getAttribute('href') : location.pathname.split('/').pop() || 'index.html').replace(/\.html.*$/, '');
   if (document.body.classList.contains('home') || name === 'index' || name === '') return 'home';
-  return ['works', 'performances', 'bookings', 'residencies', 'downloads', 'tech', 'about', 'contact'].includes(name) ? name : 'elsewhere';
+  return ['works', 'performances', 'bookings', 'residencies', 'downloads', 'tech', 'lessons', 'about', 'contact'].includes(name) ? name : 'elsewhere';
 }
 function assignPages(s) {
   const q = mulberry(s.seed * 2654435761 + 1021);
-  const names = ['works', 'performances', 'bookings', 'residencies', 'downloads', 'tech', 'about', 'contact'];
+  const names = ['works', 'performances', 'bookings', 'residencies', 'downloads', 'tech', 'lessons', 'about', 'contact'];
   for (let i = names.length - 1; i > 0; i--) { const j = Math.floor(q() * (i + 1)); [names[i], names[j]] = [names[j], names[i]]; }
   const hub = s.worlds[s.homeIdx];
   const others = s.worlds.filter(o => o !== hub).sort((a, b) => (b.living ? 1 : 0) - (a.living ? 1 : 0));
