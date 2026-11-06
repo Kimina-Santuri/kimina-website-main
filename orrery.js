@@ -56,6 +56,10 @@ function orbitXY(a, e, w, M, out) {
 
 const canvas = document.querySelector('.orrery-canvas');
 if (!canvas) return;
+/* Set here as well as in landing.css: a cached old stylesheet must never leave the canvas in the page flow. */
+Object.assign(canvas.style, { position: 'fixed', top: '0', left: '0', zIndex: '-1', width: '100%', pointerEvents: 'none' });
+canvas.style.height = '100vh';
+canvas.style.height = '100lvh';
 const ctx = canvas.getContext('2d', { alpha: false });
 const params = new URLSearchParams(location.search);
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;

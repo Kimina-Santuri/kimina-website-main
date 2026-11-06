@@ -480,4 +480,7 @@ Last reviewed: 2026-09-02.
   on the full orrery, same code); site test with shortened timers in real Chrome, full and LITE, no page errors; build and check
   pass. Not verified: a real phone (the user is testing after this push), Safari on iPhone. Pushed to `main` at the user's
   request. This supersedes "not committed or pushed" above.
+- Caching: kimina.co.ke's `landing.css` is served with `max-age=14400` (4 hours), so the first push showed returning visitors the old
+  stylesheet with an unpositioned canvas, which broke the page. Fixed with `?v=orrery1` on the home page's `landing.css` and `orrery.js`
+  (raise it when either changes) and by `orrery.js` positioning its own canvas. Any other CSS change on this site has the same delay.
 
