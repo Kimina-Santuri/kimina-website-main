@@ -12,16 +12,16 @@ animation: constellation
   <p class="page-intro">Websites and software I’ve built for artists, spaces and myself.</p>
   <div class="work-list">
     {% set projects = [
-      { title: "Alien Orrery", type: "Mac app / Web", url: "https://github.com/Kimina-Santuri/alien-orrery", link: "View on GitHub", text: "Charts of imagined solar systems, as the civilisations living in them might draw them. A live macOS wallpaper whose civilisations change over real days and weeks, and the animation on this site’s home page." },
-      { title: "PUSH 2 × TRAKTOR", type: "Controller mapping", url: "https://github.com/Kimina-Santuri/push2-traktor", link: "View on GitHub", text: "Ableton Push 2 as a four-deck Traktor Pro 4 controller on macOS, with stems, hotcues, loops and transport in beat-synced colour." },
-      { title: "Santuri Bookings", type: "Website", url: "https://bookings.santuri.org", link: "Visit site", text: "Booking and information site for Santuri East Africa’s creative spaces in Nairobi." },
-      { title: "Santuri Learning Portal", type: "Website", url: "https://learn.santuri.org", link: "Visit site", text: "Portal for Santuri’s educational programs, including SEMA and the Instrument Makers Lab." },
-      { title: "Daisy Nduta", type: "Website", url: "https://daisynduta.com", link: "Visit site", text: "Portfolio site for Daisy Nduta, a Nairobi-based sound designer, location recordist and cultural producer." },
-      { title: "ZAHABU", type: "Website", url: "https://zahabu.co.ke", link: "Visit site", text: "Landing page for Zahabu Culture Garden, with community photo submissions and a contact form." }
+      { title: "Alien Orrery", image: "images/tech/alien-orrery.jpg", alt: "A chart of an imagined solar system in green and red on white, with looping orbits and invented script", type: "Mac app / Web", url: "https://github.com/Kimina-Santuri/alien-orrery", link: "View on GitHub", text: "Charts of imagined solar systems, as the civilisations living in them might draw them. A live macOS wallpaper whose civilisations change over real days and weeks, and the animation on this site’s home page." },
+      { title: "PUSH 2 × TRAKTOR", image: "images/tech/push2-traktor.jpg", alt: "The Push 2 × Traktor cheat sheet, showing the colour-coded pads for four decks", type: "Controller mapping", url: "https://github.com/Kimina-Santuri/push2-traktor", link: "View on GitHub", text: "Ableton Push 2 as a four-deck Traktor Pro 4 controller on macOS, with stems, hotcues, loops and transport in beat-synced colour." },
+      { title: "Santuri Bookings", image: "images/tech/santuri-bookings.jpg", alt: "The Santuri Bookings home page, with a map of Kenya and a list of spaces", type: "Website", url: "https://bookings.santuri.org", link: "Visit site", text: "Booking and information site for Santuri East Africa’s creative spaces in Nairobi." },
+      { title: "Santuri Learning Portal", image: "images/tech/santuri-learning.jpg", alt: "The Santuri Learning home page, listing upcoming courses and workshops", type: "Website", url: "https://learn.santuri.org", link: "Visit site", text: "Portal for Santuri’s educational programs, including SEMA and the Instrument Makers Lab." },
+      { title: "Daisy Nduta", image: "images/tech/daisy-nduta.jpg", alt: "Daisy Nduta's portfolio home page, with her name above photo cards", type: "Website", url: "https://daisynduta.com", link: "Visit site", text: "Portfolio site for Daisy Nduta, a Nairobi-based sound designer, location recordist and cultural producer." },
+      { title: "ZAHABU", image: "images/tech/zahabu.jpg", alt: "The Zahabu Culture Garden landing page over a watercolour background", type: "Website", url: "https://zahabu.co.ke", link: "Visit site", text: "Landing page for Zahabu Culture Garden, with community photo submissions and a contact form." }
     ] %}
     {% for item in projects %}
     <article class="work-item">
-      <a class="work-item__image-link" href="{{ item.url }}" aria-label="Open {{ item.title }}" target="_blank" rel="noopener"><span class="work-item__placeholder" aria-hidden="true">{{ item.title }}</span></a>
+      <a class="work-item__image-link" href="{{ item.url }}" aria-label="Open {{ item.title }}" target="_blank" rel="noopener"><img src="{{ item.image }}" alt="{{ item.alt }}" loading="lazy" width="600" height="800"></a>
       <div class="work-item__meta"><p>{{ item.type }}</p></div>
       <div class="work-item__content"><h2>{{ item.title }}</h2><p>{{ item.text }}</p><a class="text-link" href="{{ item.url }}" target="_blank" rel="noopener">{{ item.link }} <span aria-hidden="true">↗</span></a></div>
     </article>

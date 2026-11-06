@@ -494,4 +494,4 @@ Last reviewed: 2026-09-02.
   links to the release at github.com/Kimina-Santuri/alien-orrery. "Tech" added to `nav.njk` and the five static pages with a menu. Descriptions come
   only from each project's own AGENTS.md. No dates or claims beyond those.
 - The website's `orrery.js` stays as pushed: it doesn't have the Mac app's living civilisations or new world types.
-
+- `images/tech/` holds 600 px screenshots of each project, taken from the live sites on 2026-11-06 and checked by eye. Retake them when a site changes a lot.
