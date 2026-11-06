@@ -523,6 +523,6 @@ After the push of 3f856da the live site served the repo's root files, not the bu
 ## 2026-11-06: Lessons section and Pages source
 
 - User's request: a section for lesson plans and assignments, and yes to the Pages fix. `site/lessons.njk` (`lessons.html`) is hand-written like Tech and lists the three existing learner workbooks, each with a page image (`images/lessons/`, 720x960 from the real page in light mode), its programme, and workbook and PDF links. "Lessons" sits after Tech in `nav.njk` and the static menus, and has its own world in the universe (`site_layer.js`, at least 10 worlds; `?v=universe2`). To add a lesson: add its folder under `lessons/` and one entry in `site/lessons.njk`.
-- Left out on purpose: lesson plans and facilitator guides (the Business of DJing plan is the user's Google Doc, the Santuri DNA guide a private claude.ai doc) because they may not be meant for learners, and the untracked `lesson-10-mix-missions.html` and `Five Beats - SEMA.pdf`. Waiting on the user.
+- Left out on purpose: lesson plans and facilitator guides (the Business of DJing plan is the user's Google Doc, the Santuri DNA guide a private claude.ai doc) because they may not be meant for learners; the user chose workbooks only for now. The untracked `lesson-10-mix-missions.html` and `Five Beats - SEMA.pdf` were deleted from the laptop at the user's request; they were never committed, so no copy is in git.
 - Pages source changed from "Deploy from a branch" (main, root) to GitHub Actions through the API (`build_type: workflow`), so only `deploy.yml` publishes.
 
