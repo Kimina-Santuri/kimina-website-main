@@ -85,6 +85,65 @@ function makeGlyph(r) {
   return { strokes, dot: pts[Math.floor(r() * pts.length)] };
 }
 
+/* What a world's surface is made of. Above zero is land, or whatever passes for it here.
+   Every world gets its own coastlines from its own stream. */
+function makeSurface(kind, q) {
+  const ph = [q() * TAU, q() * TAU, q() * TAU, q() * TAU];
+  const warp = 0.1 + q() * 0.32;
+  const f = 0.75 + q() * 1.15, th = 0.15 + q() * 0.95;
+  const bandF = 7 + q() * 8;
+  const cx = (q() - 0.5) * 0.9, cy = (q() - 0.5) * 0.9, poles = 0.55 + q() * 0.3;
+  const noise = (x, y, k) => {
+    const X = (x + warp * Math.sin(4.3 * y + ph[2])) * k, Y = (y + warp * Math.sin(3.7 * x + ph[3])) * k;
+    return Math.sin(3.7 * X + ph[0]) + Math.sin(4.1 * Y + ph[1]) + 0.7 * Math.sin(8.3 * (X + Y) + ph[2])
+      + 0.5 * Math.sin(13 * X - 9 * Y + ph[3]) + 0.3 * Math.sin(23 * X + 19 * Y + ph[0]);
+  };
+  const craters = [];
+  for (let i = 0; i < 16; i++) craters.push([(q() - 0.5) * 2, (q() - 0.5) * 2, 0.04 + q() * q() * 0.2]);
+  const fields = {
+    continents: (x, y) => noise(x, y, f) - th,
+    pangaea: (x, y) => noise(x, y, 0.8) * 0.55 + (1 - Math.hypot(x - cx, y - cy) * 2.1) * 1.5,
+    archipelago: (x, y) => noise(x, y, 2 + f) - 1.1,
+    water: (x, y) => noise(x, y, 1.1 + f) - 2.15,
+    desert: (x, y) => noise(x, y, f) + 1.3,
+    ice: (x, y) => (Math.abs(y) - poles * 0.6) * 4 + noise(x, y, 1.7) * 0.55,
+    banded: (x, y) => Math.sin(y * bandF + 0.5 * Math.sin(x * 3 + ph[0])) * 1.3 + noise(x, y, 1.4) * 0.22,
+    lava: (x, y) => 0.42 - Math.abs(noise(x, y, f + 0.7)),
+    barren: (x, y) => {
+      for (const [a, b, r] of craters) { const d = Math.hypot(x - a, y - b); if (d < r) return d > r * 0.72 ? 1 : -0.4; }
+      return noise(x, y, 2.4) - 0.9;
+    },
+  };
+  const field = fields[kind] || fields.continents;
+  const storms = kind === 'water' ? [[(q() - 0.5) * 1.2, (q() - 0.5) * 1.2, 0.2 + q() * 0.2], [(q() - 0.5) * 1.2, (q() - 0.5) * 1.2, 0.12 + q() * 0.14]] : [];
+  return { kind, field, sea: kind === 'water' ? 0.34 : kind === 'lava' ? 0.2 : 0.09, storms, hot: kind === 'lava', peopled: kind !== 'lava' && kind !== 'barren' && kind !== 'banded' };
+}
+
+/* A small painted disc for a world on the chart, so its surface shows even at this size. */
+function worldSprite(s, o) {
+  const size = Math.max(14, Math.ceil(o.r * 2 * s.dpr * 1.7));
+  const c = document.createElement('canvas');
+  c.width = c.height = size;
+  const g = c.getContext('2d');
+  const R = size / 2;
+  const q = mulberry(s.seed * 2654435761 + 701 + o.i * 13);
+  const surf = o.surfaceFn = makeSurface(o.surface, q);
+  g.fillStyle = mix(s.pal.paper, o.tint, 0.32);
+  g.fillRect(0, 0, size, size);
+  const dots = dotBuckets([s.pal.ink, s.pal.ink2, s.pal.accent]);
+  const n = size * size * 0.75;
+  for (let i = 0; i < n; i++) {
+    const x = q() * 2 - 1, y = q() * 2 - 1;
+    const h = surf.field(x, y) + (q() - 0.5) * 0.3;
+    const land = h > 0;
+    if (q() > (land ? 0.85 : surf.sea)) continue;
+    const tone = surf.hot ? (land ? 2 : 1) : land ? 0 : 1;
+    dots.add(tone, R + x * R, R + y * R, Math.max(0.5, size / 90));
+  }
+  dots.flush(g, 0.8);
+  return c;
+}
+
 function digits(value, base) {
   const out = [];
   let v = value;
@@ -169,7 +228,10 @@ function build(seed, W, H) {
   const clsRoll = r();
   const homeClass = clsRoll < 0.2 ? 0 : clsRoll < 0.62 ? 1 : clsRoll < 0.88 ? 2 : 3;
   const homeSize = [R(7, 10), R(13, 18), R(22, 32), R(36, 52)][homeClass];
-  const surface = pick(['continents', 'continents', 'archipelago', 'ocean', 'desert', 'ice', 'banded']);
+  pick([0]);
+  const sq = mulberry(seed * 2654435761 + 691);
+  const sqPick = list => list[Math.floor(sq() * list.length)];
+  const surface = sqPick(['continents', 'continents', 'continents', 'pangaea', 'archipelago', 'water', 'water', 'desert', 'ice']);
 
   worlds.forEach((o, i) => {
     const prev = i > 0 ? worlds[i - 1].a : o.a * 0.5;
@@ -179,6 +241,9 @@ function build(seed, W, H) {
     o.r = clamp(want, 2.4, Math.max(2.6, room));
     const tints = [pal.ink, pal.accent, pal.ink2, mix(pal.ink, pal.accent, 0.5)];
     o.tint = o.home ? pick([pal.ink, pal.ink, mix(pal.ink, pal.accent, 0.3)]) : o.living ? pal.ink : pick(tints);
+    o.surface = o.home ? surface : o.living
+      ? sqPick(['continents', 'pangaea', 'archipelago', 'water', 'desert', 'ice'])
+      : i === giant ? 'banded' : sqPick(['barren', 'barren', 'banded', 'lava', 'ice', 'water', 'desert']);
     o.moons = [];
     const big = o.r > 5 * px;
     const moonCount = o.home ? pick([0, 1, 1, 2, 2, 3, 4, 5, 7]) : i === giant ? Math.floor(r() * 5) : big ? Math.floor(r() * 3) : 0;
@@ -259,6 +324,7 @@ function build(seed, W, H) {
   }
 
   drawStatic(sysObj, r, R);
+  worlds.forEach(o => { if (o.r > 3 * px) o.sprite = worldSprite(sysObj, o); });
 
   /* A few grains stay loose and keep drifting through the printed dust. */
   const liteDevice = (navigator.hardwareConcurrency || 4) <= 4;
@@ -731,9 +797,12 @@ function drawWorld(s, o, t) {
   ctx.beginPath();
   ctx.arc(x, y, r, 0, TAU);
   ctx.clip();
-  ctx.fillStyle = o.tint;
-  ctx.fillRect(x - r - 1, y - r - 1, r * 2 + 2, r * 2 + 2);
-  ctx.fillStyle = mix(pal.paper, o.tint, 0.2);
+  if (o.sprite) ctx.drawImage(o.sprite, x - r, y - r, r * 2, r * 2);
+  else {
+    ctx.fillStyle = o.tint;
+    ctx.fillRect(x - r - 1, y - r - 1, r * 2 + 2, r * 2 + 2);
+  }
+  ctx.fillStyle = alpha(mix(pal.paper, o.tint, 0.2), 0.86);
   ctx.beginPath();
   ctx.arc(x - lx * r * 0.62, y - ly * r * 0.62, r * 1.02, 0, TAU);
   ctx.fill();
@@ -1624,25 +1693,8 @@ function buildWorld(s) {
   const home = s.worlds[s.homeIdx];
   const Rw = min * [0.2, 0.29, 0.37, 0.46][s.homeClass];
   const la = r() * TAU, lx = Math.cos(la), ly = Math.sin(la);
-  const ph = [r() * TAU, r() * TAU, r() * TAU, r() * TAU];
-  const wx = (x, y) => x + 0.22 * Math.sin(4.3 * y + ph[2]);
-  const wy = (x, y) => y + 0.22 * Math.sin(3.7 * x + ph[3]);
-  const noise = (x, y, f) => {
-    const X = wx(x, y) * f, Y = wy(x, y) * f;
-    return Math.sin(3.7 * X + ph[0]) + Math.sin(4.1 * Y + ph[1]) + 0.7 * Math.sin(8.3 * (X + Y) + ph[2])
-      + 0.5 * Math.sin(13 * X - 9 * Y + ph[3]) + 0.3 * Math.sin(23 * X + 19 * Y + ph[0]);
-  };
-  /* Above zero is land, or whatever passes for it here. */
-  const bandF = 7 + r() * 8;
-  const height = {
-    continents: (x, y) => noise(x, y, 1) - 0.55,
-    archipelago: (x, y) => noise(x, y, 2.3) - 1.1,
-    ocean: (x, y) => noise(x, y, 1.2) - 1.75,
-    desert: (x, y) => noise(x, y, 1) + 1.3,
-    ice: (x, y) => (Math.abs(y) - 0.5) * 4 + noise(x, y, 1.7) * 0.55,
-    banded: (x, y) => Math.sin(y * bandF + 0.5 * Math.sin(x * 3 + ph[0])) * 1.3 + noise(x, y, 1.4) * 0.22,
-  }[surface];
-
+  const surf = makeSurface(surface, mulberry(s.seed * 2654435761 + 829));
+  const height = surf.field;
   const ring = home.ring;
   const ringInner = ring ? Rw * ring.a1 : 0, ringOuter = ring ? Rw * ring.a2 : 0;
   const ringDots = front => {
@@ -1678,8 +1730,17 @@ function buildWorld(s) {
     const h = height(x / Rw, y / Rw) + gauss(r) * 0.22;
     const onLand = h > 0;
     const inland = clamp(h / 1.1, 0, 1);
-    if (r() > (onLand ? 0.42 + 0.58 * inland : 0.09)) continue;
-    dots.add(onLand ? (r() < 0.5 + 0.5 * inland ? 0 : 1) : 1, x, y, (0.55 + r() * r() * (onLand ? 0.55 + inland : 0.4)) * u);
+    if (r() > (onLand ? 0.42 + 0.58 * inland : surf.sea)) continue;
+    const tone = surf.hot ? (onLand ? 2 : 1) : onLand ? (r() < 0.5 + 0.5 * inland ? 0 : 1) : 1;
+    dots.add(tone, x, y, (0.55 + r() * r() * (onLand ? 0.55 + inland : 0.4)) * u);
+  }
+  /* Great storms turn slowly on a water world. */
+  for (const [ox, oy, rad] of surf.storms) {
+    const arms = 2, steps = Math.round(1400 * rad * rad * 40);
+    for (let i = 0; i < steps; i++) {
+      const t = r(), a = Math.floor(r() * arms) * Math.PI + t * 7 + gauss(r) * 0.3;
+      dots.add(0, (ox + Math.cos(a) * t * rad) * Rw, (oy + Math.sin(a) * t * rad) * Rw, (0.55 + r() * 0.5) * u);
+    }
   }
   dots.flush(g, 0.8 * u);
   const sx = -lx * Rw * 0.62, sy = -ly * Rw * 0.62;
@@ -1697,7 +1758,8 @@ function buildWorld(s) {
   for (let i = 0; i < lightTries; i++) {
     const a = r() * TAU, d = Math.sqrt(r()) * Rw;
     const x = Math.cos(a) * d, y = Math.sin(a) * d;
-    if (!inNight(x, y) || height(x / Rw, y / Rw) <= 0 || r() > 0.45) continue;
+    const floating = surface === 'water' && r() < 0.14;
+    if (!inNight(x, y) || (height(x / Rw, y / Rw) <= 0 && !floating) || r() > 0.45) continue;
     cities.add(0, x, y, (0.5 + r() * 0.7) * u);
     if (lights.length < 90 && r() < 0.15) lights.push([x, y, 1]);
   }
