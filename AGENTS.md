@@ -9,7 +9,7 @@ This is Kimina’s static personal portfolio for music, education, sound enginee
 - Use pure white backgrounds, black typography and thin black rules. Photography may remain in colour.
 - Use JetBrains Mono throughout.
 - Keep the enlarged `K.` mark at the upper left and the exact masthead tagline `MUSIC.EDUCATION.SOUND` at the upper right.
-- Keep shared navigation in this order: Works, Performances, Bookings, Residencies, Downloads, About, Contact.
+- Keep shared navigation in this order: Works, Performances, Bookings, Residencies, Downloads, Tech, About, Contact.
 - Desktop navigation stays fixed on the left; mobile navigation becomes a bordered bottom bar.
 - Keep page content restrained, with generous whitespace and square geometry.
 - Maintain semantic HTML, descriptive image alt text, visible keyboard focus styles and reduced-motion support.
@@ -28,6 +28,7 @@ This is Kimina’s static personal portfolio for music, education, sound enginee
 - `residencies.html`: residency archive and orbital forms
 - `smem-residency.html`: dedicated SMEM residency story, twelve-image gallery, credits and constellation field
 - `downloads.html`: external shops/download destinations and rippling grid
+- `tech.html`: websites and software, generated from `site/tech.njk`, constellation field
 - `about.html`: full biography and connected threads
 - `contact.html`: enquiry routes and cursor-following pulse rings
 - `404.html`: custom “Signal lost” page and reactive signal line
@@ -483,4 +484,14 @@ Last reviewed: 2026-09-02.
 - Caching: kimina.co.ke's `landing.css` is served with `max-age=14400` (4 hours), so the first push showed returning visitors the old
   stylesheet with an unpositioned canvas, which broke the page. Fixed with `?v=orrery1` on the home page's `landing.css` and `orrery.js`
   (raise it when either changes) and by `orrery.js` positioning its own canvas. Any other CSS change on this site has the same delay.
+
+## 2026-11-06: Tech section and Orrery download
+
+- User's request: a new section for tech work, listing the Santuri websites, Push 2 × Traktor, Daisy's site, ZAHABU's site and the orrery
+  (the user confirmed Daisy and ZAHABU are happy to be listed), plus the Orrery as a download with a public MIT GitHub repo and an unsigned app.
+  The user didn't choose a name or position, so I picked "Tech", after Downloads; easy to change.
+- `site/tech.njk` is hand-written (not a CMS collection) and reuses the Works list classes, so `landing.css` is unchanged. `site/content/downloads/orrery.md`
+  links to the release at github.com/Kimina-Santuri/alien-orrery. "Tech" added to `nav.njk` and the five static pages with a menu. Descriptions come
+  only from each project's own AGENTS.md. No dates or claims beyond those.
+- The website's `orrery.js` stays as pushed: it doesn't have the Mac app's living civilisations or new world types.
 
