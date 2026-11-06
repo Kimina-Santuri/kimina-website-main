@@ -514,3 +514,7 @@ Last reviewed: 2026-09-02.
 
 - User's request: a better image or the new logo for the orrery, and better images for the other Tech entries. `images/tech/` is now 720x960 (`?v=2` in `site/tech.njk`; raise it when replacing them). Orrery: the black hole app icon on black. Push 2: only the four pad decks from `cheatsheet.svg` (the full sheet in the push2-traktor repo still says "screen not used"). Bookings, Learning and ZAHABU: live sites at 600x800, taken 2026-11-06. Daisy: live site at 960x1280, cropped; its slides move, so check the frame when retaking. Each file is about 75 to 115 KB.
 
+## 2026-11-06: Deploy problem to watch
+
+After the push of 3f856da the live site served the repo's root files, not the built `_site`: `tech.html` returned 404 and `works.html` had the old canvas, although "Build and deploy portfolio" succeeded. The Pages API reports `build_type: legacy`, source `main` `/`, alongside the Actions deploy in `deploy.yml`. Running that workflow again by hand (`gh workflow run deploy.yml`) restored the right site within a minute. Likely cause, not proven: the two publishers overwrite each other, whichever finishes last winning. Likely lasting fix, needing the user's yes because it changes the repo's settings: Pages source to GitHub Actions (Settings → Pages). Until then, after every push check `tech.html` live and re-run the workflow if it 404s.
+
