@@ -98,7 +98,7 @@ const testZ = params.has('z') ? parseFloat(params.get('z')) : null;
 const followEvents = false;
 const explore = false; /* clicking is the Mac app's for now */
 const wallpaper = true; /* civilisations and stories on */
-const crumbles = followEvents || explore; /* worlds and suns come apart in grain; the website keeps the simpler story */
+const crumbles = !OPTS.mini; /* worlds and suns come apart in grain */
 let forcedPalette = OPTS.palette || null, customPalette = null, dustMul = 1;
 
 let sys = null;
@@ -3937,6 +3937,7 @@ function civHistory(seed, s, age) {
   const enemy = sisters.length ? sisterNames[0] : `the colonies of ${homeName}`;
   const beginArc = (d, kind, dur) => {
     if (st.arc || st.final) return;
+    if (kind === 'starlift' && !s.suns.every(x => x.kind !== 'hole' && x.kind !== 'pulsar')) return;
     if (kind === 'war') { st.arc = { kind, d0: d, dur }; add(d, 'war', `War broke out between ${homeName} and ${enemy}.`); }
     if (kind === 'ascend') { st.arc = { kind, d0: d, dur, gone: 0 }; add(d, 'ascend', `${people} stopped answering. Something is being built around the star.`); }
     if (kind === 'destroy') { st.arc = { kind, d0: d, dur }; add(d, 'destroyBegin', 'Every signal is warning of the same thing.'); }
@@ -4061,7 +4062,7 @@ function applyCiv(first) {
   const taken = s.sunless ? s.worlds.length : c.arc && c.arc.kind === 'ascend' ? c.arc.gone : c.final && c.final.kind === 'transcended' ? c.final.gone : 0;
   /* With the star gone, the worlds go after it, one by one, from the outside in. */
   let lifted = null;
-  if (crumbles && s.sunless && !wasSunless && !first) for (const sun of s.suns) if (!sun.far) { const e = crumble(s, sun, 'sun', lifted && { entry: lifted, gap: 3 }); lifted = lifted || e; }
+  if (crumbles && s.sunless && !wasSunless && !first) for (const sun of s.suns) if (!sun.far && !(s.scene && lifted)) { const e = crumble(s, sun, 'sun', lifted && { entry: lifted, gap: 3 }); lifted = lifted || e; }
   let wave = 0;
   s.worlds.slice().sort((a, b) => b.a - a.a).forEach((o, i) => {
     const was = o.gone;
@@ -4700,6 +4701,302 @@ if (wallpaper) {
 }
 
 
+/* ---- Worlds and suns coming apart: the thing itself dissolves into grain, the same stipple as the chart, and it floats away. ----
+   Each grain takes its colour from a small copy of what's on screen, read once at the start.
+   It is held until the camera arrives if the camera is on its way, so you see it happen up close. */
+const CRUMBLE = { dismantle: 14, destroy: 11, sun: 20, drift: 16, impact: 9 };
+const CRUMBLE_WAIT = 45;
+let crumbleT = 0;
+function crumble(s, ref, mode, after) {
+  if (frozen) return null;
+  s.crumbles = s.crumbles || [];
+  const e = { ref, mode, born: clock, start: null, dur: CRUMBLE[mode], after: after || null, where: null, cells: null };
+  if (mode !== 'impact') ref.armed = true;
+  s.crumbles.push(e);
+  return e;
+}
+function crumbleReset(s) {
+  for (const e of s.crumbles || []) { e.ref.armed = false; e.ref.crumbling = false; e.ref.crumbled = false; }
+  s.crumbles = [];
+}
+const crumbleBusy = s => !!s && !!s.crumbles && s.crumbles.some(e => e.start !== null && clock - e.start < e.dur);
+function crumbleTick(s) {
+  if (!s || !s.crumbles || !s.crumbles.length) return;
+  for (const e of s.crumbles.slice()) {
+    if (e.start === null) {
+      if (e.after && (e.after.entry.start === null || clock - e.after.entry.start < e.after.gap)) continue;
+      const here = s.focus && s.focus.ref === e.ref;
+      if (here && cam.z === -1 && cam.u >= 1 && s.plates && s.plates[-1]) { crumbleStart(s, e, 'close'); continue; }
+      if (e.mode === 'impact') { s.crumbles.splice(s.crumbles.indexOf(e), 1); continue; }
+      if (followEvents && crumbleWaiting(s, e)) continue;
+      crumbleStart(s, e, 'chart');
+    } else if (e.where === 'chart') {
+      if (clock - e.start > e.dur) crumbleEnd(s, e);
+    } else if (cam.z > -0.01) {
+      /* Back on the chart: the close-up had the whole world painted in, so it can't be used again. */
+      if (e.mode !== 'impact') { delete s.closeups[e.focusId]; if (s.plates) delete s.plates[-1]; s.focusReady = false; }
+      crumbleEnd(s, e);
+    }
+  }
+}
+function crumbleEnd(s, e) {
+  if (e.mode !== 'impact') { e.ref.crumbling = false; e.ref.crumbled = true; }
+  s.crumbles.splice(s.crumbles.indexOf(e), 1);
+}
+function crumbleStart(s, e, where) {
+  const { ref, mode } = e, isSun = !!ref.mid, t = crumbleT, P2 = [0, 0];
+  e.where = where; e.start = clock;
+  if (mode !== 'impact') {
+    ref.armed = false; ref.crumbling = true;
+    if (mode === 'destroy') ref.shattered = true;
+  }
+  /* Where the star is from here sets which way a dismantled world's grains go. */
+  let gx, gy;
+  if (isSun) { const a = (t / s.sunT) * TAU * ref.rate + ref.ph; gx = Math.cos(a) * ref.off; gy = Math.sin(a) * ref.off; }
+  else { orbitXY(ref.a, ref.e, ref.w, (t / ref.T) * TAU + ref.phase, P2); gx = P2[0]; gy = P2[1]; }
+  const view = s.scene && s.scene.hero ? s.scene : null;
+  const toStar = (view ? Math.atan2(view.sun.y - (isSun ? 0 : ref.y), view.sun.x - (isSun ? 0 : ref.x)) : Math.atan2(-gy, -gx)) || 0;
+  e.hit = toStar + Math.PI + (Math.random() - 0.5) * 1.6;
+  e.mono = s.pal.paper === '#ffffff';
+  let R, L, total, zoom, ink = s.pal.paper;
+  if (view) {
+    const big = ref === view.hero;
+    R = isSun ? view.sun.r * 1.1 : big ? view.pad : ref.r;
+    L = big ? R * 0.7 : Math.max(R, 60 * s.px); zoom = s.dpr;
+    total = big ? (LITE ? 1800 : 6000) : clamp(Math.round((Math.PI * R * R) / 3), 120, LITE ? 400 : 900);
+    e.fx = isSun ? view.sun.x : ref.x; e.fy = isSun ? view.sun.y : ref.y;
+    e.maxGrain = 1.5;
+    const pic = big ? view.heroC : isSun ? null : ref.sprite;
+    const n = big ? 128 : clamp(Math.round(R * 2), 16, 64);
+    if (pic) e.mini = crumbleCopy(pic, 0, 0, pic.width, n);
+    else {
+      e.mini = document.createElement('canvas');
+      e.mini.width = e.mini.height = n;
+      const g = e.mini.getContext('2d');
+      g.fillStyle = s.pal.ink;
+      g.beginPath(); g.arc(n / 2, n / 2, n / 2, 0, TAU); g.fill();
+    }
+    e.mask = crumbleMask(R, zoom);
+    e.mask.getContext('2d').drawImage(pic || e.mini, 0, 0, e.mask.width, e.mask.height);
+    if (mode === 'destroy' && ref.home) pushEvent('nova');
+    if (mode === 'dismantle') pushEvent('taken', ref);
+  } else if (where === 'close') {
+    const p = s.plates[-1], min = Math.min(s.W, s.H);
+    const body = p.world ? p.world.Rw : min * 0.4;
+    R = isSun ? body * 1.15 : ref.ring ? body * Math.max(1, ref.ring.a2) : body;
+    L = R; zoom = s.dpr;
+    total = LITE ? 4000 : 10000;
+    e.mini = crumbleCopy(canvas, (s.W / 2 - R) * s.dpr, (s.H / 2 - R) * s.dpr, R * 2 * s.dpr, 128);
+    e.mask = crumbleMask(R, zoom);
+    if (mode === 'impact') ink = mix(s.pal.ink, s.pal.paper, 0.72);
+    e.focusId = s.focus.id;
+    /* Long enough to watch it finish, and not much longer on an empty view. */
+    if (cam.auto) cam.hold = e.dur + 2;
+    if (mode !== 'impact') { p.lanes = null; p.gates = null; p.comms = null; }
+  } else {
+    const size = lerp(1, s.vs, cam.k), base = isSun ? ref.mid : ref.r * (ref.home ? lerp(1, Math.max(ref.r, 26 * s.px) / ref.r, cam.k) : 1);
+    R = base; L = Math.max(R, 46 * s.px); zoom = s.dpr * size;
+    total = clamp(Math.round((Math.PI * Math.pow(R * size, 2)) / 3.6), 220, LITE ? 1400 : 3600);
+    e.gx = gx; e.gy = gy;
+    const n = clamp(Math.round(R * size * 2), 24, 128), sprite = ref.sprite;
+    if (sprite) e.mini = crumbleCopy(sprite, 0, 0, sprite.width, n);
+    else {
+      e.mini = document.createElement('canvas');
+      e.mini.width = e.mini.height = n;
+      const g = e.mini.getContext('2d');
+      g.fillStyle = ref.tint || s.pal.ink;
+      g.beginPath(); g.arc(n / 2, n / 2, n / 2, 0, TAU); g.fill();
+    }
+    /* On the chart the world itself is this picture now, with the grains eating into it. */
+    e.mask = crumbleMask(R, zoom);
+    e.mask.getContext('2d').drawImage(sprite || e.mini, 0, 0, e.mask.width, e.mask.height);
+    if (mode === 'destroy' && ref.home) pushEvent('nova');
+    if (mode === 'dismantle') pushEvent('taken', ref);
+  }
+  e.R = R; e.zoom = zoom; e.ink = ink;
+  crumbleCells(e, R, total, L, toStar);
+}
+function crumbleMask(R, zoom) {
+  const c = document.createElement('canvas');
+  c.width = c.height = Math.max(4, Math.ceil(R * 2 * zoom));
+  return c;
+}
+function crumbleCopy(src, sx, sy, size, n) {
+  /* In two steps, so fine grain averages into a real colour rather than aliasing. */
+  const c = document.createElement('canvas'), mid = document.createElement('canvas');
+  mid.width = mid.height = n * 4;
+  const gm = mid.getContext('2d');
+  gm.imageSmoothingQuality = 'high';
+  gm.drawImage(src, sx, sy, size, size, 0, 0, n * 4, n * 4);
+  c.width = c.height = n;
+  const g = c.getContext('2d', { willReadFrequently: true });
+  g.imageSmoothingQuality = 'high';
+  g.drawImage(mid, 0, 0, n, n);
+  return c;
+}
+function crumbleCells(e, R, total, L, toStar) {
+  const sx = Math.cos(toStar), sy = Math.sin(toStar), hx = Math.cos(e.hit) * R * 0.92, hy = Math.sin(e.hit) * R * 0.92;
+  const rnd = Math.random, D = e.dur, n = e.mini.width, gap = Math.sqrt((Math.PI * R * R) / total);
+  const px = e.mini.getContext('2d').getImageData(0, 0, n, n).data;
+  const groups = new Map(), cells = [];
+  for (let i = 0; i < total; i++) {
+    const ang = rnd() * TAU, rad = R * Math.sqrt(rnd()), x = Math.cos(ang) * rad, y = Math.sin(ang) * rad;
+    const nx = rad ? x / rad : 0, ny = rad ? y / rad : 0, r = rnd(), r2 = rnd();
+    const big = rnd() < 0.05 ? 1.8 : 1;
+    const c = { x, y, r: Math.min(e.maxGrain || Infinity, gap * (0.15 + rnd() * 0.17) * big), delay: 0, vx: 0, vy: 0, ax: 0, ay: 0, drag: 0, wob: (r2 - 0.5) * L * 0.05, ph: rnd() * TAU };
+    if (e.mode === 'dismantle') {
+      /* Peeled off from the side facing the star, and carried towards it. */
+      const facing = (x * sx + y * sy) / R, side = r2 - 0.5;
+      c.delay = 1 + ((1 - facing) / 2) * D * 0.62 + r * 1;
+      c.vx = sx * L * (0.05 + 0.1 * r) - sy * side * L * 0.16;
+      c.vy = sy * L * (0.05 + 0.1 * r) + sx * side * L * 0.16;
+      c.ax = sx * L * 0.022; c.ay = sy * L * 0.022;
+    } else if (e.mode === 'destroy') {
+      const dist = Math.hypot(x - hx, y - hy), v = L * (0.5 + r * r * 2.8);
+      c.delay = 0.3 + (dist / (2 * R)) * 1.5 + r2 * 0.25;
+      c.vx = (nx + (r2 - 0.5) * 0.7) * v; c.vy = (ny + (rnd() - 0.5) * 0.7) * v;
+      c.drag = 1.5;
+      c.ax = nx * L * 0.012; c.ay = ny * L * 0.012;
+    } else if (e.mode === 'sun') {
+      /* From the outside in, like layers being lifted away. */
+      const v = L * (0.04 + 0.08 * r);
+      c.delay = 0.4 + (1 - rad / R) * D * 0.62 + r2 * 1.6;
+      c.vx = nx * v - ny * L * 0.05; c.vy = ny * v + nx * L * 0.05;
+      c.ax = nx * L * 0.018; c.ay = ny * L * 0.018;
+    } else if (e.mode === 'drift') {
+      const a = Math.atan2(ny, nx) + (r2 - 0.5) * 2, v = L * (0.02 + 0.055 * r);
+      c.delay = 0.5 + rnd() * D * 0.42 + (1 - rad / R) * D * 0.2;
+      c.vx = Math.cos(a) * v; c.vy = Math.sin(a) * v;
+      c.ax = Math.cos(a) * L * 0.005; c.ay = Math.sin(a) * L * 0.005;
+    } else {
+      const dist = Math.hypot(x - hx, y - hy);
+      if (dist > R * 0.34) continue;
+      const a = e.hit + (r2 - 0.5) * 2, v = L * (0.35 + r * 1.3);
+      c.delay = 1.3 + (dist / R) * 0.5;
+      c.vx = Math.cos(a) * v; c.vy = Math.sin(a) * v;
+      c.drag = 1.3;
+    }
+    /* Its colour is whatever was really there; where nothing was, no grain, but the place still empties. */
+    const at = (clamp(Math.floor(((y + R) / (2 * R)) * n), 0, n - 1) * n + clamp(Math.floor(((x + R) / (2 * R)) * n), 0, n - 1)) * 4;
+    cells.push(c);
+    if (px[at + 3] < 40) continue;
+    /* The website stays black, grey and white: fine stipple averages to pale grey, so keep its contrast. */
+    const grey = (px[at] + px[at + 1] + px[at + 2]) / 3;
+    if (e.mono && grey > 248) continue;
+    const key = e.mono ? (grey < 225 ? '#050505' : '#8e8e8e') : `rgb(${(px[at] >> 4) * 16 + 8},${(px[at + 1] >> 4) * 16 + 8},${(px[at + 2] >> 4) * 16 + 8})`;
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key).push(c);
+  }
+  cells.sort((a, b) => a.delay - b.delay);
+  e.cells = cells;
+  e.groups = [...groups.entries()];
+  e.next = 0;
+  e.blot = gap * 1.45;
+  e.lastDelay = cells.length ? cells[cells.length - 1].delay : 0;
+}
+/* Each grain that leaves takes its bit of the surface with it, so the edge stays stippled. */
+function crumbleErode(e, age) {
+  const g = e.mask.getContext('2d'), z = e.zoom, wipe = e.where === 'chart';
+  if (e.next >= e.cells.length || e.cells[e.next].delay > age) return;
+  g.globalCompositeOperation = wipe ? 'destination-out' : 'source-over';
+  g.fillStyle = wipe ? '#000' : e.ink;
+  g.beginPath();
+  while (e.next < e.cells.length && e.cells[e.next].delay <= age) {
+    const c = e.cells[e.next++], x = (c.x + e.R) * z, y = (c.y + e.R) * z, r = e.blot * z * (0.7 + c.ph / TAU * 0.6);
+    g.moveTo(x + r, y);
+    g.arc(x, y, r, 0, TAU);
+  }
+  g.fill();
+}
+/* Draws the grains centred on (ox, oy), in whatever space is current. */
+function crumblePieces(s, e, ox, oy, size, a01) {
+  const age = clock - e.start;
+  crumbleErode(e, age);
+  const left = smooth(e.lastDelay, e.lastDelay + 1.3, age);
+  ctx.globalAlpha = a01;
+  if (e.where === 'chart') {
+    /* The picture with holes in it, gone once the last grain has left. */
+    ctx.globalAlpha = a01 * (1 - left);
+    if (left < 1) ctx.drawImage(e.mask, ox - e.R * size, oy - e.R * size, e.R * 2 * size, e.R * 2 * size);
+  } else {
+    ctx.drawImage(e.mask, ox - e.R, oy - e.R, e.R * 2, e.R * 2);
+    if (e.mode !== 'impact' && left > 0) {
+      ctx.globalAlpha = a01 * left;
+      ctx.fillStyle = e.ink;
+      ctx.beginPath();
+      ctx.arc(ox, oy, e.R, 0, TAU);
+      ctx.fill();
+    }
+  }
+  ctx.globalAlpha = a01;
+  for (const [col, list] of e.groups) {
+    ctx.fillStyle = col;
+    ctx.beginPath();
+    let inPath = 0;
+    for (const c of list) {
+      const flown = age - c.delay;
+      if (flown < 0) continue;
+      const u = flown / Math.max(0.5, e.dur - c.delay);
+      if (u >= 1) continue;
+      const rad = c.r * size * Math.pow(1 - u, 0.7);
+      if (rad < 0.3) continue;
+      const go = c.drag ? (1 - Math.exp(-flown * c.drag)) / c.drag : flown;
+      const wob = Math.sin(flown * 0.9 + c.ph) * c.wob * Math.min(1, flown * 0.5);
+      const x = ox + (c.x + c.vx * go + 0.5 * c.ax * flown * flown + wob) * size, y = oy + (c.y + c.vy * go + 0.5 * c.ay * flown * flown - wob) * size;
+      if (rad < 0.8) ctx.rect(x - rad, y - rad, rad * 2, rad * 2);
+      else { ctx.moveTo(x + rad, y); ctx.arc(x, y, rad, 0, TAU); }
+      /* In batches: Apple's WebKit drops a single path with too many dots in it. */
+      if (++inPath >= DOT_BATCH) { ctx.fill(); ctx.beginPath(); inPath = 0; }
+    }
+    ctx.fill();
+  }
+}
+function drawCrumbleChart(s) {
+  if (!s.crumbles || !s.crumbles.length) return;
+  const size = lerp(1, s.vs, cam.k);
+  for (const e of s.crumbles) {
+    if (e.start === null || e.where !== 'chart') continue;
+    if (e.fx === undefined) place(s, e.gx, e.gy);
+    const a = ctx.globalAlpha;
+    crumblePieces(s, e, e.fx === undefined ? VX : e.fx, e.fx === undefined ? VY : e.fy, e.fx === undefined ? size : 1, a);
+    ctx.globalAlpha = a;
+  }
+}
+function drawCrumbleClose(s, p, a01) {
+  if (!s.crumbles || !s.crumbles.length) return;
+  const { pal } = s, far = Math.hypot(s.W, s.H);
+  for (const e of s.crumbles) {
+    if (e.start === null || e.where !== 'close' || s.focus.id !== e.focusId) continue;
+    const age = clock - e.start;
+    if (e.mode !== 'impact') p.moonFade = 1 - smooth(0.5, 5, age);
+    if (e.mode === 'impact') {
+      /* The comet coming in, then the flash where it lands. */
+      const c = Math.cos(e.hit), sn = Math.sin(e.hit), ix = c * e.R * 0.92, iy = sn * e.R * 0.92;
+      if (age < 1.3) {
+        const f = age / 1.3, d = (1 - f * f) * far * 0.5;
+        ctx.strokeStyle = pal.accent;
+        ctx.lineWidth = 2.4;
+        ctx.beginPath();
+        ctx.moveTo(ix + c * d, iy + sn * d);
+        ctx.lineTo(ix + c * (d + e.R * 0.5), iy + sn * (d + e.R * 0.5));
+        ctx.stroke();
+      } else {
+        const f = clamp((age - 1.3) / 4, 0, 1);
+        for (let n = 0; n < 3; n++) if (f < 1) ringAt(ix, iy, e.R * f * (0.5 + n * 0.3), (1 - f) * 0.9, pal.accent, 1.5);
+      }
+    }
+    crumblePieces(s, e, 0, 0, 1, a01);
+    if (e.mode === 'destroy' && age < 3) {
+      /* The flash and the first shockwave. */
+      const f = age / 3;
+      ctx.globalAlpha = a01 * Math.pow(1 - f, 3) * 0.85;
+      ctx.fillStyle = pal.accent;
+      ctx.fillRect(-far, -far, far * 2, far * 2);
+      ctx.globalAlpha = a01;
+      for (let n = 0; n < 3; n++) ringAt(0, 0, e.R * (0.9 + f * (2 + n * 0.5)), (1 - f) * 0.9, n ? pal.ink : pal.accent, 2);
+    }
+  }
+}
 
 /* ---- Explore: every system can be named, shared and touched. Used by the Mac app's Explore window and the website. ---- */
 const exp = { hover: null, sel: null, flights: [], log: [], want: null, seed: 0, els: null, wheel: 0, refreshed: 0, lastPick: 0 };
@@ -4894,12 +5191,13 @@ function renderScene(s, t) {
   const st = s.civState;
   const enclosed = st && st.final && st.final.kind === 'transcended';
   /* The sun, unless it has been enclosed. */
-  if (!enclosed) {
+  if (!enclosed && !s.sunless) {
+    const thinned = st && st.arc && st.arc.kind === 'starlift' ? 1 - 0.45 * st.arc.progress : 1;
     ctx.fillStyle = pal.ink;
-    ctx.beginPath(); ctx.arc(c.sun.x, c.sun.y, c.sun.r * (1 + sound.bass * 0.05), 0, TAU); ctx.fill();
+    ctx.beginPath(); ctx.arc(c.sun.x, c.sun.y, c.sun.r * thinned * (1 + sound.bass * 0.05), 0, TAU); ctx.fill();
     ctx.strokeStyle = alpha(pal.ink, 0.4);
     ctx.lineWidth = 0.7;
-    ctx.beginPath(); ctx.arc(c.sun.x, c.sun.y, c.sun.r * 1.5, 0, TAU); ctx.stroke();
+    ctx.beginPath(); ctx.arc(c.sun.x, c.sun.y, c.sun.r * thinned * 1.5, 0, TAU); ctx.stroke();
   }
   drawComms(s.commsNow || s.comms, t, 1, pal, k);
   /* A route lights up when you point at its page in the menu. */
@@ -4917,7 +5215,7 @@ function renderScene(s, t) {
   ctx.font = '400 10px "JetBrains Mono", ui-monospace, Menlo, monospace';
   ctx.textBaseline = 'middle';
   for (const o of c.nodes) {
-    if (o.gone) continue;
+    if ((o.gone && !o.armed) || o.crumbling) continue;
     if (o.sprite && !o.shattered) {
       ctx.save();
       ctx.beginPath(); ctx.arc(o.x, o.y, o.r, 0, TAU); ctx.clip();
@@ -4939,7 +5237,7 @@ function renderScene(s, t) {
   }
   ctx.textBaseline = 'alphabetic';
   /* This page's world. */
-  if (!hero.gone) {
+  if (!(hero.gone && !hero.armed) && !hero.crumbling && !hero.crumbled) {
     ctx.globalAlpha = hero.shattered ? 0.3 : 1;
     ctx.drawImage(c.heroC, hero.x - c.pad, hero.y - c.pad, c.pad * 2, c.pad * 2);
     ctx.globalAlpha = 1;
@@ -4947,6 +5245,7 @@ function renderScene(s, t) {
   drawArrival(s, t);
   drawStory(s, t, 1, k);
   drawEvents(s, t, 1, k);
+  if (crumbles) drawCrumbleChart(s);
 }
 
 /* You came along a route: a ship carries you in from the page you just left. */
@@ -4973,6 +5272,19 @@ function drawArrival(s, t) {
 /* Transcendence as seen from a world: others pour towards the sun; the swarm grows; if this one goes, only dust is left. */
 function sceneStory(s, t, k) {
   const st = s.civState, c = s.scene, { pal } = s;
+  /* A sun being taken apart: it thins, and its matter streams away as grain. */
+  if (st.arc && st.arc.kind === 'starlift') {
+    const u = st.arc.progress, reach = Math.hypot(s.W, s.H) * 0.55, shown = Math.floor(streamSeeds.length * (0.2 + 0.5 * u));
+    ctx.fillStyle = pal.ink;
+    ctx.beginPath();
+    for (let i = 0; i < shown; i++) {
+      const p = streamSeeds[i], f = (t * p.sp * 2 + p.ph) % 1, a = p.a + Math.floor(p.band * 7) / 7 * TAU + f * 1.3;
+      const rad = c.sun.r * 0.7 + f * f * reach, r = (0.5 + p.s * 0.6) * (1 - f * 0.5);
+      ctx.moveTo(c.sun.x + Math.cos(a) * rad + r, c.sun.y + Math.sin(a) * rad);
+      ctx.arc(c.sun.x + Math.cos(a) * rad, c.sun.y + Math.sin(a) * rad, r, 0, TAU);
+    }
+    ctx.fill();
+  }
   const going = (st.arc && st.arc.kind === 'ascend') || (st.final && st.final.kind === 'transcended');
   if (going) {
     const u = st.final ? 1 : st.arc.progress;
@@ -5012,7 +5324,7 @@ function sceneStory(s, t, k) {
     ctx.fillStyle = pal.ink;
     ctx.beginPath();
     for (const o of s.worlds) {
-      if (!o.shattered || !(o === c.hero || c.nodes.includes(o))) continue;
+      if (!o.shattered || o.crumbling || !(o === c.hero || c.nodes.includes(o))) continue;
       const big = o === c.hero;
       for (const p of shardSeeds) {
         const a = p.a + t * p.w, d = o.r * (big ? 0.55 + p.d * 0.3 : 0.45 + p.d * 1.3), r = p.s * (big ? 2 : 1);
@@ -5033,8 +5345,8 @@ function plannedStories(seed, age) {
   let d = age + 1.5 + q() * 2.5;
   for (let i = 0; i < 8; i++) {
     const roll = q();
-    const kind = roll < 0.55 ? 'war' : roll < 0.8 ? 'ascend' : 'destroy';
-    const dur = kind === 'war' ? 1.5 + q() * 1.5 : kind === 'ascend' ? 5 + q() * 3 : 1;
+    const kind = roll < 0.5 ? 'war' : roll < 0.72 ? 'ascend' : roll < 0.88 ? 'destroy' : 'starlift';
+    const dur = kind === 'war' ? 1.5 + q() * 1.5 : kind === 'ascend' ? 5 + q() * 3 : kind === 'starlift' ? 1.5 + q() : 1;
     list.push({ kind, d, dur });
     d += dur + 2 + q() * 3;
   }
@@ -5068,7 +5380,8 @@ function siteTick() {
   sliderTick();
   const c = sys && sys.civState;
   if (!c || !c.final || pendingBuild || forcedSeed || OPTS.mini) return;
-  if (c.age - c.final.d0 > 1) {
+  /* The pages' worlds come back with the new universe, once the last grain has gone. */
+  if (c.age - c.final.d0 > 1 && (c.age - c.final.d0 > 3 || !(sys.crumbles && sys.crumbles.length))) {
     universe = freshUniverse();
     saveUniverse(universe);
     loadSeed(universe.seed, universe.founded);

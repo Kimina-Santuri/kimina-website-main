@@ -541,3 +541,11 @@ After the push of 3f856da the live site served the repo's root files, not the bu
 - What visitors get: comets that fly in and throw grain; round wreckage grain after a civilisation destroys itself. Left out on purpose: the stipple dissolve, the star-taking story and the camera following events (`crumbles` is false here; the site's worlds are its pages, so a dissolve would need its own decision). Private setups aren't in this file; only the generic, unused `window.ORRERY_LOCAL` check is.
 - Verified: build and `npm run check`; no console errors on 8 pages in Chrome; forced comets and a forced self-destruction on Contact (seed 42) with no errors, wreckage seen in a screenshot.
 - Not verified: the comet itself in a frame (the stills caught war tracers, not clearly the comet); a real phone, budget Android or iPhone Safari.
+
+## 2026-11-07: Stipple dissolve on the site
+
+- User's request: push the regenerated background (601bb87) and add the stipple dissolve. `crumbles` is now on for the page and off for the thumbnail. Worlds dissolve into black and grey grain behind the text: dismantled worlds towards the sun, destroyed worlds in a blast, and a new story where the sun is taken apart and the page worlds drift off one by one.
+- The worlds come back: the site already starts a fresh universe a minute after a civilisation ends, and now waits for the last grain first (at most three days of theirs, three minutes of ours). Grain counts: this page's world 6,000, or 1,800 on low-power devices; other worlds up to 900, or 400. Reduced motion and frozen devices skip it.
+- `orrery.js` is 249 KB, about 74 KB compressed (was about 70). `?v=universe6`.
+- Verified: build and check; real-time Chrome with forced stories: destroy on Contact and Home, sun on Tech, ascend on About, no page errors, frames viewed and text stayed readable; 390 px at 4x CPU slowdown on this M1 Pro, no errors, rAF gaps steady (p95 9 ms, but that doesn't measure GPU work, so it says little about real phones).
+- Not verified: a real phone or budget Android (the main risk; the LITE counts haven't been timed), iPhone Safari, the sun dissolve on Home, the comet in flight in a frame.
