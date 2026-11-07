@@ -549,3 +549,10 @@ After the push of 3f856da the live site served the repo's root files, not the bu
 - `orrery.js` is 249 KB, about 74 KB compressed (was about 70). `?v=universe6`.
 - Verified: build and check; real-time Chrome with forced stories: destroy on Contact and Home, sun on Tech, ascend on About, no page errors, frames viewed and text stayed readable; 390 px at 4x CPU slowdown on this M1 Pro, no errors, rAF gaps steady (p95 9 ms, but that doesn't measure GPU work, so it says little about real phones).
 - Not verified: a real phone or budget Android (the main risk; the LITE counts haven't been timed), iPhone Safari, the sun dissolve on Home, the comet in flight in a frame.
+
+## 2026-11-07: Moov Sunday Service photos
+
+- User's request: add the JPEGs on the Desktop to the Moov Sunday Service performance. I took these to be the six `ov-*-edit.jpeg` files added that day; all six show the event. Web copies in `images/uploads/moov-sunday-service/` at 1600 px on the long side, quality 74, sRGB, camera data removed: 1.9 MB in total, from about 75 MB. Originals left on the Desktop. Gallery added to `site/content/performances/moov-sunday-service.md`, poster stays the lead image.
+- Alt text describes what's visible and doesn't name anyone; no captions. Credit "Photography: Thiga" at the user's request, who asked that no one else be mentioned.
+- `project.njk` now hides the Details link when `external_label` is empty: Moov's entry has an Instagram `external_url` with no label, which showed as a lone arrow once the section appeared. Its URL stays in the entry, unshown.
+- Verified: build and check; desktop and 390 px renders viewed, no horizontal scroll, no page errors. Pushed at the user's request.

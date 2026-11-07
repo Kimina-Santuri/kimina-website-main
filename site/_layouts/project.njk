@@ -76,7 +76,7 @@ ogType: article
   <section class="project-credits" aria-labelledby="credits-title">
     <p class="section-label" id="credits-title">Details</p>
     <dl>{% for credit in credits %}<div><dt>{{ credit.label }}</dt><dd>{{ credit.value | markdownInline | safe }}</dd></div>{% endfor %}</dl>
-    {% if external_url and not (tracks and tracks.length) %}<a class="text-link" href="{{ external_url }}" target="_blank" rel="noopener">{{ external_label }} <span aria-hidden="true">↗</span></a>{% endif %}
+    {% if external_url and external_label and not (tracks and tracks.length) %}<a class="text-link" href="{{ external_url }}" target="_blank" rel="noopener">{{ external_label }} <span aria-hidden="true">↗</span></a>{% endif %}
   </section>
   {% endif %}
 
