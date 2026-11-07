@@ -95,8 +95,10 @@ const lowEnd = (navigator.hardwareConcurrency || 4) <= 4 || (navigator.deviceMem
 const frozen = params.has('still') || reduceMotion || saveData || !!(OPTS.mini && lowEnd);
 const startAt = parseFloat(params.get('t')) || 0;
 const testZ = params.has('z') ? parseFloat(params.get('z')) : null;
+const followEvents = false;
 const explore = false; /* clicking is the Mac app's for now */
 const wallpaper = true; /* civilisations and stories on */
+const crumbles = followEvents || explore; /* worlds and suns come apart in grain; the website keeps the simpler story */
 let forcedPalette = OPTS.palette || null, customPalette = null, dustMul = 1;
 
 let sys = null;
@@ -561,6 +563,8 @@ function* buildGen(seed, W, H) {
   sysObj.closeups = {};
   if (sysObj.scene) yield* paintScene(sysObj);
   worlds.forEach(o => o.moons.forEach((m, i) => { m.parent = o; m.index = i; m.colonised = true; }));
+  /* A private build can add its own setups (see mac/scripts/build.sh --mine). */
+  if (wallpaper && window.ORRERY_LOCAL) window.ORRERY_LOCAL.apply(sysObj, { mulberry, TAU, lerp, smooth, clamp, alpha, mix });
 
   return sysObj;
 }
@@ -972,7 +976,7 @@ function drawWorld(s, o, t) {
   const homeBoost = o.home ? Math.max(o.r, 26 * px) / o.r : 0.8;
   const r = o.r * lerp(1, homeBoost, k) * (o.shattered ? 0.42 : 1);
   o.x = x; o.y = y;
-  const hideMe = o === s.hideFocus || o === s.hideParent || o.gone;
+  const hideMe = o === s.hideFocus || o === s.hideParent || (o.gone && !o.armed) || o.crumbling;
   if (k > 0.5) {
     o.ang = Math.atan2(py0 - s.hy, px0 - s.hx);
     o.dist = Math.hypot(py0 - s.hy, px0 - s.hx);
@@ -1441,8 +1445,9 @@ function drawSuns(s, t) {
   const a = (t / s.sunT) * TAU;
   const size = lerp(1, s.vs, cam.k);
   const enclosed = s.civState && s.civState.final && s.civState.final.kind === 'transcended';
+  const lifting = s.civState && s.civState.arc && s.civState.arc.kind === 'starlift' ? 1 - 0.45 * s.civState.arc.progress : 1;
   s.suns.forEach((sun, i) => {
-    if (sun === s.hideFocus || (enclosed && !sun.far)) return;
+    if (sun === s.hideFocus || (enclosed && !sun.far) || sun.crumbling || (s.sunless && !sun.far && !sun.armed)) return;
     const dir = a * sun.rate + sun.ph;
     place(s, Math.cos(dir) * sun.off, Math.sin(dir) * sun.off);
     if (sun.kind === 'pulsar') drawBeams(s, sun, VX, VY, t);
@@ -1453,7 +1458,7 @@ function drawSuns(s, t) {
       ctx.fill();
       return;
     }
-    const m = sun.mid * size * (1 + sound.bass * 0.05);
+    const m = sun.mid * size * (1 + sound.bass * 0.05) * (sun.far ? 1 : lifting);
     ctx.drawImage(sun.sprite, VX - m, VY - m, m * 2, m * 2);
   });
 }
@@ -2933,9 +2938,9 @@ function focusOptions(s, anywhere) {
   const t = lastCamT;
   const P2 = [0, 0];
   const worldPos = o => { orbitXY(o.a, o.e, o.w, (t / o.T) * TAU + o.phase, P2); place(s, P2[0], P2[1]); return [VX, VY]; };
-  if (!hub.gone) out.push({ id: 'home', kind: 'world', ref: hub, label: hub.shattered ? 'Shattered home world' : 'Home world', weight: 2 });
+  if (!hub.gone || hub.armed) out.push({ id: 'home', kind: 'world', ref: hub, label: hub.shattered ? 'Shattered home world' : 'Home world', weight: 2 });
   for (const o of s.worlds) {
-    if (o === hub || o.r < 5 * s.px || o.gone) continue;
+    if (o === hub || o.r < 5 * s.px || (o.gone && !o.armed)) continue;
     const [x, y] = worldPos(o);
     if (inView(x, y)) out.push({ id: 'world' + o.i, kind: 'world', ref: o, label: o.living ? 'Sister world' : 'World', weight: o.living ? 1.6 : 1 });
   }
@@ -2946,6 +2951,7 @@ function focusOptions(s, anywhere) {
     o.moons.forEach((m, i) => out.push({ id: `moon${o.i}.${i}`, kind: 'moon', ref: m, label: m.colonised && o.living ? 'Colonised moon' : 'Moon', weight: m.colonised && o.living ? 1.5 : 0.6 }));
   }
   s.suns.forEach((sun, i) => {
+    if ((s.sunless && !sun.far && !sun.armed) || sun.veiled) return;
     const a = (t / s.sunT) * TAU * sun.rate + sun.ph;
     place(s, Math.cos(a) * sun.off, Math.sin(a) * sun.off);
     if (inView(VX, VY)) {
@@ -2966,7 +2972,9 @@ function focusOptions(s, anywhere) {
   return out;
 }
 function chooseFocus(s) {
-  const all = focusOptions(s).filter(f => f.id !== s.lastFocusId);
+  const options = focusOptions(s), others = options.filter(f => f.id !== s.lastFocusId);
+  /* With one thing left it may be the last one seen; with nothing left this returns undefined. */
+  const all = others.length ? others : options;
   let total = 0;
   for (const f of all) total += f.weight;
   let pick = Math.random() * total;
@@ -3478,8 +3486,10 @@ function drawLive(s, t, alpha01, scale) {
     }
     drawStory(s, t, Math.max(scale, 1), tk);
     drawEvents(s, t, Math.max(scale, 1), tk);
+    if (crumbles) drawCrumbleChart(s);
   }
   drawSuns(s, t);
+  if (s.setup && s.setup.over && s.civState) s.setup.over(setupView(s, t, 1, 1));
   ctx.globalAlpha = 1;
 }
 
@@ -3574,6 +3584,7 @@ function drawPlate(s, level, t, px, py, mx, my, scale, a01) {
   for (const m of p.moons || []) {
     const a = (t / m.T) * TAU + m.ph;
     const x = Math.cos(a) * m.d, y = Math.sin(a) * m.d;
+    if (p.moonFade !== undefined) ctx.globalAlpha = a01 * p.moonFade;
     ctx.fillStyle = pal.paper;
     ctx.beginPath();
     ctx.arc(x, y, m.r + 2.2, 0, TAU);
@@ -3597,6 +3608,7 @@ function drawPlate(s, level, t, px, py, mx, my, scale, a01) {
   if (p.comms) drawComms(p.commsNow || p.comms, t, Math.max(scale, 1), pal, p.k);
   if (p.lanes) drawLanes(p.lanesNow || p.lanes, t, Math.max(scale, 1), pal, p.k, fleetOf(s), scale);
   if (p.gates) for (const g of p.gatesNow || p.gates) drawGate(g, t, Math.max(scale, 1), pal, p.k);
+  if (crumbles && level === -1) drawCrumbleClose(s, p, a01);
   ctx.globalAlpha = 1;
 }
 
@@ -3729,6 +3741,7 @@ function stepCam(dt) {
       cam.hold = (pacing.pMin + Math.random() * (pacing.pMax - pacing.pMin)) * (cam.to === 0 ? 1.6 : 1);
       cam.planned = null;
       if (cam.visitNext) { const f = cam.visitNext; cam.visitNext = null; goTo(f); return; }
+      if (followEvents) eventArrived();
     }
     updateScale();
     return;
@@ -3740,12 +3753,16 @@ function stepCam(dt) {
   /* Wait until the destination is painted, so the journey itself never stalls. */
   if (cam.hold > 0 || backlog.some(j => j.s === sys)) return;
   const here = clamp(Math.round(cam.z), LEVEL_MIN, LEVEL_MAX);
-  const target = here !== 0 && swapDue() ? 0 : cam.planned;
+  let target = here !== 0 && swapDue() ? 0 : cam.planned;
   cam.planned = null;
   if (target === -1 && here >= 0) {
-    if (!sys.focusReady) setFocus(sys, chooseFocus(sys));
-    plate(sys, -1);
-    sys.focusReady = false;
+    const next = sys.focusReady ? sys.focus : chooseFocus(sys);
+    if (!next) target = 0;
+    else {
+      if (!sys.focusReady) setFocus(sys, next);
+      plate(sys, -1);
+      sys.focusReady = false;
+    }
   }
   cam.from = cam.z;
   cam.to = target;
@@ -3784,6 +3801,7 @@ function planNext(s) {
   let target = here !== 0 && Math.random() < 0.3 ? 0 : choices[Math.floor(Math.random() * choices.length)];
   /* From the chart, visiting something in it is the most likely journey. */
   if (here === 0 && Math.random() < 0.4) target = -1;
+  if (target === -1 && !focusOptions(s).length) target = 0;
   cam.planned = target;
   for (const l of [1, 2, 3, 4]) {
     if (target >= l || here >= l) {
@@ -3796,7 +3814,9 @@ function planNext(s) {
 }
 function prepareFocusNow(s) {
   if (s !== sys || cam.z < 0 || s.focusReady) return;
-  setFocus(s, chooseFocus(s));
+  const next = chooseFocus(s);
+  if (!next) return;
+  setFocus(s, next);
   plateDisc(s, -1);
   queueJob(s, () => { plate(s, -1); s.focusReady = true; });
 }
@@ -3807,7 +3827,7 @@ function loop(now) {
   raf = requestAnimationFrame(loop);
   /* Up to 60 frames a second while the camera moves on capable devices; otherwise 30, which
      is plenty for slow orbits and kinder to batteries. */
-  const moving = cam.u < 1 || cam.k !== cam.viewTo;
+  const moving = cam.u < 1 || cam.k !== cam.viewTo || (crumbles && crumbleBusy(sys));
   if (now - lastDraw < (OPTS.mini ? 66 : moving && !LITE && quality > 0.7 ? 15 : 32)) return;
   const gap = now - lastDraw;
   /* Steady slow frames lower the detail; a long run of good ones slowly brings it back. */
@@ -3825,6 +3845,7 @@ function loop(now) {
   sound.bass *= 0.86; sound.level *= 0.9;
   lastT = spanInfo ? (Date.now() / 1000) * simSpeed : simT;
   lastCamT = lastT;
+  if (crumbles) crumbleT = startAt + lastT;
   render(startAt + lastT);
   if (fade) {
     const left = 1 - (now - fade.at) / 3000;
@@ -3839,6 +3860,8 @@ function loop(now) {
   if (wallpaper) {
     drawOverlays();
     civTimer -= dt;
+    if (followEvents) eventTick();
+    if (crumbles) crumbleTick(sys);
     siteTick();
     if (civTimer <= 0) { civTimer = sys.civState && sys.civState.arc ? 4 : 15; applyCiv(false); }
   }
@@ -3917,6 +3940,7 @@ function civHistory(seed, s, age) {
     if (kind === 'war') { st.arc = { kind, d0: d, dur }; add(d, 'war', `War broke out between ${homeName} and ${enemy}.`); }
     if (kind === 'ascend') { st.arc = { kind, d0: d, dur, gone: 0 }; add(d, 'ascend', `${people} stopped answering. Something is being built around the star.`); }
     if (kind === 'destroy') { st.arc = { kind, d0: d, dur }; add(d, 'destroyBegin', 'Every signal is warning of the same thing.'); }
+    if (kind === 'starlift') { st.arc = { kind, d0: d, dur }; add(d, 'starlift', `${people} have begun taking their star apart.`); }
   };
   const order = s.worlds.slice().sort((a, b) => b.a - a.a);
   const advanceArc = d => {
@@ -3943,8 +3967,14 @@ function civHistory(seed, s, age) {
       st.arc = null; st.final = { kind: 'ended', d0: d }; st.status = 'silent'; st.vigor = 0;
       add(d, 'ended', `${people} destroyed themselves. Nothing answers from ${homeName}.`);
     }
+    if (a.kind === 'starlift' && u >= 1) {
+      st.arc = null; st.final = { kind: 'sunless', d0: d }; st.status = 'silent'; st.vigor = 0;
+      add(d, 'sunless', `The star is gone. ${homeName} and its sisters are drifting apart in the dark.`);
+    }
   };
-  const story = civStory.slice().sort((a, b) => a.d - b.d);
+  const told = s.setup && s.setup.history ? s.setup.history({ people, homeName, worldNames, age }) : { events: [], arcs: [] };
+  let toldAt = 0;
+  const story = civStory.concat(told.arcs).sort((a, b) => a.d - b.d);
   let storyAt = 0;
   const steps = Math.min(16000, Math.floor(age * 4));
   for (let i = 1; i <= steps; i++) {
@@ -3958,9 +3988,11 @@ function civHistory(seed, s, age) {
       if (a3 < 0.0005) beginArc(d, 'war', 8 + c3 * 25);
       else if (a3 < 0.00058 && st.reach >= 3) beginArc(d, 'ascend', 50 + c3 * 70);
       else if (a3 < 0.00063) beginArc(d, 'destroy', 2 + c3 * 3);
+      else if (crumbles && a3 < 0.00068 && s.suns.every(x => x.kind !== 'hole' && x.kind !== 'pulsar')) beginArc(d, 'starlift', 6 + c3 * 14);
     }
     advanceArc(d);
     if (st.final) continue;
+    while (toldAt < told.events.length && told.events[toldAt].d <= d) { const e = told.events[toldAt++]; add(e.d, e.kind, e.text); }
     if (st.status !== 'silent') {
       while (st.stations < stationCount && d >= stationAt[st.stations]) { st.stations++; add(d, 'station', st.stations === 1 ? 'Their first space station was finished.' : `Station ${st.stations} went into orbit.`); }
       while (st.rocks < rockCount && d >= rockAt[st.rocks]) { st.rocks++; add(d, 'asteroid', st.rocks === 1 ? 'Miners settled the first asteroid.' : `Asteroid ${st.rocks} was occupied.`); }
@@ -4023,12 +4055,34 @@ function applyCiv(first) {
   const sisters = s.worlds.filter(o => o.living && !o.home);
   sisters.forEach((o, i) => { o.settled = i < c.settled; });
   /* Worlds taken apart outermost first; if it all ended badly, the peopled ones are shattered. */
-  const taken = c.arc && c.arc.kind === 'ascend' ? c.arc.gone : c.final && c.final.kind === 'transcended' ? c.final.gone : 0;
-  s.worlds.slice().sort((a, b) => b.a - a.a).forEach((o, i) => { const was = o.gone; o.gone = i < taken; if (o.gone && !was && !first) pushEvent('taken', o); });
+  if (crumbles && first) crumbleReset(s);
+  const wasSunless = s.sunless;
+  s.sunless = !!(crumbles && c.final && c.final.kind === 'sunless');
+  const taken = s.sunless ? s.worlds.length : c.arc && c.arc.kind === 'ascend' ? c.arc.gone : c.final && c.final.kind === 'transcended' ? c.final.gone : 0;
+  /* With the star gone, the worlds go after it, one by one, from the outside in. */
+  let lifted = null;
+  if (crumbles && s.sunless && !wasSunless && !first) for (const sun of s.suns) if (!sun.far) { const e = crumble(s, sun, 'sun', lifted && { entry: lifted, gap: 3 }); lifted = lifted || e; }
+  let wave = 0;
+  s.worlds.slice().sort((a, b) => b.a - a.a).forEach((o, i) => {
+    const was = o.gone;
+    o.gone = i < taken || !!(s.setup && s.setup.goneBy && s.setup.goneBy(c, o));
+    if (o.gone && !was && !first) {
+      if (!crumbles) pushEvent('taken', o);
+      else if (s.sunless) crumble(s, o, 'drift', lifted && { entry: lifted, gap: 15 + 3.5 * wave++ });
+      else crumble(s, o, 'dismantle');
+    }
+  });
   const wasEnded = s.ended;
   s.ended = !!(c.final && c.final.kind === 'ended');
-  s.worlds.forEach(o => { o.shattered = s.ended && (o.living || o.home); });
-  if (s.ended && !wasEnded && !first) pushEvent('nova');
+  const blasted = s.ended && !wasEnded && !first;
+  if (blasted && !crumbles) pushEvent('nova');
+  if (blasted && crumbles) {
+    /* Home goes first and takes the flash with it; its sisters follow in the shockwave. */
+    const homeBlast = crumble(s, s.worlds[s.homeIdx], 'destroy');
+    let n = 0;
+    for (const o of s.worlds) if (o.living && !o.home) crumble(s, o, 'destroy', homeBlast && { entry: homeBlast, gap: 1.2 + 0.9 * n++ });
+  }
+  s.worlds.forEach(o => { o.shattered = s.ended && (o.living || o.home) && !o.armed; });
   /* Close-ups were painted for the old state, so paint fresh ones when the story moves on. */
   const chapter = (c.final ? c.final.kind : c.arc ? c.arc.kind : 'peace') + taken;
   if (s.chapter && s.chapter !== chapter && cam.z >= 0) { s.closeups = {}; s.plates && delete s.plates[-1]; s.focusReady = false; }
@@ -4073,7 +4127,8 @@ function applyCiv(first) {
   /* Anything new since last time plays out on screen. */
   if (!first && lastEvent) {
     const i = c.events.findIndex(e => e.d === lastEvent.d && e.text === lastEvent.text);
-    for (const e of c.events.slice(i + 1)) if (e.kind !== 'gate') pushEvent(e.kind);
+    for (const e of c.events.slice(i + 1)) if (e.kind !== 'gate') pushEvent(e.kind, e.kind === 'comet' ? s.worlds[c.worldNames.findIndex(n => n && e.text.includes(n))] : undefined);
+    if (followEvents) noteEvents(c.events.slice(i + 1).slice(-5));
   }
   tellApp();
 }
@@ -4095,6 +4150,7 @@ const shardSeeds = (() => {
 function drawStory(s, t, scale, k) {
   const c = s.civState;
   if (!c) return;
+  if (s.setup && s.setup.under) s.setup.under(setupView(s, t, scale, k));
   const thin = Math.pow(scale, -0.6) * k, { pal } = s, hub = s.worlds[s.homeIdx];
   /* War: tracers crossing between two sides, flashes where they land, fleets circling both. */
   if (c.arc && c.arc.kind === 'war') {
@@ -4139,7 +4195,7 @@ function drawStory(s, t, scale, k) {
     place(s, 0, 0);
     const ox = VX, oy = VY, inner = s.a0 * 0.75;
     const size = lerp(1, s.vs, cam.k);
-    const gone = s.worlds.filter(o => o.gone);
+    const gone = s.worlds.filter(o => o.gone && !o.armed);
     if (gone.length && u < 1) {
       ctx.fillStyle = pal.ink;
       ctx.beginPath();
@@ -4173,21 +4229,39 @@ function drawStory(s, t, scale, k) {
       ctx.restore();
     }
   }
+  /* Star lifting: the star is thinner by the day, and its matter leaves as streams of grain. */
+  if (c.arc && c.arc.kind === 'starlift') {
+    place(s, 0, 0);
+    const ox = VX, oy = VY, size = lerp(1, s.vs, cam.k), u = c.arc.progress;
+    const start = (s.suns[0].mid || s.a0 * 0.4) * size * (1 - 0.45 * u) * 0.6, reach = s.a0 * 1.8 * size;
+    const shown = Math.floor(streamSeeds.length * (0.25 + 0.75 * u));
+    ctx.fillStyle = s.suns[0].tint || pal.accent;
+    ctx.beginPath();
+    for (let i = 0; i < shown; i++) {
+      const p = streamSeeds[i], f = (t * p.sp + p.ph) % 1, a = p.a + Math.floor(p.band * 7) / 7 * TAU + f * 1.3;
+      const rad = start + f * f * reach, r = (1.1 + p.s) * thin * (1 - f * 0.5);
+      ctx.moveTo(ox + Math.cos(a) * rad + r, oy + Math.sin(a) * rad);
+      ctx.arc(ox + Math.cos(a) * rad, oy + Math.sin(a) * rad, r, 0, TAU);
+    }
+    ctx.fill();
+  }
   /* What's left after they destroyed themselves: a cloud of shards where each world was. */
   if (s.ended) {
     ctx.fillStyle = pal.ink;
     ctx.beginPath();
     for (const o of s.worlds) {
-      if (!o.shattered) continue;
+      if (!o.shattered || o.crumbling) continue;
       for (const p of shardSeeds) {
         const a = p.a + t * p.w, d = o.r * (0.45 + p.d * 1.3), r = p.s * thin;
-        const x = o.x + Math.cos(a) * d, y = o.y + Math.sin(a) * d;
-        ctx.moveTo(x + r, y);
-        ctx.arc(x, y, r, 0, TAU);
+        ctx.moveTo(o.x + Math.cos(a) * d + r, o.y + Math.sin(a) * d);
+        ctx.arc(o.x + Math.cos(a) * d, o.y + Math.sin(a) * d, r, 0, TAU);
       }
     }
     ctx.fill();
   }
+}
+function setupView(s, t, scale, k) {
+  return { s, t, ctx, k, thin: Math.pow(Math.max(scale, 1), -0.6) * k, size: lerp(1, s.vs, cam.k), c: s.civState, at(x, y) { place(s, x, y); return [VX, VY]; }, sunAt(sun) { const a = (t / s.sunT) * TAU * sun.rate + sun.ph; place(s, Math.cos(a) * sun.off, Math.sin(a) * sun.off); return [VX, VY]; } };
 }
 function swarmSprite(s) {
   if (s._swarm) return s._swarm;
@@ -4239,7 +4313,10 @@ function pushEvent(kind, target) {
   const s = sys, worlds = s.worlds;
   const q = Math.random();
   const ev = { kind, target, t0: lastT };
-  if (kind === 'comet') ev.target = worlds[Math.floor(q * worlds.length)];
+  if (kind === 'comet') {
+    ev.target = target || worlds[Math.floor(q * worlds.length)];
+    ev.dir = Math.random() * TAU;
+  }
   if (kind === 'contact' || kind === 'stranger') {
     const a = Math.random() * TAU, far = Math.hypot(s.W, s.H) * 0.7;
     ev.x0 = s.W / 2 + Math.cos(a) * far; ev.y0 = s.H / 2 + Math.sin(a) * far;
@@ -4259,7 +4336,7 @@ function drawEvents(s, t, scale, k) {
   const hub = s.worlds[s.homeIdx], { pal } = s;
   for (let i = liveEvents.length - 1; i >= 0; i--) {
     const e = liveEvents[i], age = t - e.t0;
-    const life = { beat: 1.4, comet: 7, festival: 9, gate: 6, contact: 20, stranger: 22, nova: 16, taken: 8 }[e.kind] || 6;
+    const life = { beat: 1.4, comet: 9, festival: 9, gate: 6, contact: 20, stranger: 22, nova: 16, taken: 8 }[e.kind] || 6;
     if (age > life || age < 0) { liveEvents.splice(i, 1); continue; }
     const u = age / life;
     if (e.kind === 'nova') {
@@ -4275,12 +4352,33 @@ function drawEvents(s, t, scale, k) {
     } else if (e.kind === 'beat') {
       ringAt(hub.x, hub.y, hub.r + 6 + u * 120 * k, (1 - u) * 0.55, pal.accent, thin);
     } else if (e.kind === 'comet') {
-      const w = e.target;
-      ctx.fillStyle = alpha(pal.accent, (1 - u) * (1 - u));
-      ctx.beginPath();
-      ctx.arc(w.x, w.y, w.r * (1 + (1 - u) * 0.4), 0, TAU);
-      ctx.fill();
-      for (let n = 0; n < 3; n++) ringAt(w.x, w.y, w.r + (u * (70 + n * 40)) * k, (1 - u) * 0.8, pal.accent, thin);
+      /* It comes in along a line, strikes, and throws pieces of the world out from where it hit. */
+      const w = e.target, hit = 0.3, c = Math.cos(e.dir), sn = Math.sin(e.dir);
+      if (u < hit) {
+        const f = u / hit, far = (w.r + 190 * k) * (1 - f * f) + w.r, tail = 46 * k * (1 - f * 0.6);
+        ctx.strokeStyle = alpha(pal.accent, 0.9);
+        ctx.lineWidth = 1.3 * thin;
+        ctx.beginPath();
+        ctx.moveTo(w.x + c * far, w.y + sn * far);
+        ctx.lineTo(w.x + c * (far + tail), w.y + sn * (far + tail));
+        ctx.stroke();
+      } else {
+        const v = (u - hit) / (1 - hit), ix = w.x + c * w.r, iy = w.y + sn * w.r;
+        ctx.fillStyle = alpha(pal.accent, (1 - v) * (1 - v));
+        ctx.beginPath();
+        ctx.arc(w.x, w.y, w.r * (1 + (1 - v) * 0.4), 0, TAU);
+        ctx.fill();
+        for (let n = 0; n < 3; n++) ringAt(ix, iy, (v * (55 + n * 34)) * k, (1 - v) * 0.8, pal.accent, thin);
+        ctx.fillStyle = alpha(pal.ink, 1 - v * v);
+        ctx.beginPath();
+        shardSeeds.forEach((p, i) => {
+          if (i % 2) return;
+          const a = e.dir + (p.a - Math.PI) * 0.42, d = (1 - Math.pow(1 - v, 2.4)) * (14 + p.d * 62) * k, r = (0.6 + p.s) * thin * (1 - v * 0.5);
+          ctx.moveTo(ix + Math.cos(a) * d + r, iy + Math.sin(a) * d);
+          ctx.arc(ix + Math.cos(a) * d, iy + Math.sin(a) * d, r, 0, TAU);
+        });
+        ctx.fill();
+      }
     } else if (e.kind === 'festival') {
       for (const w of s.worlds) {
         if (!w.living || w.settled === false) continue;
@@ -4343,6 +4441,7 @@ function drawOverlays() {
   }
   if (showChronicle && s.civState) drawChronicle(s);
   if (explore) drawExplore(s);
+  if (followEvents && showEventLog) drawEventLog(s);
 }
 
 /* The panel is a real cipher: every letter has its own glyph in this civilisation's script. Now and then
@@ -4363,6 +4462,8 @@ function panelLines(s) {
   const count = (n, one, many) => `${n} ${n === 1 ? one : many || one + 'S'}`;
   const reach = ['THEIR OWN SYSTEM', 'NEIGHBOURING STARS', 'THE GALAXY', 'THE GALAXY GROUP', 'THE SUPERCLUSTER'][c.reach];
   const dev = c.final && c.final.kind === 'ended' ? 'DESTROYED THEMSELVES'
+    : c.final && c.final.kind === 'sunless' ? 'THEIR STAR IS GONE'
+    : c.arc && c.arc.kind === 'starlift' ? 'TAKING THEIR STAR APART'
     : c.status === 'transcended' ? 'BEYOND ANSWERING'
     : c.arc && c.arc.kind === 'war' ? 'AT WAR'
     : c.arc && c.arc.kind === 'ascend' ? (c.arc.gone ? 'TAKING THEIR WORLDS APART' : 'BUILDING SOMETHING')
@@ -4534,6 +4635,12 @@ if (wallpaper) {
     setCiv(founded, rate) { civFounded = founded === null || founded === undefined ? civFounded : founded; civRate = rate || 1; applyCiv(true); },
     setRate(rate) { civRate = rate; civTimer = 0; },
     setChronicle(on) { showChronicle = on; },
+    setEventLog(on) { showEventLog = on; },
+    setZoomToEvents(on) { zoomToEvents = on; if (!on) ev.pending = null; },
+    /* For testing: treat this as if the history had just produced it, camera and all. */
+    eventTest(kind) { const c = sys.civState; ev.last = -1e9; ev.pending = { e: { kind, d: c.age, text: `A comet struck ${c.homeName}.` }, at: performance.now() }; },
+    crumbleState() { return JSON.stringify((sys.crumbles || []).map(e => ({ mode: e.mode, where: e.where, age: e.start === null ? null : clock - e.start, dur: e.dur, cells: e.cells && e.cells.length, groups: e.groups && e.groups.length, sun: !!e.ref.mid }))); },
+    eventState() { return JSON.stringify({ state: ev.state, pending: ev.pending && ev.pending.e.kind, rows: evLog.rows.map(r => r.text), focus: sys.focus && sys.focus.id }); },
     setRealTime(on) { realTime = on; nightAt = 0; },
     setAudio,
     places() { return JSON.stringify(focusOptions(sys).map(f => f.kind)); },
@@ -4552,6 +4659,10 @@ if (wallpaper) {
     /* Start one of the big stories now, over this many minutes of real time. */
     story(kind, minutes) {
       const age = civAgeDays(sys.seed);
+      if (kind === 'starlift' && !sys.suns.every(x => x.kind !== 'hole' && x.kind !== 'pulsar')) {
+        if (followEvents) { evLog.rows.push({ d: age, text: 'There is no star here to take apart.', at: performance.now() }); evLog.rows = evLog.rows.slice(-5); }
+        return false;
+      }
       if (kind === 'clear') civStory = [];
       else civStory.push({ kind, d: age, dur: (minutes / 1440) * civRate });
       civTimer = 0;
@@ -4573,9 +4684,11 @@ if (wallpaper) {
     },
     options() { return JSON.stringify(focusOptions(sys).map(f => f.label)); },
     /* For testing: where each clickable place is right now. */
-    pos() { return JSON.stringify(explore ? focusOptions(sys, true).map(f => { const [x, y] = xyOf(sys, f); return { id: f.id, kind: f.kind, x, y }; }) : []); },
+    pos() { return JSON.stringify(wallpaper ? focusOptions(sys, true).map(f => { const [x, y] = xyOf(sys, f); return { id: f.id, kind: f.kind, x, y, drawnX: f.kind === 'world' ? f.ref.x : null, drawnY: f.kind === 'world' ? f.ref.y : null }; }) : []); },
+    explored() { return JSON.stringify({ hover: exp.hover && exp.hover.id, sel: exp.sel && exp.sel.id, cursor: canvas.style.cursor, z: cam.z, u: cam.u, stay: !!cam.stay, W: sys.W, H: sys.H, cw: canvas.clientWidth, ch: canvas.clientHeight, card: exp.els && !exp.els.card.hidden && exp.els.card.textContent.slice(0, 60), log: exp.log.slice(0, 2), active: !!document.hasFocus() }); },
     /* For tools/trait_table.py: what a seed decides, at the current size, without showing it. */
     traitsFor(seed) { const b = build(seed, canvas.clientWidth || 400, canvas.clientHeight || 300); return traitsOf(b).map(x => [x[0], x[2]]); },
+    labelFor(seed) { return build(seed, canvas.clientWidth || 400, canvas.clientHeight || 300).arch.label; },
     report: tellApp,
     history(age) { return JSON.stringify(civHistory(sys.seed, sys, age)); },
     state() {
@@ -4585,6 +4698,8 @@ if (wallpaper) {
     },
   };
 }
+
+
 
 /* ---- Explore: every system can be named, shared and touched. Used by the Mac app's Explore window and the website. ---- */
 const exp = { hover: null, sel: null, flights: [], log: [], want: null, seed: 0, els: null, wheel: 0, refreshed: 0, lastPick: 0 };

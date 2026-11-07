@@ -534,3 +534,10 @@ After the push of 3f856da the live site served the repo's root files, not the bu
 - `site/orrery.njk` (`orrery.html`, reached from Tech, not in the menu) shows the visitor's own universe at full strength with four sliders: Orbit speed, History (keeps today's date, changes only the pace), Scale (system to supercluster) and Dust (repaints on release). It doesn't save to the universe or count as a page visited. `.orrery-canvas` stays `pointer-events:none`. The explore code is stripped from the site build (`/*SITE-SKIP*/` markers). Raise `?v=universe4` when these change.
 - Verified: build and check; no console errors on 7 pages in Chrome; real-time Chrome run: Scale to 3 and back to 0, History at 10x gave 5.02 days in 30 s with no jump, Dust repainted, values shown correctly; WebKit at 390 px width laid out correctly, with Scale reaching 2. Not verified: a real phone or budget Android, iPhone Safari, frame timing with thumbnail and page together, and dragging a slider by hand (tests set values by script).
 
+
+## 2026-11-07: Background regenerated from Orrery 0.6.0 (not pushed)
+
+- User's request: "Lets do the website next", after I offered to regenerate the site's background. `orrery.js` regenerated with `alien-orrery/tools/make_site_orrery.py`; 233 KB, about 70 KB compressed. `?v=universe5` on all pages, including the static `index`, `about`, `contact`, `bookings`, `learn` and `404`.
+- What visitors get: comets that fly in and throw grain; round wreckage grain after a civilisation destroys itself. Left out on purpose: the stipple dissolve, the star-taking story and the camera following events (`crumbles` is false here; the site's worlds are its pages, so a dissolve would need its own decision). Private setups aren't in this file; only the generic, unused `window.ORRERY_LOCAL` check is.
+- Verified: build and `npm run check`; no console errors on 8 pages in Chrome; forced comets and a forced self-destruction on Contact (seed 42) with no errors, wreckage seen in a screenshot.
+- Not verified: the comet itself in a frame (the stills caught war tracers, not clearly the comet); a real phone, budget Android or iPhone Safari.
