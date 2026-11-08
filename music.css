@@ -11,7 +11,7 @@
 .sleeve { min-width:0; }
 .sleeve[hidden] { display:none; }
 .sleeve__front { display:none; position:relative; width:100%; padding:0; border:1px solid var(--ink); border-radius:0; background:var(--paper); color:var(--ink); font:inherit; text-align:left; cursor:pointer; overflow:hidden; }
-.sleeve__front canvas { display:block; width:100%; aspect-ratio:1; }
+.sleeve__front canvas,.sleeve__front img { display:block; width:100%; height:auto; aspect-ratio:1; object-fit:cover; }
 .sleeve__tab,.sleeve__label,.sleeve__hint { position:absolute; background:var(--paper); color:var(--ink); text-transform:uppercase; }
 .sleeve__tab { top:0; left:0; max-width:100%; padding:6px 10px; font-size:.55rem; letter-spacing:.08em; line-height:1.35; }
 .sleeve__label { left:0; bottom:0; max-width:80%; padding:7px 10px; font-size:.58rem; letter-spacing:.05em; line-height:1.35; }

@@ -104,6 +104,7 @@
     if (el.dataset.painted) return;
     el.dataset.painted = "1";
     const canvas = el.querySelector("canvas");
+    if (!canvas) return; /* a real cover */
     const q = mulberry(hash(el.dataset.slug));
     const size = Math.min(1000, Math.round((canvas.clientWidth || 360) * Math.min(window.devicePixelRatio || 1, 2)));
     canvas.width = canvas.height = size;

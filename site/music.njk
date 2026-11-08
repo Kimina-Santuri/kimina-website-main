@@ -5,13 +5,13 @@ title: Music
 description: Songs mixed and mastered by Kimina, and Kimina's own projects.
 currentPage: music
 animation: constellation
-pageStyle: music.css?v=5
-pageScript: music.js?v=5
+pageStyle: music.css?v=6
+pageScript: music.js?v=6
 ---
 <main>
   <p class="section-label">Music</p>
   <h1>Music</h1>
-  <p class="page-intro">Songs I’ve mixed and mastered, and my own projects. Each sleeve is drawn from the sound of the music inside it.</p>
+  <p class="page-intro">Songs I’ve mixed and mastered, and my own releases. Where there’s no cover, the sleeve is drawn from the sound of the music inside it.</p>
   {% set pieces = collections.publishedMusic | reverse %}
   {% if pieces.length %}
   <section class="crate" data-crate aria-label="Music">
@@ -29,7 +29,7 @@ pageScript: music.js?v=5
         <li class="sleeve" id="{{ piece.fileSlug }}" data-slug="{{ piece.fileSlug }}" data-kind="{{ d.kind or 'other' }}" data-title="{{ d.title }}" data-sound="{{ d.sound }}">
           <div class="sleeve__inner">
             <button type="button" class="sleeve__front" aria-label="Turn over {% if d.artist %}{{ d.artist }}, {% endif %}{{ d.title }}">
-              <canvas aria-hidden="true"></canvas>
+              {% if d.image %}<img src="{{ d.image }}" alt="" loading="lazy" decoding="async" width="640" height="640">{% else %}<canvas aria-hidden="true"></canvas>{% endif %}
               <span class="sleeve__tab" aria-hidden="true">{% if d.artist %}{{ d.artist }} / {% endif %}{{ d.title }}</span>
               <span class="sleeve__label" aria-hidden="true">{{ d.role or 'Music' }} / {{ d.date | year }}</span>
               <span class="sleeve__hint" aria-hidden="true">↻</span>

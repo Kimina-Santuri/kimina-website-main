@@ -589,3 +589,11 @@ After the push of 3f856da the live site served the repo's root files, not the bu
 - Pushed with it: the Music menu link on every page, the Music world in the background (`orrery.js`, `?v=universe7`), `music.css`, `music.js`, `site/music.njk`, `tools/music_sound.py`.
 - Verified first in a clean copy of the live site plus these changes, without the samples: build and check pass; no "sample" text in `music.html`; 1280 px and a 390 px phone viewport, no horizontal scroll, no page errors.
 - Still uncommitted in the engine repo: the `alien-orrery/tools/` change that adds the Music world. `orrery.js` here already includes it, but regenerating from a clean copy of the engine would drop it until that's committed.
+
+## 2026-11-08: Bandcamp releases on the Music page
+
+- User's request: everything from kimina.bandcamp.com as Music cards with the album art, track titles and a Bandcamp link. 15 entries, `site/content/music/bandcamp-<bandcamp slug>.md`: 8 releases (with tracks and times) and 7 singles, read from each page's JSON-LD on 2026-11-08. Covers in `images/music/<slug>.jpg` (640 px, or 560 px at lower quality for the busiest; 864 KB for all 15, lazy-loaded).
+- New optional field `image`: the card shows the cover instead of a drawn sleeve (`music.njk`; `paint()` in `music.js` skips cards with no canvas; `?v=6`). The intro now says sleeves are drawn only where there's no cover.
+- Choices the user didn't specify: Chini Ya Jua (Chevy Kev ft. Luka; "Produced, Mixed & Mastered by Kimina") is under Mixing & Mastering with that role; the rest are "My projects". Roles: Release, Single, Remix (Mad Man, Never Really Get There), Collaboration (Kitu Iko, NASA). Summaries are the first sentence or two of the user's own Bandcamp text, with Mad Man and Never Really Get There reworded briefly. Titles of collaborations are split into title and artist.
+- To add a new Bandcamp release: copy one of these files, change the fields and add its cover to `images/music/`.
+- Verified: clean copy of the live site plus these changes built and passed check; 1280 px and 390 px phone viewport, all 15 covers loaded, no horizontal scroll, no page errors; clicking a card and a `#bandcamp-…` link both turn it, Bandcamp button points to the right page. Not verified: a real phone.
