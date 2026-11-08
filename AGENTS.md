@@ -597,3 +597,12 @@ After the push of 3f856da the live site served the repo's root files, not the bu
 - Choices the user didn't specify: Chini Ya Jua (Chevy Kev ft. Luka; "Produced, Mixed & Mastered by Kimina") is under Mixing & Mastering with that role; the rest are "My projects". Roles: Release, Single, Remix (Mad Man, Never Really Get There), Collaboration (Kitu Iko, NASA). Summaries are the first sentence or two of the user's own Bandcamp text, with Mad Man and Never Really Get There reworded briefly. Titles of collaborations are split into title and artist.
 - To add a new Bandcamp release: copy one of these files, change the fields and add its cover to `images/music/`.
 - Verified: clean copy of the live site plus these changes built and passed check; 1280 px and 390 px phone viewport, all 15 covers loaded, no horizontal scroll, no page errors; clicking a card and a `#bandcamp-…` link both turn it, Bandcamp button points to the right page. Not verified: a real phone.
+
+## 2026-11-08: EIE Pro for Mac on Downloads
+
+- User's request: add the EIE Pro driver release to Downloads. `site/content/downloads/eie-pro-mac.md`: "EIE PRO FOR
+  MAC", kind Audio Driver, Download → github.com/Kimina-Santuri/eie-pro-mac/releases/latest (so new versions need no
+  site change), How to install → the repo README's "Download and install" section. Downloads only (a utility, not in
+  Works). Summary from the project's README and release notes; unsigned-installer line worded like the Orrery entry.
+- Verified: build and check pass; headless Chrome at 1280 px (entry first, both buttons, links correct). The 390 px
+  shot was a desktop window (Chrome's minimum width clips every entry), so not a real phone check.
