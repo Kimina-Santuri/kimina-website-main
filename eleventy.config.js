@@ -36,7 +36,7 @@ module.exports = function (eleventyConfig) {
       return item.data.published && (tags.includes("works") || item.data.include_in_works);
     })
   );
-  ["performances", "residencies", "downloads"].forEach((tag) => {
+  ["performances", "residencies", "downloads", "music"].forEach((tag) => {
     const name = `published${tag[0].toUpperCase()}${tag.slice(1)}`;
     eleventyConfig.addCollection(name, (collectionApi) =>
       collectionApi.getFilteredByTag(tag).filter((item) => item.data.published && (tag !== "downloads" || item.data.external_url))
@@ -58,6 +58,8 @@ module.exports = function (eleventyConfig) {
     "learn.css",
     "learn.js",
     "landing.js",
+    "music.css",
+    "music.js",
     "orrery.js",
     "release-player.js",
     "stellar-player.js",

@@ -1,0 +1,79 @@
+---
+layout: base.njk
+permalink: music.html
+title: Music
+description: Songs mixed and mastered by Kimina, and Kimina's own projects.
+currentPage: music
+animation: constellation
+pageStyle: music.css?v=5
+pageScript: music.js?v=5
+---
+<main>
+  <p class="section-label">Music</p>
+  <h1>Music</h1>
+  <p class="page-intro">Songs I’ve mixed and mastered, and my own projects. Each sleeve is drawn from the sound of the music inside it.</p>
+  {% set pieces = collections.publishedMusic | reverse %}
+  {% if pieces.length %}
+  <section class="crate" data-crate aria-label="Music">
+    <div class="crate__tools">
+      <div class="crate__filters" role="group" aria-label="Show">
+        <button type="button" data-crate-filter="all" aria-pressed="true">All</button>
+        <button type="button" data-crate-filter="engineering" aria-pressed="false">Mixing &amp; Mastering</button>
+        <button type="button" data-crate-filter="project" aria-pressed="false">My projects</button>
+      </div>
+      <span class="crate__count" data-crate-count role="status"></span>
+    </div>
+    <ol class="crate__list">
+        {% for piece in pieces %}
+        {% set d = piece.data %}
+        <li class="sleeve" id="{{ piece.fileSlug }}" data-slug="{{ piece.fileSlug }}" data-kind="{{ d.kind or 'other' }}" data-title="{{ d.title }}" data-sound="{{ d.sound }}">
+          <div class="sleeve__inner">
+            <button type="button" class="sleeve__front" aria-label="Turn over {% if d.artist %}{{ d.artist }}, {% endif %}{{ d.title }}">
+              <canvas aria-hidden="true"></canvas>
+              <span class="sleeve__tab" aria-hidden="true">{% if d.artist %}{{ d.artist }} / {% endif %}{{ d.title }}</span>
+              <span class="sleeve__label" aria-hidden="true">{{ d.role or 'Music' }} / {{ d.date | year }}</span>
+              <span class="sleeve__hint" aria-hidden="true">↻</span>
+              <span class="sleeve__progress" aria-hidden="true"></span>
+            </button>
+            <div class="sleeve__back">
+              <p class="sleeve__meta">{{ d.role or 'Music' }} / {{ d.date | year }}{% if d.duration %} / {{ d.duration }}{% endif %}</p>
+              <h2>{{ d.title }}</h2>
+              {% if d.artist %}<p class="sleeve__meta sleeve__artist">{{ d.artist }}</p>{% endif %}
+              {% if d.summary %}<p class="sleeve__about">{{ d.summary }}</p>{% endif %}
+              <div class="sleeve__actions">
+                {% if d.audio %}<button type="button" data-play="main" data-src="{{ d.audio }}" aria-label="Play {{ d.title }}">Play</button>{% endif %}
+                {% if d.embed %}<button type="button" data-embed="{{ d.embed }}">Load player</button>{% endif %}
+                {% if d.link %}<a class="sleeve__link" href="{{ d.link }}" target="_blank" rel="noopener">{{ d.link_label or 'Listen' }} <span aria-hidden="true">↗</span></a>{% endif %}
+                <button type="button" data-turn-back>Turn back</button>
+              </div>
+              {% if d.tracks and d.tracks.length %}
+              <ol class="sleeve__tracks">
+                {% for track in d.tracks %}
+                <li>
+                  {% if track.src or d.audio %}
+                  <button type="button" data-play="track" data-src="{{ track.src or d.audio }}" data-name="{{ track.title }}"{% if track.seconds !== undefined %} data-at="{{ track.seconds }}"{% endif %} aria-label="Play {{ track.title }}"><span>{{ track.title }}</span><span>{{ track.time }}</span></button>
+                  {% else %}
+                  <span>{{ track.title }}</span><span>{{ track.time }}</span>
+                  {% endif %}
+                </li>
+                {% endfor %}
+              </ol>
+              {% endif %}
+              {% if d.audio %}<noscript><audio controls preload="none" src="{{ d.audio }}"></audio></noscript>{% endif %}
+            </div>
+          </div>
+        </li>
+        {% endfor %}
+    </ol>
+    <div class="crate__deck" hidden>
+      <button type="button" data-deck-toggle>Play</button>
+      <p data-deck-now></p>
+      <p data-deck-time>0:00 / --:--</p>
+      <input type="range" min="0" max="1000" value="0" aria-label="Position in the piece" disabled>
+    </div>
+    <audio preload="none"></audio>
+  </section>
+  {% else %}
+  <p class="empty-state">Nothing here yet.</p>
+  {% endif %}
+</main>

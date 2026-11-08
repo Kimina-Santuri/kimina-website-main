@@ -582,3 +582,10 @@ After the push of 3f856da the live site served the repo's root files, not the bu
 - `site/content/music/kevin-kinembe-album.md`: "Album" by Kevin Kinembe, Mixing and mastering (the user's choice of credit), the five songs with lengths from the latest masters in `~/Desktop/Kevin Kinembe/My Masters`. **No audio** (the user's choice until release). The sleeve's `sound` is measured from the Pushing master with `tools/music_sound.py`. Song names follow the user's sessions; the other engineers' masters spell them "Vurungu" and "Asking Yourself". The album's real title isn't known; change "Album" when it is.
 - Verified: build and check; Tech at 1280 px; Music and Tech at a real 390 px phone viewport (puppeteer, mobile): no horizontal scroll, no page errors, the Kevin card turns over to its track list.
 - Not verified: a real phone. The Tech entries were pushed on their own at the user's request (a clean copy of the live site plus these files built and passed check). The Kevin card is still local: it needs the Music page, which has sample entries.
+
+## 2026-11-08: Music page live
+
+- User's request: publish the Music page (album name still unknown, so the card stays "Album"). Published with only the Kevin Kinembe card; the sample entries and `downloads/music-samples/` stay on this Mac, kept out by `.git/info/exclude`. The "My projects" filter is empty until a project is added.
+- Pushed with it: the Music menu link on every page, the Music world in the background (`orrery.js`, `?v=universe7`), `music.css`, `music.js`, `site/music.njk`, `tools/music_sound.py`.
+- Verified first in a clean copy of the live site plus these changes, without the samples: build and check pass; no "sample" text in `music.html`; 1280 px and a 390 px phone viewport, no horizontal scroll, no page errors.
+- Still uncommitted in the engine repo: the `alien-orrery/tools/` change that adds the Music world. `orrery.js` here already includes it, but regenerating from a clean copy of the engine would drop it until that's committed.
