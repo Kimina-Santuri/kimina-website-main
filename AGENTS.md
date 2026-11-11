@@ -606,3 +606,9 @@ After the push of 3f856da the live site served the repo's root files, not the bu
   Works). Summary from the project's README and release notes; unsigned-installer line worded like the Orrery entry.
 - Verified: build and check pass; headless Chrome at 1280 px (entry first, both buttons, links correct). The 390 px
   shot was a desktop window (Chrome's minimum width clips every entry), so not a real phone check.
+
+## 2026-11-11: Background regenerated from Orrery 0.7.0
+- User's request: rework the website's version after the Orrery's power and stall fixes. `orrery.js` regenerated with `alien-orrery/tools/make_site_orrery.py` (engine at 8a61978); 259 KB, about 78 KB compressed. `?v=universe8` on all pages (the static `index`, `about`, `contact`, `bookings`, `learn`, `404` and `site/_layouts/base.njk`).
+- What visitors get: the loop sleeps between frames instead of being called at the display's rate and skipping (same frame rates as before: 30 at rest, 60 moving, 15 for the Tech thumbnail); the home page's chronicle panel is painted once and stamped; zoom levels on the home page and the sliders page paint in the background a step at a time instead of freezing.
+- Verified: `npm run build` and `npm run check` pass; in headless Brave (served from `_site`) the home, Orrery sliders, Tech (with its live thumbnail) and Music pages animated for 12 s each with no page errors.
+- Not verified: a real phone, Safari/iPhone, and the sliders moved by hand.
