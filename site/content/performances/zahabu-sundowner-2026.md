@@ -28,7 +28,11 @@ hero_meta: []
 external_url: ""
 external_label: ""
 gallery_title: ""
-gallery: []
+gallery:
+  - src: images/uploads/zahabu-sundowner-2026/whatsapp-image-2026-11-25-at-14-44-44.jpeg
+    alt: ""
+    caption: ""
+    wide: false
 credits: []
 ---
 Zahabu Sundowner November 2026, Experimental Night
