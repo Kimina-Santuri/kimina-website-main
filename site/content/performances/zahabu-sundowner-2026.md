@@ -31,7 +31,7 @@ gallery_title: ""
 gallery:
   - src: images/uploads/zahabu-sundowner-2026/whatsapp-image-2026-11-25-at-14-44-44.jpeg
     alt: ""
-    caption: ""
+    caption: Me!
     wide: false
 credits: []
 ---
