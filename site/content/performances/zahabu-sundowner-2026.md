@@ -1,6 +1,6 @@
 ---
 layout: project.njk
-published: false
+published: true
 status: archived
 type_label: Performance
 currentPage: performances
