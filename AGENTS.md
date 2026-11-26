@@ -618,3 +618,9 @@ After the push of 3f856da the live site served the repo's root files, not the bu
 - The user added "Zahabu Sundowner 2026" in /admin (d2d98c1, 099ceaa, 01b56d0) and it stayed "Draft": Published was unticked. That checkbox starts unticked for new entries, and Save and publish saves the entry exactly as the form shows it.
 - Set `published: true` in `site/content/performances/zahabu-sundowner-2026.md` (774e38b, pushed). Build and check pass. Deploy succeeded. Live: kimina.co.ke/zahabu-sundowner-2026.html returns 200 and the entry is on performances.html.
 - Not changed: the default stays unticked. The gallery image has no alt text yet.
+
+## 2026-11-26: Performances posters uncropped
+
+- User's request: posters on the Performances list were all cropped. `.performance-item__image` forced a square (`aspect-ratio:1; object-fit:cover`), but the posters are portrait (4:5, 3:4, 9:16). It now shows the whole image (`height:auto`). On phones the poster is limited to 78% of the screen height, so the 9:16 Moov poster isn't one very long image. Detail pages already showed the whole poster.
+- 5b4ddd9 pushed. Build and check pass. Deploy succeeded. The live landing.css has the change.
+- Not verified: how it looks. Headless Brave hung on this page (there's no Chrome on this Mac), so no screenshot. User to check on desktop and on a phone.
