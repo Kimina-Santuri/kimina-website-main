@@ -612,3 +612,9 @@ After the push of 3f856da the live site served the repo's root files, not the bu
 - What visitors get: the loop sleeps between frames instead of being called at the display's rate and skipping (same frame rates as before: 30 at rest, 60 moving, 15 for the Tech thumbnail); the home page's chronicle panel is painted once and stamped; zoom levels on the home page and the sliders page paint in the background a step at a time instead of freezing.
 - Verified: `npm run build` and `npm run check` pass; in headless Brave (served from `_site`) the home, Orrery sliders, Tech (with its live thumbnail) and Music pages animated for 12 s each with no page errors.
 - Not verified: a real phone, Safari/iPhone, and the sliders moved by hand.
+
+## 2026-11-26: Zahabu Sundowner 2026 published
+
+- The user added "Zahabu Sundowner 2026" in /admin (d2d98c1, 099ceaa, 01b56d0) and it stayed "Draft": Published was unticked. That checkbox starts unticked for new entries, and Save and publish saves the entry exactly as the form shows it.
+- Set `published: true` in `site/content/performances/zahabu-sundowner-2026.md` (774e38b, pushed). Build and check pass. Deploy succeeded. Live: kimina.co.ke/zahabu-sundowner-2026.html returns 200 and the entry is on performances.html.
+- Not changed: the default stays unticked. The gallery image has no alt text yet.
