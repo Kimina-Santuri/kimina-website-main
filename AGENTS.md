@@ -623,4 +623,4 @@ After the push of 3f856da the live site served the repo's root files, not the bu
 
 - User's request: posters on the Performances list were all cropped. `.performance-item__image` forced a square (`aspect-ratio:1; object-fit:cover`), but the posters are portrait (4:5, 3:4, 9:16). It now shows the whole image (`height:auto`). On phones the poster is limited to 78% of the screen height, so the 9:16 Moov poster isn't one very long image. Detail pages already showed the whole poster.
 - 5b4ddd9 pushed. Build and check pass. Deploy succeeded. The live landing.css has the change.
-- Not verified: how it looks. Headless Brave hung on this page (there's no Chrome on this Mac), so no screenshot. User to check on desktop and on a phone.
+- Checked by the user on the live site the same day: "perfect". (Headless Brave hung on this page and there is no Chrome on this Mac, so I took no screenshot.)
