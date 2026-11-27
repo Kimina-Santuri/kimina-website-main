@@ -58,6 +58,7 @@ module.exports = function (eleventyConfig) {
     "learn.css",
     "learn.js",
     "landing.js",
+    "kata.css",
     "music.css",
     "music.js",
     "orrery.js",

@@ -1,0 +1,68 @@
+---
+layout: base.njk
+permalink: kata.html
+title: KATA
+metaTitle: KATA, a loop slicer
+description: KATA chops a loop, or the sound of a video, into slices and plays them back as new patterns in time with your song. Free VST3 and CLAP plugin for Mac and Windows.
+currentPage: tech
+bodyClass: kata-page
+animation: constellation
+pageStyle: kata.css?v=1
+socialImage: /images/kata/kata-light.jpg
+download_url: "https://drive.google.com/drive/folders/1xY74TMH165bzrz_JMNdISZcVzdIG4HfF?usp=sharing"
+version: 1.0.0
+---
+<main>
+  <section class="kata-hero">
+    <div>
+      <p class="section-label"><a href="tech.html">Tech</a> / Audio plugin</p>
+      <h1>KATA<span>Cut. Shuffle. Play.</span></h1>
+      <p class="kata-lede">KATA (Swahili for “cut”) chops a loop, or the sound of a video, into slices and plays them back as new patterns in time with your song. Drop a loop on it, press Shuffle until something hits, lock the steps you like and shuffle the rest.</p>
+      <div class="kata-actions">
+        {% if download_url %}<a class="download-button" href="{{ download_url }}" target="_blank" rel="noopener">Download {{ version }} <span aria-hidden="true">↗</span></a>{% else %}<span class="kata-soon">Download coming soon</span>{% endif %}
+        <a class="download-button" href="manuals/kata.html">Manual</a>
+      </div>
+      <p class="kata-meta">Free and open source · VST3 and CLAP<br>Mac: Apple Silicon and Intel, macOS 13 or later<br>Windows: 64-bit, audio loops only</p>
+    </div>
+    <figure class="kata-shot">
+      <img src="images/kata/kata-light.jpg" width="1600" height="954" alt="The KATA plugin window in its light theme: a drum loop's waveform cut into eight slices, a sixteen-step pattern below it, a large orange Shuffle button with style choices, eight pads, and a constellation of stars on the right joined by lines that trace the pattern">
+      <figcaption>KATA 1.0 in its light theme, with a drum loop cut at the hits. It also has a dark theme.</figcaption>
+    </figure>
+  </section>
+
+  <section class="kata-section" aria-labelledby="kata-what">
+    <h2 id="kata-what">What it does</h2>
+    <ul class="kata-features">
+      <li><strong>Four ways to slice</strong>At the hits, in the quiet gaps, on a beat grid or into equal parts. Drag a chop line to move it; it snaps to the nearest hit.</li>
+      <li><strong>Patterns that listen</strong>KATA hears how deep, bright and loud each slice is: low hits go on the downbeats, bright ones on the ticks, loud mid ones on the backbeats.</li>
+      <li><strong>Styles to steer it</strong>Four-on-the-floor, broken beats, halftime, afro house, amapiano and club, or Original to keep the loop's own order.</li>
+      <li><strong>Lock and shuffle</strong>Right-click a step to lock it. Shuffle rolls the rest. The History strip brings back any of the last eight patterns.</li>
+      <li><strong>Feel</strong>Swing, Skip, Drift, Wobble and Tight change how the pattern breathes while it plays. Each step can repeat, change pitch, play backwards or fade.</li>
+      <li><strong>Constellation</strong>Every slice is a star and the pattern is drawn as lines between them. Click a star to hear it; drag it onto a step, or onto another star to swap them.</li>
+      <li><strong>Slice a video</strong>Drop an MP4 or MOV (up to two minutes, Mac only). The picture follows whatever slice plays. Float opens it in its own window, ready for a projector.</li>
+      <li><strong>Bounce</strong>Render 1 to 16 bars as a WAV to drag into your song and, for a video, an MP4 with the picture re-cut to match.</li>
+      <li><strong>Play it yourself</strong>Every slice is on a key from C1 up. In Hold mode the pattern runs only while you hold a key below C1.</li>
+      <li><strong>Made for laptops</strong>Light and dark themes, and the window at 100, 125 or 150 %.</li>
+    </ul>
+  </section>
+
+  <section class="kata-section" aria-labelledby="kata-install">
+    <h2 id="kata-install">Install on a Mac</h2>
+    <div>
+      <ol class="kata-steps">
+        <li>Unzip the download and copy <code>KATA.vst3</code> to <code>~/Library/Audio/Plug-Ins/VST3/</code> and <code>KATA.clap</code> to <code>~/Library/Audio/Plug-Ins/CLAP/</code> (in Finder: Go › Go to Folder…).</li>
+        <li>KATA is free and unsigned, so macOS blocks it after downloading. Open Terminal and paste:<br><code>xattr -dr com.apple.quarantine ~/Library/Audio/Plug-Ins/VST3/KATA.vst3</code><br><code>xattr -dr com.apple.quarantine ~/Library/Audio/Plug-Ins/CLAP/KATA.clap</code></li>
+        <li>Rescan plug-ins in your host (in Live: Settings › Plug-Ins › Rescan). KATA is an instrument: put it on a MIDI track.</li>
+      </ol>
+      <p class="kata-note">The download includes a README with these steps, the manual and the full source code. On Windows, copy the two files into your VST3 and CLAP folders; the Windows build is new and video isn't available there yet.</p>
+    </div>
+  </section>
+
+  <section class="kata-section" aria-labelledby="kata-feedback">
+    <h2 id="kata-feedback">Feedback</h2>
+    <div>
+      <p class="kata-note">KATA was made for producers who asked for it. Tell me what works, what breaks and what you'd like next: the Feedback button in the plugin opens the contact form.</p>
+      <a class="text-link" href="contact.html#enquiry">Send feedback <span aria-hidden="true">↗</span></a>
+    </div>
+  </section>
+</main>
