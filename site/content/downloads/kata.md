@@ -7,7 +7,7 @@ title: KATA
 date: 2026-11-27
 kind: VST3 / CLAP Plugin
 summary: |-
-  Loop slicer and pattern instrument: chops a loop, or the sound of a video, into slices and shuffles them into new patterns in time with your song. Mac (Apple Silicon and Intel) and Windows. Free and open source.
+  Loop slicer and pattern instrument: chops up to four loops, or the sound of a video, into slices and shuffles them into new patterns in time with your song, with effect buses, video effects and drag into Live. Version 2.0 for Mac (Apple Silicon and Intel); 1.0 for Windows. Free and open source.
 external_url: https://drive.google.com/drive/folders/1xY74TMH165bzrz_JMNdISZcVzdIG4HfF?usp=sharing
 external_label: Google Drive
 manual_url: kata.html

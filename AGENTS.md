@@ -635,3 +635,9 @@ After the push of 3f856da the live site served the repo's root files, not the bu
 - Verified: build and check pass; headless Brave at 1280 px and at a real 390 px viewport (iframe; scrollWidth = 390, no horizontal scroll). Not verified: a real phone.
 - Same day: the user supplied the Drive folder (https://drive.google.com/drive/folders/1xY74TMH165bzrz_JMNdISZcVzdIG4HfF, "Kata Plugin", link-shared). Both zips in it match the local `dist/` files byte for byte. `download_url` set in `site/kata.njk`; `site/content/downloads/kata.md` published with that link (Downloads, and Works as an instrument). Build and check pass; pushed.
 - Same day, user's request: manual wording fixed in KATA (`meta.rs`: "on the map" → a star in the constellation or a slice on the waveform; "above the slice map" → "next to the waveform"). `manuals/kata.html` regenerated and pushed. The zips were rebuilt (still 1.0.0); the user re-uploads them to the same Drive folder.
+
+### 2026-11-28: KATA 2.0
+kata.html updated for KATA 2.0 (Mac only; Windows stays on 1.0 in the same Drive folder): four "New in 2.0" items,
+new hero screenshot `images/kata/kata-light.jpg` (2.0, light theme, synthetic drum loop, 1600×909, `?v=2`),
+Downloads summary and Tech card text, `manuals/kata.html` regenerated from the 2.0 plugin. Drive checked before
+pushing: KATA-2.0.0-macOS.zip present at the built size.
